@@ -11,7 +11,7 @@ def get_vision_trigger(image_path):
     base64_image = encode_image_to_base64(image_path)
 
     response = openai.ChatCompletion.create(
-        model="gpt-4-vision-preview",
+    model="gpt-4o",
         messages=[
             {
                 "role": "user",
