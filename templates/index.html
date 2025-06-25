@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IHWAP SCOUT</title>
+</head>
+<body>
+  <h1>Scout Report Generator</h1>
+  <form method="POST" enctype="multipart/form-data">
+    <label>Enter a field trigger (optional):</label><br>
+    <input type="text" name="trigger" placeholder="e.g. attic moisture"><br><br>
+    <label>Upload a photo (optional):</label><br>
+    <input type="file" name="image"><br><br>
+    <input type="submit" value="Evaluate">
+  </form>
+
+  {% if trigger %}
+    <h3>Trigger: {{ trigger }}</h3>
+    <p><strong>Result:</strong> {{ result }}</p>
+  {% endif %}
+
+  {% if image_path %}
+    <h4>Uploaded Image:</h4>
+    <img src="{{ image_path }}" width="300">
+  {% endif %}
+</body>
+</html>
