@@ -29,4 +29,5 @@ def home():
         if trigger:
             result = evaluate_trigger(trigger)
 
-    return render_template("index.html", trigger=trigger, result=result, image_path=imag
+     return render_template("index.html", trigger=trigger, result=result, image_path=image_path)
+
