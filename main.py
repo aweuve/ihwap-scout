@@ -1,4 +1,3 @@
-print("🚀 Flask app has started.")
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 import os
@@ -30,7 +29,4 @@ def home():
         if trigger:
             result = evaluate_trigger(trigger)
 
-    return render_template("index.html", trigger=trigger, result=result, image_path=image_path)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    return render_template("index.html", trigger=trigger, result=result, image_path=imag
