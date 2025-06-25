@@ -1,49 +1,39 @@
-import base64
 import os
 import openai
+from base64 import b64encode
 
-def encode_image_to_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode('utf-8')
+# Load OpenAI key from environment
+openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 def get_vision_trigger(image_path):
-    openai.api_key = os.environ.get("OPENAI_API_KEY")
-    base64_image = encode_image_to_base64(image_path)
+    # Encode image for base64 upload
+    with open(image_path, "rb") as image_file:
+        encoded_image = b64encode(image_file.read()).decode("utf-8")
 
-    response = openai.ChatCompletion.create(
-    model="gpt-4o",
+    # Ask GPT-4o to describe the issue
+    response = openai.chat.completions.create(
+        model="gpt-4o",
         messages=[
+            {
+                "role": "system",
+                "content": "You are an expert in home weatherization field inspections. When given an image, return a simple label describing the most important issue present — like 'water heater corrosion' or 'vermiculite insulation'."
+            },
             {
                 "role": "user",
                 "content": [
-                    { "type": "text", "text": (
-                        "This image was taken during a home weatherization inspection. "
-                        "What specific field condition or hazard does this photo show? "
-                        "Respond with a short label like: 'attic moisture', 'mold', 'flue too close to pipe', "
-                        "'rim joist unsealed', 'rusted water heater', etc. Return only the condition."
-                    ) },
-                    { "type": "image_url", "image_url": {
-                        "url": f"data:image/jpeg;base64,{base64_image}"
-                    }}
+                    {
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{encoded_image}"
+                        }
+                    }
                 ]
             }
         ],
         max_tokens=50
     )
+
+    label = response.choices[0].message.content.strip().lower()
     print("🔍 GPT-4 Vision label:", label)
     return label
-    
-    if "water heater" in label and "rust" in label:
-        return "water heater corrosion"
-    if "vermiculite" in label:
-        return "vermiculite insulation"
-    if "rim joist" in label or "box sill" in label:
-        return "rim joist unsealed"
-    if "pipe" in label and "flue" in label:
-        return "pipe insulation near flue"
-    if "moisture" in label or "mold" in label:
-        return "attic moisture"
-    if "open panel" in label or "electrical" in label:
-        return "open electrical panel"
 
-    return label
