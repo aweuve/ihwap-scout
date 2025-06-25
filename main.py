@@ -8,6 +8,10 @@ import io
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
