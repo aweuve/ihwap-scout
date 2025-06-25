@@ -8,6 +8,9 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# ✅ Ensure upload folder exists
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 @app.route("/", methods=["GET", "POST"])
 def home():
     trigger = ""
@@ -32,7 +35,7 @@ def home():
 
     return render_template("index.html", trigger=trigger, result=result, image_path=image_path)
 
-# ✅ Required for Render to bind the public port
+# ✅ Required for Render to expose public port
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
