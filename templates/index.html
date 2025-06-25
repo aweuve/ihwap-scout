@@ -1,26 +1,120 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>IHWAP SCOUT</title>
+    <title>IHWAP SCOUT</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .section {
+            background: #fff;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 6px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        input[type="file"],
+        input[type="text"] {
+            padding: 0.5rem;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1rem;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #388e3c;
+        }
+
+        .result-box {
+            padding: 1rem;
+            background: #e8f5e9;
+            border-left: 5px solid #4CAF50;
+            margin-top: 1rem;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+        }
+
+        .chat-box {
+            background: #f0f0f0;
+            padding: 1rem;
+            border-left: 5px solid #2196F3;
+            margin-top: 1rem;
+        }
+    </style>
 </head>
 <body>
-  <h1>Scout Report Generator</h1>
-  <form method="POST" enctype="multipart/form-data">
-    <label>Enter a field trigger (optional):</label><br>
-    <input type="text" name="trigger" placeholder="e.g. attic moisture"><br><br>
-    <label>Upload a photo (optional):</label><br>
-    <input type="file" name="image"><br><br>
-    <input type="submit" value="Evaluate">
-  </form>
+    <h1>🧠 IHWAP SCOUT — Field Image Analysis</h1>
 
-  {% if trigger %}
-    <h3>Trigger: {{ trigger }}</h3>
-    <p><strong>Result:</strong> {{ result }}</p>
-  {% endif %}
+    <div class="section">
+        <form method="POST" enctype="multipart/form-data">
+            <label>Upload Field Photo (jpg/png):</label>
+            <input type="file" name="image" required>
+            <button type="submit">Analyze Photo</button>
+        </form>
 
-  {% if image_path %}
-    <h4>Uploaded Image:</h4>
-    <img src="{{ image_path }}" width="300">
-  {% endif %}
+        {% if image_path %}
+            <div class="image-preview">
+                <p><strong>📸 Uploaded Image:</strong></p>
+                <img src="{{ image_path }}" width="300">
+            </div>
+        {% endif %}
+
+        {% if trigger and result %}
+            <div class="result-box">
+                <p><strong>🧠 Trigger:</strong> {{ trigger }}</p>
+                <p><strong>✅ FAAIE Response:</strong> {{ result }}</p>
+
+                <form action="/download_report" method="get">
+                    <input type="hidden" name="trigger" value="{{ trigger }}">
+                    <input type="hidden" name="result" value="{{ result }}">
+                    <input type="hidden" name="image_path" value="{{ image_path }}">
+                    <button type="submit">📄 Download PDF Report</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="section">
+        <form method="POST">
+            <label>💬 Ask Scout (Policy Question):</label>
+            <input type="text" name="chat_input" placeholder="e.g. Can I insulate over vermiculite?">
+            <button type="submit">Ask Scout</button>
+        </form>
+
+        {% if chat_response %}
+            <div class="chat-box">
+                <p><strong>🧠 Scout Says:</strong></p>
+                <p>{{ chat_response }}</p>
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>
