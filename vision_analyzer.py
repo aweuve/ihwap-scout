@@ -31,7 +31,7 @@ def get_vision_trigger(image_path):
         max_tokens=50
     )
 
-    label = response['choices'][0]['message']['content'].strip().lower()
+    print("🔍 GPT-4 Vision label:", label)
 
     if "water heater" in label and "rust" in label:
         return "water heater corrosion"
