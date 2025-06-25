@@ -1,3 +1,4 @@
+print("🚀 Flask app has started.")
 from flask import Flask, request, render_template
 from werkzeug.utils import secure_filename
 import os
