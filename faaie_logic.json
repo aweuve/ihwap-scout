@@ -128,7 +128,7 @@
     "category": "attic",
     "visual_cue": "Visible bowing or collapse of ceiling finish materials",
     "tags": ["structural", "ceiling", "attic", "deferral"]
-  }
+  },
   {
   "vermiculate suspected in attic insulation": {
     "action": "⚠️🛑 Action Item",
