@@ -1,15 +1,23 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, jsonify
 import os
 import openai
-from vision_analyzer import get_vision_trigger
-from evaluate_faaie import evaluate_trigger
+import json
 import datetime
 import io
+
+from vision_analyzer import get_vision_trigger
+from evaluate_faaie import evaluate_trigger
+from vision_matcher import get_matching_trigger_from_image
+
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# ✅ Load logic once
+with open("faaie_logic.json", "r") as f:
+    faaie_logic = json.load(f)
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -47,6 +55,16 @@ def home():
 
     return render_template("index.html", trigger=trigger, result=result, image_path=image_path, chat_response=chat_response)
 
+@app.route("/evaluate_image", methods=["POST"])
+def evaluate_image():
+    image_file = request.files.get("image")
+    if not image_file:
+        return jsonify({"error": "No image file provided"}), 400
+
+    image_bytes = image_file.read()
+    result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+    return jsonify(result)
+
 @app.route("/download_report")
 def download_report():
     trigger = request.args.get("trigger", "N/A")
@@ -77,18 +95,3 @@ def download_report():
 # ✅ Port binding for Render
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
-from flask import request, jsonify
-from vision_matcher import get_matching_trigger_from_image
-
-@app.route("/evaluate_image", methods=["POST"])
-def evaluate_image():
-    image_file = request.files.get("image")
-    if not image_file:
-        return jsonify({"error": "No image file provided"}), 400
-
-    image_bytes = image_file.read()
-
-    result = get_matching_trigger_from_image(image_bytes, faaie_logic)
-
-    return jsonify(result)
-
