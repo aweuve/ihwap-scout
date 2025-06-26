@@ -38,9 +38,7 @@
     "category": "health and safety",
     "visual_cue": "Pink, yellow, or white batt insulation visible without covering",
     "tags": ["fiberglass", "exposure", "barrier", "deferral"]
-  }
-},
-{
+  },
   "flue pipe rusted or disconnected": {
     "action": "⚠️🛑 Action Item",
     "reason": "Rusted or disconnected flue pipe may cause backdraft or CO hazard.",
@@ -190,8 +188,7 @@
     "category": "mechanical",
     "visual_cue": "Open duct end or severed connection in attic/crawl",
     "tags": ["duct", "leakage", "deferral", "airflow"]
-  }
-},{
+  },
   "missing T&P discharge pipe on water heater": {
     "action": "⚠️🛑 Action Item",
     "reason": "No discharge pipe can cause scalding in pressure relief event.",
@@ -351,8 +348,7 @@
     "category": "mechanical",
     "visual_cue": "Cold air or dirt smell through register when HVAC runs",
     "tags": ["duct", "airflow", "callback", "comfort"]
-  }
-},{
+  },
   "ductwork obstructed by debris or trash": {
     "action": "⚠️🛑 Action Item",
     "reason": "Obstructions can reduce airflow and contaminate air supply.",
