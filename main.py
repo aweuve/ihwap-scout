@@ -8,10 +8,6 @@ import io
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
-
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -50,34 +46,3 @@ def home():
             result = evaluate_trigger(trigger)
 
     return render_template("index.html", trigger=trigger, result=result, image_path=image_path, chat_response=chat_response)
-
-@app.route("/download_report")
-def download_report():
-    trigger = request.args.get("trigger", "N/A")
-    result = request.args.get("result", "N/A")
-    image_path = request.args.get("image_path", None)
-
-    buffer = io.BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=letter)
-    pdf.setFont("Helvetica", 12)
-
-    pdf.drawString(50, 750, "🧠 IHWAP Scout Report")
-    pdf.drawString(50, 730, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    pdf.drawString(50, 710, f"Trigger: {trigger}")
-    pdf.drawString(50, 690, f"Result: {result}")
-
-    if image_path and os.path.exists(image_path):
-        try:
-            pdf.drawImage(image_path, 50, 500, width=200, height=150)
-        except Exception as e:
-            pdf.drawString(50, 670, f"Image error: {str(e)}")
-
-    pdf.showPage()
-    pdf.save()
-    buffer.seek(0)
-
-    return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
