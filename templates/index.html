@@ -33,11 +33,20 @@
       background-color: #e7f5e7;
       border-left: 6px solid #4CAF50;
       border-radius: 6px;
+      font-size: 0.95rem;
+      white-space: pre-wrap;
     }
     img.preview {
       max-width: 400px;
       margin-top: 1rem;
       border: 1px solid #ccc;
+    }
+    .debug {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      background-color: #fff8e1;
+      padding: 1rem;
+      border-left: 5px solid orange;
     }
   </style>
 </head>
@@ -53,14 +62,19 @@
 
   <div id="imagePreview"></div>
   <div id="scoutResult"></div>
+  <div class="debug" id="debugLog"><b>🛠️ Debug Log:</b><br></div>
 </div>
 
 <script>
   async function analyzeImage() {
+    const debug = document.getElementById("debugLog");
+    debug.innerHTML += "📤 Preparing image upload...<br>";
+
     const fileInput = document.getElementById("imageInput");
     const file = fileInput.files[0];
     if (!file) {
       alert("Please select an image file first.");
+      debug.innerHTML += "❌ No image file selected.<br>";
       return;
     }
 
@@ -72,32 +86,49 @@
     };
     reader.readAsDataURL(file);
 
-    // Prepare request
+    // Prepare upload
     const formData = new FormData();
     formData.append("image", file);
 
-    const res = await fetch("/evaluate_image", {
-      method: "POST",
-      body: formData
-    });
+    try {
+      const res = await fetch("/evaluate_image", {
+        method: "POST",
+        body: formData
+      });
 
-    const result = await res.json();
+      debug.innerHTML += `📡 Sent to /evaluate_image → Status: ${res.status}<br>`;
 
-    // Show result
-    const output = document.getElementById("scoutResult");
-    if (result.matched_trigger && result.response) {
-      output.innerHTML = `
-        <h3>🧠 FAAIE Response</h3>
-        <b>📌 Trigger:</b> ${result.matched_trigger}<br>
-        <b>⚠️ Action:</b> ${result.response.action}<br>
-        <b>📝 Reason:</b> ${result.response.reason}<br>
-        <b>🔧 Recommendation:</b> ${result.response.recommendation}<br>
-        <b>📘 Source Policy:</b> ${result.response.source_policy}<br>
-        <b>🗂️ Category:</b> ${result.response.category}<br>
-        <b>👀 Visual Cue:</b> ${result.response.visual_cue}<br>
-      `;
-    } else {
-      output.innerHTML = `
-        <h3>⚠️ No Match Found</h3>
-        Scout couldn’t match this image to a known condition.<br>
-        <pre><i>Visual Description:</i><br>${result.descr
+      if (!res.ok) {
+        throw new Error(`Server responded with status ${res.status}`);
+      }
+
+      const result = await res.json();
+      debug.innerHTML += `✅ Got result: ${JSON.stringify(result)}<br>`;
+
+      const output = document.getElementById("scoutResult");
+      if (result.matched_trigger && result.response) {
+        output.innerHTML = `
+          <h3>🧠 FAAIE Response</h3>
+          <b>📌 Trigger:</b> ${result.matched_trigger}<br>
+          <b>⚠️ Action:</b> ${result.response.action}<br>
+          <b>📝 Reason:</b> ${result.response.reason}<br>
+          <b>🔧 Recommendation:</b> ${result.response.recommendation}<br>
+          <b>📘 Source Policy:</b> ${result.response.source_policy}<br>
+          <b>🗂️ Category:</b> ${result.response.category}<br>
+          <b>👀 Visual Cue:</b> ${result.response.visual_cue}<br>
+        `;
+      } else {
+        output.innerHTML = `
+          <h3>⚠️ No Match Found</h3>
+          Scout couldn’t match this image to a known condition.<br>
+          <pre><i>Visual Description:</i><br>${result.description}</pre>
+        `;
+      }
+    } catch (err) {
+      debug.innerHTML += `❌ Error: ${err.message}<br>`;
+    }
+  }
+</script>
+
+</body>
+</html>
