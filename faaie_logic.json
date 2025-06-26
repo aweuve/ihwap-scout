@@ -28,8 +28,7 @@
     "category": "ventilation",
     "visual_cue": "Fan duct visible ending in attic or crawl, no exterior termination",
     "tags": ["bath fan", "moisture", "callback", "ventilation"]
-  }
-
+  },
   "unsealed rim joist": {
     "action": "⚠️🛑 Action Item",
     "reason": "Unsealed rim joist cavity allows air leakage and heat loss.",
