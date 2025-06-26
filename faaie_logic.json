@@ -129,7 +129,6 @@
     "visual_cue": "Visible bowing or collapse of ceiling finish materials",
     "tags": ["structural", "ceiling", "attic", "deferral"]
   },
-  {
   "vermiculate suspected in attic insulation": {
     "action": "⚠️🛑 Action Item",
     "reason": "Vermiculite may contain asbestos. Attic work must be deferred unless tested and cleared.",
