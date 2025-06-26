@@ -130,6 +130,470 @@
     "visual_cue": "Visible bowing or collapse of ceiling finish materials",
     "tags": ["structural", "ceiling", "attic", "deferral"]
   }
+  {
+  "vermiculate suspected in attic insulation": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Vermiculite may contain asbestos. Attic work must be deferred unless tested and cleared.",
+    "recommendation": "Defer attic work. Recommend testing or consult abatement professional.",
+    "source_policy": "IHWAP 2026 §3.2.5",
+    "priority": 1,
+    "category": "hazardous materials",
+    "visual_cue": "Granular gray-gold insulation resembling pebble fill or cat litter",
+    "tags": ["attic", "asbestos", "vermiculate", "deferral"]
+  },
+  "lead paint risk in chipping window trim": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Chipping paint in pre-1978 homes may expose residents to lead dust.",
+    "recommendation": "Use lead-safe protocols and containment or defer work in the area.",
+    "source_policy": "EPA RRP Rule",
+    "priority": 2,
+    "category": "hazardous materials",
+    "visual_cue": "Chipped, flaking paint on wood surfaces around window or door trim",
+    "tags": ["lead", "hazardous material", "callback", "containment"]
+  },
+  "gas leak odor reported or detected": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Presence of natural gas odor indicates a potential leak — immediate hazard.",
+    "recommendation": "Defer all work. Contact gas utility or licensed plumber for emergency response.",
+    "source_policy": "IHWAP 2026 §7.4.1",
+    "priority": 1,
+    "category": "health and safety",
+    "visual_cue": "Smell of gas, client report, or meter reading anomaly",
+    "tags": ["gas leak", "combustion", "safety", "deferral"]
+  },
+  "double tapped circuit breaker": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Two wires on one breaker can lead to overheating and fire risk.",
+    "recommendation": "Refer to licensed electrician for correction.",
+    "source_policy": "NEC 2023 §110.14(A)",
+    "priority": 2,
+    "category": "electrical",
+    "visual_cue": "Panel with two wires inserted into one breaker lug",
+    "tags": ["electrical", "panel", "safety", "callback"]
+  },
+  "exterior door frame unsealed and deteriorated": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Cracked or rotted door framing compromises air sealing and weather barrier.",
+    "recommendation": "Repair or replace framing before shell measures.",
+    "source_policy": "SWS 3.2001.2a",
+    "priority": 2,
+    "category": "shell",
+    "visual_cue": "Visible daylight, rot, or water staining around door framing",
+    "tags": ["shell", "door", "air leakage", "callback"]
+  },
+  "duct disconnected or open-ended": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Disconnected ductwork causes air leakage and may backdraft combustion appliances.",
+    "recommendation": "Seal, reconnect, or cap duct based on intended function.",
+    "source_policy": "SWS 5.3004.1",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "Open duct end or severed connection in attic/crawl",
+    "tags": ["duct", "leakage", "deferral", "airflow"]
+  },
+  "missing T&P discharge pipe on water heater": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "No discharge pipe can cause scalding in pressure relief event.",
+    "recommendation": "Install metal or CPVC pipe to 6 inches from floor.",
+    "source_policy": "UPC §504.6",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Bare T&P valve with no pipe attached",
+    "tags": ["water heater", "T&P", "mechanical", "callback"]
+  },
+  "improper insulation near combustion flue": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Foam or plastic insulation near hot flue can ignite.",
+    "recommendation": "Remove foam, replace with fire-rated fiberglass wrap or shield.",
+    "source_policy": "IHWAP 2026 §7.2.6",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "Pipe insulation within 6\" of vent or flue",
+    "tags": ["insulation", "fire hazard", "flue", "deferral"]
+  },
+  "lath and plaster air bypass observed": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Gaps behind lath act as large air leakage pathways.",
+    "recommendation": "Dense-pack or block cavity before shell air sealing.",
+    "source_policy": "SWS 3.2004.3",
+    "priority": 2,
+    "category": "shell",
+    "visual_cue": "Loose or open lath layer visible behind plaster wall",
+    "tags": ["air sealing", "shell", "bypass", "callback"]
+  },
+  "vent fan terminates in attic or crawlspace": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Fan discharge must exit building envelope, not terminate inside.",
+    "recommendation": "Extend duct to proper gable, soffit, or wall termination.",
+    "source_policy": "SWS 4.0201.1c",
+    "priority": 2,
+    "category": "ventilation",
+    "visual_cue": "Fan duct stops in attic or crawlspace, no cap visible",
+    "tags": ["fan", "moisture", "callback", "code violation"]
+  }
+  {
+  "exposed fiberglass in living space": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Uncovered fiberglass in occupied space poses respiratory hazard.",
+    "recommendation": "Install appropriate barrier (drywall, foam board, or approved sheathing) to isolate fiberglass.",
+    "source_policy": "IHWAP 2026 §3.2.6",
+    "priority": 1,
+    "category": "health and safety",
+    "visual_cue": "Pink, yellow, or white batt insulation visible without covering",
+    "tags": ["fiberglass", "exposure", "barrier", "deferral"]
+  },
+  "open sump pit in basement": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unsealed sump pits release moisture and may create fall hazard.",
+    "recommendation": "Install airtight lid or sealed basin per code.",
+    "source_policy": "SWS 3.1102.1",
+    "priority": 2,
+    "category": "crawlspace",
+    "visual_cue": "Sump hole uncovered with visible water or pump",
+    "tags": ["sump", "moisture", "hazard", "callback"]
+  },
+  "loose or unsupported flue chase": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unstable flue structure may collapse or leak combustion gases.",
+    "recommendation": "Secure flue path and support vent at every level.",
+    "source_policy": "IHWAP 2026 §7.2.3",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "Flue pipe sagging, detached from chase or masonry",
+    "tags": ["flue", "structure", "venting", "deferral"]
+  },
+  "backdraft risk in CAZ": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Backdrafting combustion gases can cause CO accumulation indoors.",
+    "recommendation": "Test WCD. If fail, halt work and refer HVAC/venting corrections.",
+    "source_policy": "IHWAP 2026 §7.3.5",
+    "priority": 1,
+    "category": "combustion safety",
+    "visual_cue": "Flame rollout, CO spike, negative pressure on WCD test",
+    "tags": ["CAZ", "CO", "backdraft", "deferral"]
+  },
+  "foundation wall open to outside": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Exterior wall breach undermines envelope integrity and allows pest/moisture intrusion.",
+    "recommendation": "Seal or enclose foundation opening before continuing envelope work.",
+    "source_policy": "SWS 3.1202.2",
+    "priority": 1,
+    "category": "shell",
+    "visual_cue": "Unsealed hole or daylight visible in basement/crawl wall",
+    "tags": ["foundation", "shell", "moisture", "deferral"]
+  },
+  "mechanical system coated in black mastic": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unknown adhesive may contain contaminants and interferes with diagnostics.",
+    "recommendation": "Flag for HVAC contractor remediation and label review.",
+    "source_policy": "IHWAP 2026 §7.1.9",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "Tar-like black adhesive coating system housing or ducts",
+    "tags": ["adhesive", "mechanical", "hazard", "deferral"]
+  },
+  "smoke detector missing or nonfunctional": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Smoke alarms are required per program rules and state law.",
+    "recommendation": "Install or replace with UL-listed smoke alarm outside sleeping areas.",
+    "source_policy": "IHWAP 2026 §7.3.1",
+    "priority": 1,
+    "category": "health and safety",
+    "visual_cue": "No alarm on ceiling, wall, or visible battery failure indicator",
+    "tags": ["smoke alarm", "code", "occupant safety", "callback"]
+  },
+  "interior ceiling collapse or delamination": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Ceiling failure may indicate structural risk, active leak, or unsafe living condition.",
+    "recommendation": "Defer until structure is inspected and repaired by qualified trades.",
+    "source_policy": "IHWAP 2026 §3.1.3",
+    "priority": 1,
+    "category": "attic",
+    "visual_cue": "Fallen drywall, water-stained panels, cracked seams in ceiling",
+    "tags": ["ceiling", "collapse", "moisture", "deferral"]
+  },
+  "attached greenhouse open to conditioned space": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Uninsulated sunroom attached to interior skews modeling and shell assumptions.",
+    "recommendation": "Verify separation or modify boundary in energy model. Correct air barrier if needed.",
+    "source_policy": "IHWAP 2026 §5.2.4",
+    "priority": 2,
+    "category": "shell",
+    "visual_cue": "Glass enclosure or greenhouse attached with interior door left open",
+    "tags": ["shell", "sunroom", "boundary", "callback"]
+  },
+  "exterior wall uninsulated with open framing": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unfinished or open wall cavities permit severe heat loss and must be addressed.",
+    "recommendation": "Insulate or dense-pack cavity prior to blower door testing.",
+    "source_policy": "SWS 3.2001.3",
+    "priority": 2,
+    "category": "shell",
+    "visual_cue": "Stud cavities visible, no sheathing or batt insulation",
+    "tags": ["wall", "open cavity", "insulation", "callback"]
+  },
+  "floor above crawlspace uninsulated": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Uninsulated floor allows winter heat loss and occupant discomfort.",
+    "recommendation": "Install R-19 or higher cavity insulation with support webbing.",
+    "source_policy": "SWS 3.1204.2",
+    "priority": 2,
+    "category": "crawlspace",
+    "visual_cue": "Open floor joists, exposed subfloor visible from below",
+    "tags": ["floor insulation", "thermal", "callback"]
+  },
+  "missing grommet or seal at pipe penetration": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unsealed pipe penetrations introduce air leakage and pest pathways.",
+    "recommendation": "Seal with foam, gasket, or caulk per program specs.",
+    "source_policy": "SWS 3.2001.2b",
+    "priority": 2,
+    "category": "shell",
+    "visual_cue": "Daylight or gap around pipe into wall or floor",
+    "tags": ["penetration", "sealing", "air leakage", "callback"]
+  },
+  "floor register blowing cold air from crawlspace": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Return or supply duct is likely disconnected or pressurizing unconditioned zone.",
+    "recommendation": "Inspect duct routing, seal leaks, and confirm airflow balance.",
+    "source_policy": "SWS 5.3004.3",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Cold air or dirt smell through register when HVAC runs",
+    "tags": ["duct", "airflow", "callback", "comfort"]
+  },
+  "ductwork obstructed by debris or trash": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Obstructions can reduce airflow and contaminate air supply.",
+    "recommendation": "Clean ducts before sealing or insulating system.",
+    "source_policy": "SWS 5.3003.1",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Visible debris in flex duct, crushed or filled duct run",
+    "tags": ["duct cleaning", "HVAC", "callback", "QA"]
+  },
+  "uninsulated attic hatch door": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Uninsulated hatch causes major attic heat loss and air leakage.",
+    "recommendation": "Install rigid board insulation and weatherstripping on hatch.",
+    "source_policy": "SWS 3.2010.3",
+    "priority": 2,
+    "category": "attic",
+    "visual_cue": "Bare plywood hatch or drywall door with no insulation",
+    "tags": ["attic", "hatch", "insulation", "callback"]
+  },
+  "active rodent droppings in attic or crawl": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Rodent presence poses sanitation and respiratory hazard.",
+    "recommendation": "Defer work and refer to pest control for cleaning and sealing.",
+    "source_policy": "IHWAP 2026 §3.2.8",
+    "priority": 1,
+    "category": "health and safety",
+    "visual_cue": "Small black droppings, nesting material, or urine stains",
+    "tags": ["pest", "rodents", "biohazard", "deferral"]
+  },
+  "flex duct disconnected from boot": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Disconnected supply causes room to underheat or overcool.",
+    "recommendation": "Reattach and seal duct to register boot with mastic.",
+    "source_policy": "SWS 5.3004.2",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Register boot visible with no duct or loose connection",
+    "tags": ["HVAC", "duct", "comfort", "callback"]
+  },
+  "air handler intake open to crawlspace": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unfiltered intake from crawl pulls in allergens and moisture.",
+    "recommendation": "Seal return path and install sealed return plenum if needed.",
+    "source_policy": "SWS 5.3002.1a",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "Open box return, unfiltered duct into vented crawl",
+    "tags": ["air handler", "return", "crawlspace", "deferral"]
+  },
+  "taped wiring splice without junction box": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Spliced wires outside of box pose fire and code violation risk.",
+    "recommendation": "Install junction box and secure with listed cover plate.",
+    "source_policy": "NEC 2023 §300.15",
+    "priority": 1,
+    "category": "electrical",
+    "visual_cue": "Electrical tape around wire bundle with no box present",
+    "tags": ["electrical", "splice", "code", "deferral"]
+  }
+  {
+  "insulation blocking attic ventilation": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Blocking soffit or ridge vents impedes airflow, causing moisture buildup.",
+    "recommendation": "Install baffles or redirect insulation to preserve ventilation pathway.",
+    "source_policy": "SWS 3.2005.2b",
+    "priority": 2,
+    "category": "attic",
+    "visual_cue": "Blown insulation packed into eave or vent",
+    "tags": ["attic", "ventilation", "moisture", "callback"]
+  },
+  "furnace filter missing or severely clogged": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Missing or blocked filter reduces airflow and increases equipment wear.",
+    "recommendation": "Install or replace filter with appropriate MERV rating.",
+    "source_policy": "SWS 5.3001.1",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Filter slot empty or filter collapsed/blackened",
+    "tags": ["furnace", "filter", "HVAC", "callback"]
+  },
+  "combustion appliance improperly vented": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Improper venting can lead to backdraft or CO accumulation.",
+    "recommendation": "Verify type-B or liner venting and slope requirements per code.",
+    "source_policy": "SWS 7.601.3c",
+    "priority": 1,
+    "category": "combustion safety",
+    "visual_cue": "Double wall pipe missing, horizontal run too long, or negative slope",
+    "tags": ["combustion", "venting", "deferral", "CO"]
+  },
+  "wet or mold-stained insulation": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Wet insulation promotes mold growth and must be removed.",
+    "recommendation": "Identify moisture source, replace insulation, and treat area if needed.",
+    "source_policy": "SWS 3.2002.2",
+    "priority": 1,
+    "category": "attic",
+    "visual_cue": "Black or brown spots, clumping, or water-damaged batt/blown material",
+    "tags": ["mold", "insulation", "moisture", "deferral"]
+  },
+  "missing or broken handrail on stairs": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unsecured stairs without handrail pose fall hazard.",
+    "recommendation": "Install or repair railing per building code before interior work.",
+    "source_policy": "IHWAP 2026 §7.5.3",
+    "priority": 2,
+    "category": "health and safety",
+    "visual_cue": "Stairs with no rail or loose wood bracket",
+    "tags": ["stair", "handrail", "fall hazard", "callback"]
+  },
+  "gas water heater in confined closet with no venting": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Closet-located water heaters must meet combustion air and clearance rules.",
+    "recommendation": "Install louvered door or add vent per appliance manual and code.",
+    "source_policy": "SWS 7.601.3d",
+    "priority": 1,
+    "category": "combustion safety",
+    "visual_cue": "No vents or louvers visible in closet with combustion unit",
+    "tags": ["combustion air", "closet", "water heater", "deferral"]
+  },
+  "disconnected or non-terminating bath fan duct": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Moisture discharged into building cavities causes mold and decay.",
+    "recommendation": "Reattach duct and terminate to exterior wall, roof, or soffit.",
+    "source_policy": "SWS 4.0201.1c",
+    "priority": 1,
+    "category": "ventilation",
+    "visual_cue": "Fan duct hanging loose, disconnected, or pointed into attic/crawl",
+    "tags": ["fan", "moisture", "ventilation", "callback"]
+  },
+  "gas shutoff valve missing near appliance": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Code requires accessible gas shutoff valve within 6’ of appliance.",
+    "recommendation": "Install inline shutoff or flex connector with valve.",
+    "source_policy": "UPC 1212.5",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Rigid gas line enters appliance with no visible shutoff",
+    "tags": ["gas", "valve", "code", "callback"]
+  },
+  "torn or loose insulation wrap on ducts": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Compromised wrap reduces duct efficiency and leaks conditioned air.",
+    "recommendation": "Repair or replace insulation wrap and tape seams securely.",
+    "source_policy": "SWS 5.3004.5",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Foil or fiberglass wrap hanging from duct or missing sections",
+    "tags": ["duct", "insulation", "HVAC", "callback"]
+  },
+  "crawlspace hatch missing or broken": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Open crawl access introduces pests, moisture, and heat loss.",
+    "recommendation": "Install insulated and sealed access door or panel.",
+    "source_policy": "SWS 3.1102.4",
+    "priority": 2,
+    "category": "crawlspace",
+    "visual_cue": "Hole in floor, exterior opening with no lid or cover",
+    "tags": ["crawlspace", "access", "air leakage", "callback"]
+  },
+  "multiple extension cords used permanently": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Improper use of cords indicates electrical overload or outlet shortage.",
+    "recommendation": "Refer for wiring assessment or outlet installation.",
+    "source_policy": "NEC 400.8",
+    "priority": 2,
+    "category": "electrical",
+    "visual_cue": "Extension cords daisy-chained or powering major appliances",
+    "tags": ["electrical", "outlet", "fire risk", "callback"]
+  },
+  "vented crawlspace with no ground vapor barrier": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Open vented crawlspaces without vapor barrier allow moisture intrusion.",
+    "recommendation": "Install 6-mil poly across ground and seal to piers.",
+    "source_policy": "SWS 3.1101.1",
+    "priority": 1,
+    "category": "crawlspace",
+    "visual_cue": "Bare dirt floor with visible vents to outside",
+    "tags": ["crawl", "moisture", "vapor barrier", "deferral"]
+  },
+  "inaccessible attic or crawlspace for inspection": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Inaccessible spaces must be inspected before any work is scoped.",
+    "recommendation": "Clear path, remove barriers, or create access hatch before reinspection.",
+    "source_policy": "IHWAP 2026 §3.0.2",
+    "priority": 2,
+    "category": "field protocol",
+    "visual_cue": "Blocked access door, no hatch, or unsafe entry condition",
+    "tags": ["access", "inspection", "callback", "field"]
+  },
+  "clothes dryer vented with plastic flex duct": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Plastic dryer ducts are a known fire hazard and non-code compliant.",
+    "recommendation": "Replace with smooth metal duct and secure exterior damper.",
+    "source_policy": "IMC 504.6.1",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "White plastic or ribbed vinyl duct attached to dryer",
+    "tags": ["dryer", "venting", "fire hazard", "deferral"]
+  },
+  "attic access covered by storage or clutter": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Inspector must visually confirm conditions before insulating.",
+    "recommendation": "Request homeowner clear access and reschedule inspection.",
+    "source_policy": "IHWAP 2026 §3.0.3",
+    "priority": 2,
+    "category": "attic",
+    "visual_cue": "Hatch or scuttle panel blocked by furniture, boxes, or personal items",
+    "tags": ["access", "attic", "inspection", "callback"]
+  },
+  "combustion spillage detected at draft diverter": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Spillage during operation indicates venting problem and safety risk.",
+    "recommendation": "Stop work and refer for HVAC evaluation. May require B-vent or liner.",
+    "source_policy": "SWS 7.601.4b",
+    "priority": 1,
+    "category": "combustion safety",
+    "visual_cue": "Smoke or CO detected near diverter with appliance running",
+    "tags": ["spillage", "combustion", "CO", "deferral"]
+  },
+  "refrigerator venting into mechanical closet": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Refrigerant exhaust or heat discharge near combustion equipment violates clearance.",
+    "recommendation": "Relocate appliance or add barrier and verify clearances.",
+    "source_policy": "IHWAP 2026 §7.2.8",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Fridge or freezer in same closet as gas equipment",
+    "tags": ["clearance", "appliance", "mechanical", "callback"]
+  }
 }
 
-}
+
+
