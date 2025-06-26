@@ -29,4 +29,107 @@
     "visual_cue": "Fan duct visible ending in attic or crawl, no exterior termination",
     "tags": ["bath fan", "moisture", "callback", "ventilation"]
   }
+
+  "unsealed rim joist": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Unsealed rim joist cavity allows air leakage and heat loss.",
+    "recommendation": "Air seal and insulate rim joist with spray foam or rigid board.",
+    "source_policy": "SWS 3.2002.1a",
+    "priority": 3,
+    "category": "shell",
+    "visual_cue": "Exposed concrete or wood at box sill without air seal",
+    "tags": ["rim joist", "air sealing", "thermal boundary", "shell"]
+  },
+  "flue pipe rusted or disconnected": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Rusted or disconnected flue pipe may cause backdraft or CO hazard.",
+    "recommendation": "Replace flue pipe or reconnect with proper slope and clearance.",
+    "source_policy": "SWS 7.601.1a",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "Flue pipe with visible corrosion or gaps near joints",
+    "tags": ["flue", "combustion", "CO", "deferral"]
+  },
+  "no CO alarm present": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "CO alarms are required in homes with combustion appliances per IHWAP.",
+    "recommendation": "Install UL-listed CO alarm outside sleeping area.",
+    "source_policy": "IHWAP 2026 §7.3.2",
+    "priority": 1,
+    "category": "combustion safety",
+    "visual_cue": "No visible CO detector near bedrooms or appliances",
+    "tags": ["CO alarm", "safety", "required", "combustion"]
+  },
+  "knob and tube wiring in attic": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Insulating over knob and tube wiring is prohibited due to fire risk.",
+    "recommendation": "Defer insulation until wiring is upgraded or removed.",
+    "source_policy": "SWS 3.2004.1b",
+    "priority": 1,
+    "category": "attic",
+    "visual_cue": "Cloth-wrapped wiring visible in attic ceiling bays",
+    "tags": ["knob and tube", "electrical", "fire hazard", "deferral"]
+  },
+  "duct not sealed in crawlspace": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Leaky ductwork in crawlspace causes energy loss and moisture risk.",
+    "recommendation": "Seal duct with mastic and verify airflow to conditioned space.",
+    "source_policy": "SWS 5.3001.2",
+    "priority": 2,
+    "category": "mechanical",
+    "visual_cue": "Unsealed duct joints, open ends, or sagging flex in crawl",
+    "tags": ["duct sealing", "crawlspace", "energy loss", "callback"]
+  },
+  "unsealed vapor barrier in crawl": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Vapor barrier not sealed allows ground moisture into building envelope.",
+    "recommendation": "Seal seams, piers, and perimeter of vapor barrier with tape or adhesive.",
+    "source_policy": "SWS 3.1101.2",
+    "priority": 2,
+    "category": "crawlspace",
+    "visual_cue": "Plastic sheeting loose or gapped near foundation",
+    "tags": ["vapor barrier", "moisture", "crawlspace", "callback"]
+  },
+  "combustion appliance room lacks ventilation": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Mechanical room requires make-up air or venting for safe combustion.",
+    "recommendation": "Install louvered door or passive vent to meet combustion air needs.",
+    "source_policy": "SWS 7.601.3b",
+    "priority": 1,
+    "category": "combustion safety",
+    "visual_cue": "Sealed furnace closet with no vent or louver",
+    "tags": ["combustion air", "furnace", "ventilation", "deferral"]
+  },
+  "broken or cracked window pane": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Broken windows can compromise envelope integrity and occupant safety.",
+    "recommendation": "Repair or replace window before proceeding with air sealing or insulation.",
+    "source_policy": "IHWAP 2026 §5.1.3",
+    "priority": 2,
+    "category": "shell",
+    "visual_cue": "Cracked or shattered glass in sash or storm window",
+    "tags": ["window", "shell", "safety", "callback"]
+  },
+  "exterior dryer vent missing backdraft damper": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Missing damper allows pest intrusion, backdraft, and air leakage.",
+    "recommendation": "Install exterior vent with integrated backdraft damper.",
+    "source_policy": "SWS 4.2002.1",
+    "priority": 2,
+    "category": "ventilation",
+    "visual_cue": "Dryer vent hood open or no flap visible",
+    "tags": ["dryer", "ventilation", "air leakage", "callback"]
+  },
+  "ceiling cavity with active structural sag": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Sagging ceiling may indicate structural failure or moisture compromise.",
+    "recommendation": "Defer until ceiling structure is assessed and stabilized.",
+    "source_policy": "IHWAP 2026 §3.1.2",
+    "priority": 1,
+    "category": "attic",
+    "visual_cue": "Visible bowing or collapse of ceiling finish materials",
+    "tags": ["structural", "ceiling", "attic", "deferral"]
+  }
+}
+
 }
