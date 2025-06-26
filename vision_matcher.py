@@ -1,58 +1,86 @@
 # vision_matcher.py
 import os
 import openai
-import base64
-from PIL import Image
+import json
 from io import BytesIO
-
+from PIL import Image
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def get_matching_trigger_from_image(image_bytes, faaie_logic):
-    # Step 1: Encode image for GPT-4o Vision
-    base64_image = base64.b64encode(image_bytes).decode("utf-8")
+# Load logic from faaie_logic.json
+with open("faaie_logic.json", "r") as f:
+    faaie_logic = json.load(f)
 
-    # Step 2: Ask GPT to describe the image
-    vision_response = openai.ChatCompletion.create(
+def get_vision_description(image_bytes):
+    """
+    Sends image to OpenAI vision model and returns the raw description.
+    """
+    base64_image = base64.b64encode(image_bytes).decode("utf-8")
+    response = openai.chat.completions.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are a weatherization field inspector trained in IHWAP standards. Describe what this photo shows in detail."},
-            {
-                "role": "user",
-                "content": [
-                    {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{base64_image}"}},
-                    {"type": "text", "text": "What are the visible housing conditions or issues?"}
-                ]
-            }
+            {"role": "system", "content": "You are Scout, a visual field auditor for IHWAP. Describe any visible home safety or structural issues."},
+            {"role": "user", "content": [
+                {"type": "text", "text": "Describe this image for an audit report."},
+                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+            ]}
         ],
-        temperature=0.2,
-        max_tokens=300
+        max_tokens=500
     )
+    return response.choices[0].message.content.lower()
 
-    # Step 3: Get GPT’s response
-    description = vision_response.choices[0].message['content'].lower()
+def score_trigger_match(description, trigger_key, logic):
+    """
+    Returns a score based on overlap between description and tags/reason/visual_cue
+    """
+    score = 0
+    parts = [
+        logic.get("reason", ""),
+        logic.get("visual_cue", ""),
+        " ".join(logic.get("tags", []))
+    ]
+    for part in parts:
+        for word in part.lower().split():
+            if word in description:
+                score += 1
+    return score
 
-    # Step 4: Fuzzy match FAAIE logic
-    best_match = None
-    highest_score = 0
+def get_matching_trigger_from_image(image_bytes, faaie_logic):
+    description = get_vision_description(image_bytes)
 
-    for trigger, entry in faaie_logic.items():
-        for tag in entry.get("tags", []):
-            if tag.lower() in description:
-                match_score = description.count(tag.lower())
-                if match_score > highest_score:
-                    best_match = trigger
-                    highest_score = match_score
+    matches = []
+    for trigger_key, logic in faaie_logic.items():
+        score = score_trigger_match(description, trigger_key, logic)
+        if score > 1:  # threshold to avoid false positives
+            matches.append((trigger_key, logic, score))
 
-    if best_match:
-        return {
-            "matched_trigger": best_match,
-            "response": faaie_logic[best_match],
-            "description": description
-        }
-    else:
-        return {
-            "matched_trigger": None,
-            "response": None,
-            "description": description
-        }
+    # Sort by score descending
+    matches = sorted(matches, key=lambda x: x[2], reverse=True)
+
+    # Build result
+    result = {
+        "description": description,
+        "matched_triggers": []
+    }
+
+    for trigger_key, logic, score in matches[:3]:  # return top 3 if present
+        result["matched_triggers"].append({
+            "trigger": trigger_key,
+            "response": logic
+        })
+
+    if not result["matched_triggers"]:
+        result["matched_triggers"].append({
+            "trigger": "unlisted condition",
+            "response": {
+                "action": "⚠️🛑 Action Item",
+                "reason": "Unknown trigger or unlisted condition.",
+                "recommendation": "No direct match found. Review photo manually.",
+                "source_policy": "N/A",
+                "category": "unsorted",
+                "visual_cue": "",
+                "tags": []
+            }
+        })
+
+    return result
