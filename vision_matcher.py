@@ -2,6 +2,7 @@
 import os
 import openai
 import json
+import base64
 from io import BytesIO
 from PIL import Image
 
