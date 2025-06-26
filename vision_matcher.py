@@ -33,10 +33,11 @@ def get_vision_description(image_bytes):
 
 def score_trigger_match(description, trigger_key, logic):
     """
-    Returns a score based on overlap between description and tags/reason/visual_cue
+    Scores based on overlap between description and tags, reason, visual cue, AND trigger name.
     """
     score = 0
     parts = [
+        trigger_key,
         logic.get("reason", ""),
         logic.get("visual_cue", ""),
         " ".join(logic.get("tags", []))
@@ -53,19 +54,17 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
     matches = []
     for trigger_key, logic in faaie_logic.items():
         score = score_trigger_match(description, trigger_key, logic)
-        if score > 1:  # threshold to avoid false positives
+        if score > 1:
             matches.append((trigger_key, logic, score))
 
-    # Sort by score descending
-    matches = sorted(matches, key=lambda x: x[2], reverse=True)
+    matches.sort(key=lambda x: x[2], reverse=True)
 
-    # Build result
     result = {
         "description": description,
         "matched_triggers": []
     }
 
-    for trigger_key, logic, score in matches[:3]:  # return top 3 if present
+    for trigger_key, logic, score in matches[:3]:
         result["matched_triggers"].append({
             "trigger": trigger_key,
             "response": logic
