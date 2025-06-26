@@ -9,16 +9,6 @@
     "visual_cue": "Moisture stains, discoloration, or mold on attic sheathing or insulation",
     "tags": ["attic", "moisture", "deferral", "health and safety"]
   },
-  "open electrical junction box": {
-    "action": "⚠️🛑 Action Item",
-    "reason": "Live electrical wiring visible in an open box. Immediate safety hazard.",
-    "recommendation": "Cover with a code-compliant junction box lid or have a licensed electrician correct the wiring.",
-    "source_policy": "NEC 2023 §314.25",
-    "priority": 1,
-    "category": "electrical",
-    "visual_cue": "Uncovered box with visible wires or wire nuts",
-    "tags": ["electrical", "safety", "hazard", "deferral"]
-  },
   "bathroom fan not vented to exterior": {
     "action": "⚠️🛑 Action Item",
     "reason": "Bathroom exhaust fan venting into attic or crawlspace introduces moisture and mold risk.",
@@ -29,16 +19,28 @@
     "visual_cue": "Fan duct visible ending in attic or crawl, no exterior termination",
     "tags": ["bath fan", "moisture", "callback", "ventilation"]
   },
-  "unsealed rim joist": {
+  "taped wiring splice without junction box": {
     "action": "⚠️🛑 Action Item",
-    "reason": "Unsealed rim joist cavity allows air leakage and heat loss.",
-    "recommendation": "Air seal and insulate rim joist with spray foam or rigid board.",
-    "source_policy": "SWS 3.2002.1a",
-    "priority": 3,
-    "category": "shell",
-    "visual_cue": "Exposed concrete or wood at box sill without air seal",
-    "tags": ["rim joist", "air sealing", "thermal boundary", "shell"]
+    "reason": "Spliced wires outside of box pose fire and code violation risk.",
+    "recommendation": "Install junction box and secure with listed cover plate.",
+    "source_policy": "NEC 2023 §300.15",
+    "priority": 1,
+    "category": "electrical",
+    "visual_cue": "Electrical tape around wire bundle with no box present",
+    "tags": ["electrical", "splice", "code", "deferral"]
   },
+  "exposed fiberglass in living space": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Uncovered fiberglass in occupied space poses respiratory hazard.",
+    "recommendation": "Install appropriate barrier (drywall, foam board, or approved sheathing) to isolate fiberglass.",
+    "source_policy": "IHWAP 2026 §3.2.6",
+    "priority": 1,
+    "category": "health and safety",
+    "visual_cue": "Pink, yellow, or white batt insulation visible without covering",
+    "tags": ["fiberglass", "exposure", "barrier", "deferral"]
+  }
+},
+{
   "flue pipe rusted or disconnected": {
     "action": "⚠️🛑 Action Item",
     "reason": "Rusted or disconnected flue pipe may cause backdraft or CO hazard.",
@@ -188,7 +190,8 @@
     "category": "mechanical",
     "visual_cue": "Open duct end or severed connection in attic/crawl",
     "tags": ["duct", "leakage", "deferral", "airflow"]
-  },
+  }
+},{
   "missing T&P discharge pipe on water heater": {
     "action": "⚠️🛑 Action Item",
     "reason": "No discharge pipe can cause scalding in pressure relief event.",
@@ -228,17 +231,6 @@
     "category": "ventilation",
     "visual_cue": "Fan duct stops in attic or crawlspace, no cap visible",
     "tags": ["fan", "moisture", "callback", "code violation"]
-  }
-  {
-  "exposed fiberglass in living space": {
-    "action": "⚠️🛑 Action Item",
-    "reason": "Uncovered fiberglass in occupied space poses respiratory hazard.",
-    "recommendation": "Install appropriate barrier (drywall, foam board, or approved sheathing) to isolate fiberglass.",
-    "source_policy": "IHWAP 2026 §3.2.6",
-    "priority": 1,
-    "category": "health and safety",
-    "visual_cue": "Pink, yellow, or white batt insulation visible without covering",
-    "tags": ["fiberglass", "exposure", "barrier", "deferral"]
   },
   "open sump pit in basement": {
     "action": "⚠️🛑 Action Item",
@@ -359,7 +351,8 @@
     "category": "mechanical",
     "visual_cue": "Cold air or dirt smell through register when HVAC runs",
     "tags": ["duct", "airflow", "callback", "comfort"]
-  },
+  }
+},{
   "ductwork obstructed by debris or trash": {
     "action": "⚠️🛑 Action Item",
     "reason": "Obstructions can reduce airflow and contaminate air supply.",
@@ -419,8 +412,7 @@
     "category": "electrical",
     "visual_cue": "Electrical tape around wire bundle with no box present",
     "tags": ["electrical", "splice", "code", "deferral"]
-  }
-  {
+  },
   "insulation blocking attic ventilation": {
     "action": "⚠️🛑 Action Item",
     "reason": "Blocking soffit or ridge vents impedes airflow, causing moisture buildup.",
@@ -592,6 +584,4 @@
     "tags": ["clearance", "appliance", "mechanical", "callback"]
   }
 }
-
-
 
