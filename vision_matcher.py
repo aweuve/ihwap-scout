@@ -15,9 +15,10 @@ with open("faaie_logic.json", "r") as f:
 def get_vision_description(image_bytes):
     """
     Sends image to OpenAI vision model and returns the raw description.
+    (Stable for older OpenAI Python versions)
     """
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
-    response = openai.chat.completions.create(
+    response = openai.ChatCompletion.create(
         model="gpt-4o",
         messages=[
             {"role": "system", "content": "You are Scout, a visual field auditor for IHWAP. Describe any visible home safety or structural issues."},
@@ -28,7 +29,7 @@ def get_vision_description(image_bytes):
         ],
         max_tokens=500
     )
-    return response.choices[0].message.content.lower()
+    return response.choices[0].message["content"].lower()
 
 def score_trigger_match(description, trigger_key, logic):
     """
