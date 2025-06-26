@@ -77,4 +77,18 @@ def download_report():
 # ✅ Port binding for Render
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
+from flask import request, jsonify
+from vision_matcher import get_matching_trigger_from_image
+
+@app.route("/evaluate_image", methods=["POST"])
+def evaluate_image():
+    image_file = request.files.get("image")
+    if not image_file:
+        return jsonify({"error": "No image file provided"}), 400
+
+    image_bytes = image_file.read()
+
+    result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+
+    return jsonify(result)
 
