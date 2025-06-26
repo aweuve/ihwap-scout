@@ -578,14 +578,16 @@
     "category": "mechanical",
     "visual_cue": "Fridge or freezer in same closet as gas equipment",
     "tags": ["clearance", "appliance", "mechanical", "callback"]
-   },
+  },
   "water heater corrosion": {
-  "action": "⚠️🛑 Action Item",
-  "reason": "Corrosion on water heater indicates advanced deterioration or potential leak.",
-  "recommendation": "Inspect unit for active leak, assess age, and replace if integrity is compromised.",
-  "source_policy": "IHWAP 2026 §7.2.5",
-  "priority": 1,
-  "category": "mechanical",
-  "visual_cue": "Rust stains, corrosion on tank base or water line connections",
-  "tags": ["water heater", "corrosion", "leak", "mechanical", "deferral"]
-},
+    "action": "⚠️🛑 Action Item",
+    "reason": "Corrosion on water heater indicates advanced deterioration or potential leak.",
+    "recommendation": "Inspect unit for active leak, assess age, and replace if integrity is compromised.",
+    "source_policy": "IHWAP 2026 §7.2.5",
+    "priority": 1,
+    "category": "mechanical",
+    "visual_cue": "Rust stains, corrosion on tank base or water line connections",
+    "tags": ["water heater", "corrosion", "leak", "mechanical", "deferral"]
+  }
+}
+  
