@@ -1,102 +1,32 @@
 {
-  "water heater corrosion": {
-    "result": "⚠️🛑 Action Item: Water heater shows corrosion. Recommend replacement or further inspection for H&S risk.",
-    "tier": "WX+ Conditional"
+  "attic moisture detected": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Signs of moisture in attic. Must address source before insulating.",
+    "recommendation": "Inspect roof, flashing, or ventilation. Document and resolve moisture issue before proceeding.",
+    "source_policy": "IHWAP 2026 §3.2.1",
+    "priority": 1,
+    "category": "attic",
+    "visual_cue": "Moisture stains, discoloration, or mold on attic sheathing or insulation",
+    "tags": ["attic", "moisture", "deferral", "health and safety"]
   },
-  "vermiculate insulation": {
-    "result": "⚠️🛑 Action Item: Suspected vermiculite present. Do not disturb or depressurize home (blower door) until tested and cleared. Potential asbestos hazard — defer project under IHWAP health and safety protocol.",
-    "tier": "Full Deferral"
+  "open electrical junction box": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Live electrical wiring visible in an open box. Immediate safety hazard.",
+    "recommendation": "Cover with a code-compliant junction box lid or have a licensed electrician correct the wiring.",
+    "source_policy": "NEC 2023 §314.25",
+    "priority": 1,
+    "category": "electrical",
+    "visual_cue": "Uncovered box with visible wires or wire nuts",
+    "tags": ["electrical", "safety", "hazard", "deferral"]
   },
-  "rim joist unsealed": {
-    "result": "⚠️ Action Item: Rim joist is unsealed. Recommend air sealing and insulating per IHWAP standards.",
-    "tier": "Scope Recommendation"
-  },
-  "pipe insulation too close to flue": {
-    "result": "⚠️🛑 Action Item: Foam or polyethylene pipe wrap is too close to combustion flue. Remove or rewrap using fire-rated fiberglass or install a rigid barrier. Non-compliant with combustion clearance codes.",
-    "tier": "Health and Safety"
-  },
-  "open electrical panel": {
-    "result": "⚠️🛑 Action Item: Open or exposed electrical components detected. Requires licensed electrician before weatherization can proceed.",
-    "tier": "Full Deferral"
-  },
-  "ceiling collapse": {
-    "result": "⚠️🛑 Action Item: Structural ceiling failure observed. Defer until roof and interior framing are stabilized.",
-    "tier": "Full Deferral"
-  },
-  "mold": {
-    "result": "⚠️🛑 Action Item: Mold-like substance observed. Requires source control and professional assessment before any air sealing or insulation. Defer project under IHWAP Health and Safety protocol.",
-    "tier": "Full Deferral"
-  },
-  "flue disconnected": {
-    "result": "⚠️🛑 Action Item: Combustion flue appears disconnected. Stop work and defer until HVAC or plumbing contractor corrects venting. Life safety hazard.",
-    "tier": "Health and Safety"
-  },
-  "vent fan disconnected": {
-    "result": "⚠️🛑 Action Item: Bathroom or kitchen vent fan terminates into attic or crawlspace. Install proper exterior termination to prevent moisture buildup.",
-    "tier": "WX+ Conditional"
-  },
-  "duct leak": {
-    "result": "⚠️ Action Item: Unsealed ductwork detected. Include duct sealing and airflow testing in HVAC scope.",
-    "tier": "Scope Recommendation"
-  },
-  "attic insulation missing": {
-    "result": "⚠️ Action Item: Attic appears underinsulated or bare. Recommend full R-49 fill with air sealing as part of weatherization scope.",
-    "tier": "Scope Recommendation"
-  },
-  "sump pump present": {
-    "result": "✅ Sump pump present. If functional, note as moisture mitigation. No action needed.",
-    "tier": "Pass"
-  },
-  "vapor barrier intact": {
-    "result": "✅ Crawlspace vapor barrier intact and sealed. No action needed.",
-    "tier": "Pass"
-  },
-  "sealed rim joist": {
-    "result": "✅ Rim joist appears properly sealed and insulated.",
-    "tier": "Pass"
-  },
-  "attic insulation complete": {
-    "result": "✅ Attic shows full insulation coverage with depth markers.",
-    "tier": "Pass"
-  },
-  "smoke detector installed": {
-    "result": "✅ Smoke detector visible. Meets IHWAP safety standard.",
-    "tier": "Pass"
-  },
-  "co detector present": {
-    "result": "✅ CO detector present in conditioned zone. Pass.",
-    "tier": "Pass"
-  },
-  "minor corrosion only": {
-    "result": "⚠️ Action Item: Minor corrosion noted. Monitor or include in cleanup scope as appropriate.",
-    "tier": "Scope Recommendation"
-  },
-  "float switch present": {
-    "result": "✅ Float switch detected near sump or HVAC system. Good moisture safeguard.",
-    "tier": "Pass"
-  },
-  "electrical hazard": {
-    "result": "⚠️🛑 Action Item: Potential electrical hazard detected. Flag for contractor inspection. Defer work until corrected.",
-    "tier": "Full Deferral"
-  },
-  "missing t&p pipe": {
-    "result": "⚠️ Action Item: Water heater lacks discharge pipe on T&P valve. Required for compliance. Add to scope.",
-    "tier": "Scope Recommendation"
-  },
-  "greenhouse attached": {
-    "result": "⚠️🛑 Action Item: Attached sunroom or greenhouse may affect thermal envelope. Verify if it is open to conditioned space and adjust energy model accordingly.",
-    "tier": "WX+ Conditional"
-  },
-  "crawlspace exposed wiring": {
-    "result": "⚠️🛑 Action Item: Unsecured electrical wiring detected in crawlspace. Refer to licensed contractor. Defer project until hazard is corrected.",
-    "tier": "Full Deferral"
-  },
-  "insulated ductwork complete": {
-    "result": "✅ Ductwork appears insulated and sealed.",
-    "tier": "Pass"
-  },
-  "blower door test ready": {
-    "result": "✅ Visual envelope appears prepped for blower door. Proceed unless deferred.",
-    "tier": "Pass"
+  "bathroom fan not vented to exterior": {
+    "action": "⚠️🛑 Action Item",
+    "reason": "Bathroom exhaust fan venting into attic or crawlspace introduces moisture and mold risk.",
+    "recommendation": "Reroute fan duct to terminate outside via gable, roof, or wall cap.",
+    "source_policy": "IHWAP 2026 §4.2.3",
+    "priority": 2,
+    "category": "ventilation",
+    "visual_cue": "Fan duct visible ending in attic or crawl, no exterior termination",
+    "tags": ["bath fan", "moisture", "callback", "ventilation"]
   }
 }
