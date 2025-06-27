@@ -1,110 +1,178 @@
-from flask import Flask, render_template, request, send_file, jsonify
 import os
 import openai
 import json
-import datetime
-import io
-from vision_analyzer import get_vision_analysis  # ✅ new import
+import base64
+from io import BytesIO
+from PIL import Image
 
-# ✅ Load FAAIE logic (optional use)
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# Load logic from faaie_logic.json
 with open("faaie_logic.json", "r") as f:
     faaie_logic = json.load(f)
 
-app = Flask(__name__)
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-@app.route("/", methods=["GET", "POST"])
-def home():
-    result = None
-    image_path = None
-    chat_response = None
-
-    if request.method == "POST":
-        # ✅ Handle chat input
-        if "chat_input" in request.form and request.form["chat_input"].strip() != "":
-            user_question = request.form["chat_input"]
-            try:
-                completion = openai.ChatCompletion.create(
-                    model="gpt-4o",
-                    messages=[
-                        {"role": "system", "content": "You are Scout, a compliance assistant for IHWAP. Respond with brief, factual policy guidance."},
-                        {"role": "user", "content": user_question}
-                    ],
-                    max_tokens=250
+def get_vision_analysis(image_bytes):
+    base64_image = base64.b64encode(image_bytes).decode("utf-8")
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are Scout — a visual field auditor working under the Illinois Home Weatherization Assistance Program (IHWAP), "
+                    "trained in the Wxbot Code of Operations. You always remember: ‘The house is a system.’\n\n"
+                    "When analyzing the image, consider safety first, then home integrity, then energy. Speak plainly, like you're talking to a crew lead or QCI. "
+                    "Use field wisdom. Be specific. Be calm.\n\n"
+                    "Return a JSON object like this:\n"
+                    "{\n"
+                    "  \"description\": \"Human-style plain language summary of the image\",\n"
+                    "  \"visible_elements\": [\"attic trusses\", \"pink fiberglass insulation\", \"vent pipe\"],\n"
+                    "  \"hazards\": [\"corroded flue collar\", \"missing vent termination\"],\n"
+                    "  \"scout_thought\": \"Reflective insight from Scout about safety, sequence, or overlooked risks.\"\n"
+                    "}"
                 )
-                chat_response = completion.choices[0].message["content"]
-            except Exception as e:
-                chat_response = f"Error retrieving response: {str(e)}"
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Analyze this image for IHWAP field conditions."},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                ]
+            }
+        ],
+        max_tokens=750
+    )
 
-        # ✅ Handle image upload
-        image = request.files.get("image")
-        if image:
-            upload_dir = os.path.join("static", "uploads")
-            os.makedirs(upload_dir, exist_ok=True)
-            image_path = os.path.join(upload_dir, "upload.jpg")
-            image.save(image_path)
-
-            with open(image_path, "rb") as f:
-                image_bytes = f.read()
-
-            # ✅ Use new analysis
-            result = get_vision_analysis(image_bytes)
-
-    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response)
-
-@app.route("/evaluate_image", methods=["POST"])
-def evaluate_image():
     try:
-        image_file = request.files.get("image")
-        if not image_file:
-            return jsonify({"error": "No image file provided"}), 400
+        raw = response.choices[0].message["content"].strip()
 
-        image_bytes = image_file.read()
-        result = get_vision_analysis(image_bytes)
+        if "```json" in raw:
+            raw = raw.split("```json")[-1].split("```")[0].strip()
+        elif "```" in raw:
+            raw = raw.split("```")[-1].split("```")[-1].strip()
 
-        # ✅ Add Debug Log
-        debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
-        if result["visible_elements"]:
-            debug_log += f"🔎 Visible Elements: {', '.join(result['visible_elements'])}\n"
-        if result["hazards"]:
-            debug_log += f"⚠️ Hazards: {', '.join(result['hazards'])}\n"
-        if result["scout_thought"]:
-            debug_log += f"💭 Scout's Thought: {result['scout_thought']}\n"
+        if not raw.startswith("{"):
+            raise ValueError("Scout returned non-JSON content.")
 
-        result["debug_log"] = debug_log
-        return jsonify(result)
+        parsed = json.loads(raw)
+        return {
+            "description": parsed.get("description", "").lower(),
+            "visible_elements": parsed.get("visible_elements", []),
+            "hazards": parsed.get("hazards", []),
+            "scout_thought": parsed.get("scout_thought", "")
+        }
 
     except Exception as e:
-        print("🚨 Server Error:", str(e))
-        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+        return {
+            "description": "image analysis failed",
+            "visible_elements": [],
+            "hazards": [],
+            "scout_thought": f"Error during analysis: {str(e)}"
+        }
 
-@app.route("/download_report")
-def download_report():
-    trigger = request.args.get("trigger", "N/A")
-    result = request.args.get("result", "N/A")
-    image_path = request.args.get("image_path", None)
+def score_trigger_match(parsed, trigger_key, logic):
+    description = parsed["description"]
+    words = description.split()
+    tags = parsed["visible_elements"] + parsed["hazards"]
+    score = 0
 
-    buffer = io.BytesIO()
-    pdf = canvas.Canvas(buffer, pagesize=letter)
-    pdf.setFont("Helvetica", 12)
+    if "attic" in description:
+        if "water heater" in trigger_key or "confined closet" in trigger_key:
+            return 0
+    if "exposed fiberglass" in trigger_key:
+        if not any(kw in description for kw in ["living space", "occupied", "room", "habitable"]):
+            return 0
+    if "knob and tube" in trigger_key:
+        if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
+            return 0
+    if "moisture" in trigger_key or "sag" in trigger_key:
+        if not any(kw in description for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
+            return 0
+    if "fan duct" in trigger_key or "bathroom fan" in trigger_key or "vent fan" in trigger_key:
+        if not any(kw in description for kw in ["fan", "duct", "vent pipe", "exhaust"]):
+            return 0
+    if "vermiculite" in trigger_key:
+        if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "cat litter", "vermiculite"]):
+            return 0
 
-    pdf.drawString(50, 750, "🧠 IHWAP Scout Report")
-    pdf.drawString(50, 730, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    pdf.drawString(50, 710, f"Trigger: {trigger}")
-    pdf.drawString(50, 690, f"Result: {result}")
+    parts = [
+        trigger_key,
+        logic.get("reason", ""),
+        logic.get("visual_cue", ""),
+        " ".join(logic.get("tags", []))
+    ]
+    for part in parts:
+        for word in part.lower().split():
+            if word in words:
+                score += 1
 
-    if image_path and os.path.exists(image_path):
-        try:
-            pdf.drawImage(image_path, 50, 500, width=200, height=150)
-        except Exception as e:
-            pdf.drawString(50, 670, f"Image error: {str(e)}")
+    for tag in tags:
+        clean_tag = tag.lower().strip()
+        if clean_tag in trigger_key.lower():
+            score += 2
+        if any(clean_tag in part.lower() for part in parts):
+            score += 1
 
-    pdf.showPage()
-    pdf.save()
-    buffer.seek(0)
+    return score
 
-    return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
+def get_matching_trigger_from_image(image_bytes, faaie_logic):
+    parsed = get_vision_analysis(image_bytes)
+    matches = []
 
-# ✅ For Render or local use
-port = int(os.environ.get("PORT", 5000))
-app.run(host="0.0.0.0", port=port)
+    for trigger_key, logic in faaie_logic.items():
+        score = score_trigger_match(parsed, trigger_key, logic)
+        if score >= 2 or any(h in trigger_key.lower() for h in [t.lower() for t in parsed["hazards"]]):
+            matches.append((trigger_key, logic, score))
+
+    matches.sort(key=lambda x: x[2], reverse=True)
+
+    result = {
+        "description": parsed["description"],
+        "visible_elements": parsed["visible_elements"],
+        "hazards": parsed["hazards"],
+        "scout_thought": parsed["scout_thought"],
+        "matched_triggers": []
+    }
+
+    for trigger_key, logic, score in matches[:1]:
+        result["matched_triggers"].append({
+            "trigger": trigger_key,
+            "response": {
+                "action": logic.get("action", "⚠️🛑 Action Item"),
+                "reason": logic.get("reason", ""),
+                "recommendation": logic.get("recommendation", ""),
+                "policy": logic.get("source_policy", ""),
+                "category": logic.get("category", ""),
+                "visual_cue": logic.get("visual_cue", "")
+            }
+        })
+
+    if not result["matched_triggers"] and matches:
+        best_match = matches[0]
+        result["matched_triggers"].append({
+            "trigger": best_match[0],
+            "response": {
+                "action": best_match[1].get("action", "⚠️🛑 Action Item"),
+                "reason": best_match[1].get("reason", ""),
+                "recommendation": best_match[1].get("recommendation", ""),
+                "policy": best_match[1].get("source_policy", ""),
+                "category": best_match[1].get("category", ""),
+                "visual_cue": best_match[1].get("visual_cue", "")
+            }
+        })
+
+    if not result["matched_triggers"]:
+        result["matched_triggers"].append({
+            "trigger": "unlisted condition",
+            "response": {
+                "action": "⚠️🛑 Action Item",
+                "reason": "Unknown trigger or unlisted condition.",
+                "recommendation": "No direct match found. Review photo manually.",
+                "policy": "N/A",
+                "category": "unsorted",
+                "visual_cue": ""
+            }
+        })
+
+    return result
+
