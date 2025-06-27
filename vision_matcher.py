@@ -54,7 +54,7 @@ def get_vision_analysis(image_bytes):
         if "```json" in raw:
             raw = raw.split("```json")[-1].split("```")[0].strip()
         elif "```" in raw:
-            raw = raw.split("```")[0].strip()
+            raw = raw.split("```")[-1].split("```")[-1].strip()
 
         if not raw.startswith("{"):
             raise ValueError("Scout returned non-JSON content.")
@@ -74,6 +74,3 @@ def get_vision_analysis(image_bytes):
             "hazards": [],
             "scout_thought": f"Error during analysis: {str(e)}"
         }
-
-
-
