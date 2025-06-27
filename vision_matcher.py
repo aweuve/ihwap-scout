@@ -32,41 +32,35 @@ def get_vision_description(image_bytes):
 def score_trigger_match(description, trigger_key, logic):
     """
     Scores based on overlap between description and trigger metadata.
-    Applies exclusions to reduce false positives.
+    Requires minimum 2 total hits.
+    Applies exclusions based on context and sanity checks.
     """
     words = description.split()
     score = 0
 
-    # 🔒 Exclusion Rules
+    # Exclusion logic
+    if "attic" in description:
+        if "water heater" in trigger_key or "confined closet" in trigger_key:
+            return 0
+    if "exposed fiberglass" in trigger_key:
+        if not any(kw in description for kw in ["living space", "occupied", "room", "habitable"]):
+            return 0
+    if "knob and tube" in trigger_key:
+        if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
+            return 0
     if "moisture" in trigger_key or "sag" in trigger_key:
         if not any(kw in description for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
             return 0
 
-    if "bathroom fan" in trigger_key:
-        if not any(kw in description for kw in ["fan", "duct", "bathroom vent"]):
-            return 0
+    # ❌ Sanity check: skip known safe phrases
+    if "attic moisture" in trigger_key and "no visible" in description and "water damage" in description:
+        return 0
+    if "sag" in trigger_key and "no apparent signs of structural damage" in description:
+        return 0
+    if "vermiculite" in trigger_key and "pink insulation" in description:
+        return 0
 
-    if "window" in trigger_key or "pane" in trigger_key:
-        if not any(kw in description for kw in ["glass", "crack", "broken", "shattered"]):
-            return 0
-
-    if "floor above crawlspace" in trigger_key:
-        if not any(kw in description for kw in ["joist", "subfloor", "crawlspace"]):
-            return 0
-
-    if "exposed fiberglass" in trigger_key:
-        if not any(kw in description for kw in ["living space", "occupied", "room", "habitable"]):
-            return 0
-
-    if "knob and tube" in trigger_key:
-        if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
-            return 0
-
-    if "attic" in description:
-        if "water heater" in trigger_key or "confined closet" in trigger_key:
-            return 0
-
-    # ✅ Positive scoring based on overlap
+    # Positive scoring
     parts = [
         trigger_key,
         logic.get("reason", ""),
