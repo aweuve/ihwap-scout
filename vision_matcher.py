@@ -33,7 +33,7 @@ def score_trigger_match(description, trigger_key, logic):
     """
     Scores based on overlap between description and trigger metadata.
     Requires minimum 2 total hits.
-    Applies exclusions based on context and sanity checks.
+    Applies exclusions based on context.
     """
     words = description.split()
     score = 0
@@ -51,14 +51,12 @@ def score_trigger_match(description, trigger_key, logic):
     if "moisture" in trigger_key or "sag" in trigger_key:
         if not any(kw in description for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
             return 0
-
-    # ❌ Sanity check: skip known safe phrases
-    if "attic moisture" in trigger_key and "no visible" in description and "water damage" in description:
-        return 0
-    if "sag" in trigger_key and "no apparent signs of structural damage" in description:
-        return 0
-    if "vermiculite" in trigger_key and "pink insulation" in description:
-        return 0
+    if "fan duct" in trigger_key or "bathroom fan" in trigger_key or "vent fan" in trigger_key:
+        if not any(kw in description for kw in ["fan", "duct", "vent pipe", "exhaust"]):
+            return 0
+    if "vermiculite" in trigger_key:
+        if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "cat litter", "vermiculite"]):
+            return 0
 
     # Positive scoring
     parts = [
