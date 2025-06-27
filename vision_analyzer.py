@@ -74,3 +74,96 @@ def get_vision_analysis(image_bytes):
             "hazards": [],
             "scout_thought": f"Error during analysis: {str(e)}"
         }
+
+def score_trigger_match(parsed, trigger_key, logic):
+    """
+    Scores based on matches with description, visible elements, and hazards.
+    Excludes mismatches using context rules. Prioritizes safety, then structure, then energy.
+    """
+    description = parsed["description"]
+    words = description.split()
+    tags = parsed["visible_elements"] + parsed["hazards"]
+    score = 0
+
+    # Exclusion logic
+    if "attic" in description:
+        if "water heater" in trigger_key or "confined closet" in trigger_key:
+            return 0
+    if "exposed fiberglass" in trigger_key:
+        if not any(kw in description for kw in ["living space", "occupied", "room", "habitable"]):
+            return 0
+    if "knob and tube" in trigger_key:
+        if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
+            return 0
+    if "moisture" in trigger_key or "sag" in trigger_key:
+        if not any(kw in description for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
+            return 0
+    if "fan duct" in trigger_key or "bathroom fan" in trigger_key or "vent fan" in trigger_key:
+        if not any(kw in description for kw in ["fan", "duct", "vent pipe", "exhaust"]):
+            return 0
+    if "vermiculite" in trigger_key:
+        if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "cat litter", "vermiculite"]):
+            return 0
+
+    # Positive scoring from description + logic
+    parts = [
+        trigger_key,
+        logic.get("reason", ""),
+        logic.get("visual_cue", ""),
+        " ".join(logic.get("tags", []))
+    ]
+    for part in parts:
+        for word in part.lower().split():
+            if word in words:
+                score += 1
+
+    # Boost if tag directly matches trigger phrase or is embedded in logic
+    for tag in tags:
+        clean_tag = tag.lower().strip()
+        if clean_tag in trigger_key.lower():
+            score += 2
+        if any(clean_tag in part.lower() for part in parts):
+            score += 1
+
+    return score
+
+def get_matching_trigger_from_image(image_bytes, faaie_logic):
+    parsed = get_vision_analysis(image_bytes)
+    matches = []
+
+    for trigger_key, logic in faaie_logic.items():
+        score = score_trigger_match(parsed, trigger_key, logic)
+        if score >= 1:
+            matches.append((trigger_key, logic, score))
+
+    matches.sort(key=lambda x: x[2], reverse=True)
+
+    result = {
+        "description": parsed["description"],
+        "visible_elements": parsed["visible_elements"],
+        "hazards": parsed["hazards"],
+        "scout_thought": parsed["scout_thought"],
+        "matched_triggers": []
+    }
+
+    for trigger_key, logic, score in matches[:3]:
+        result["matched_triggers"].append({
+            "trigger": trigger_key,
+            "response": logic
+        })
+
+    if not result["matched_triggers"]:
+        result["matched_triggers"].append({
+            "trigger": "unlisted condition",
+            "response": {
+                "action": "⚠️🛑 Action Item",
+                "reason": "Unknown trigger or unlisted condition.",
+                "recommendation": "No direct match found. Review photo manually.",
+                "source_policy": "N/A",
+                "category": "unsorted",
+                "visual_cue": "",
+                "tags": []
+            }
+        })
+
+    return result
