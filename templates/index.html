@@ -15,14 +15,14 @@
             background-color: #444; color: #fff; border: none;
             cursor: pointer; border-radius: 5px;
         }
-        .card {
-            background: #fff; padding: 15px; margin-top: 10px;
-            border-left: 6px solid #444; border-radius: 6px;
+        .card, .faaie {
+            background: #eaf8ed; padding: 15px; margin-top: 15px;
+            border-left: 6px solid #2e7d32; border-radius: 6px;
         }
-        .description, .elements, .hazards, .scout-thought {
-            background: #eef; padding: 10px; margin-top: 10px;
-            border-left: 4px solid #99f;
+        .section {
+            margin-top: 10px; padding: 10px;
         }
+        .label { font-weight: bold; display: inline-block; width: 160px; }
         .scout-image {
             max-width: 100%; height: auto; border-radius: 4px;
         }
@@ -51,48 +51,43 @@
     </div>
     {% endif %}
 
-    {% if result %}
-        {% if result.matched_triggers %}
-            {% for match in result.matched_triggers %}
-                <div class="card">
-                    <strong>📌 Trigger:</strong> {{ match.trigger }}<br><br>
-                    <strong>{{ match.response.action }}</strong><br><br>
-                    <strong>📝 Reason:</strong> {{ match.response.reason }}<br>
-                    <strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}<br>
-                    <strong>📘 Source Policy:</strong> {{ match.response.source_policy }}<br>
-                    <strong>🗂️ Category:</strong> {{ match.response.category }}<br>
-                    <strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}<br>
-                </div>
-            {% endfor %}
-        {% endif %}
+    {% if result and result.matched_triggers %}
+        {% for match in result.matched_triggers %}
+        <div class="faaie">
+            <h3>💬 FAAIE Response</h3>
+            <div class="section"><span class="label">📌 Trigger:</span> {{ match.trigger }}</div>
+            <div class="section"><span class="label">⚠️ Action:</span> {{ match.response.action }}</div>
+            <div class="section"><span class="label">📝 Reason:</span> {{ match.response.reason }}</div>
+            <div class="section"><span class="label">🔧 Recommendation:</span> {{ match.response.recommendation }}</div>
+            <div class="section"><span class="label">📘 Source Policy:</span> {{ match.response.source_policy }}</div>
+            <div class="section"><span class="label">🗂️ Category:</span> {{ match.response.category }}</div>
+            <div class="section"><span class="label">👀 Visual Cue:</span> {{ match.response.visual_cue }}</div>
+        </div>
+        {% endfor %}
+    {% endif %}
 
-        {% if result.visible_elements %}
-            <div class="elements">
-                <strong>🔍 Visible Elements:</strong><br>
-                {{ result.visible_elements | join(", ") }}
-            </div>
-        {% endif %}
+    {% if result.visible_elements %}
+        <div class="section">
+            <strong>🔍 Visible Elements:</strong> {{ result.visible_elements | join(", ") }}
+        </div>
+    {% endif %}
 
-        {% if result.hazards %}
-            <div class="hazards">
-                <strong>⚠️ Hazards Detected:</strong><br>
-                {{ result.hazards | join(", ") }}
-            </div>
-        {% endif %}
+    {% if result.hazards %}
+        <div class="section">
+            <strong>⚠️ Hazards Detected:</strong> {{ result.hazards | join(", ") }}
+        </div>
+    {% endif %}
 
-        {% if result.scout_thought %}
-            <div class="scout-thought">
-                <strong>💭 Scout’s Thought:</strong><br>
-                {{ result.scout_thought }}
-            </div>
-        {% endif %}
+    {% if result.scout_thought %}
+        <div class="section">
+            <strong>💭 Scout’s Thought:</strong> {{ result.scout_thought }}
+        </div>
+    {% endif %}
 
-        {% if result.description %}
-            <div class="description">
-                <strong>📄 Visual Description:</strong><br>
-                {{ result.description }}
-            </div>
-        {% endif %}
+    {% if result.description %}
+        <div class="section">
+            <strong>📄 Visual Description:</strong> {{ result.description }}
+        </div>
     {% endif %}
 
     {% if chat_response %}
@@ -111,3 +106,4 @@
 
 </body>
 </html>
+
