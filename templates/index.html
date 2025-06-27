@@ -20,7 +20,7 @@
             border-left: 6px solid #2e7d32; border-radius: 6px;
         }
         .section {
-            margin-top: 10px; padding: 10px;
+            margin-top: 10px; padding: 4px;
         }
         .label { font-weight: bold; display: inline-block; width: 160px; }
         .scout-image {
@@ -59,8 +59,8 @@
             <div class="section"><span class="label">⚠️ Action:</span> {{ match.response.action }}</div>
             <div class="section"><span class="label">📝 Reason:</span> {{ match.response.reason }}</div>
             <div class="section"><span class="label">🔧 Recommendation:</span> {{ match.response.recommendation }}</div>
-            <div class="section"><span class="label">📘 Source Policy:</span> {{ match.response.policy }}</div>
-            <div class="section"><span class="label">🗂️ Category:</span> {{ match.response.category }}</div>
+            <div class="section"><span class="label">📘 Citation:</span> {{ match.response.policy }}</div>
+            <div class="section"><span class="label">📂 Category:</span> {{ match.response.category }}</div>
             <div class="section"><span class="label">👀 Visual Cue:</span> {{ match.response.visual_cue }}</div>
         </div>
         {% endfor %}
