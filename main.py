@@ -4,7 +4,9 @@ import openai
 import datetime
 import io
 from vision_matcher import get_matching_trigger_from_image
-from evaluate_faaie import evaluate_trigger  # Optional if still used
+from evaluate_faaie import evaluate_trigger  # Optional if used
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -17,24 +19,24 @@ def home():
     chat_response = None
 
     if request.method == "POST":
-        # Chat input
+        # Handle chat input
         if "chat_input" in request.form and request.form["chat_input"].strip() != "":
             user_question = request.form["chat_input"]
-            completion = openai.ChatCompletion.create(
-                model="gpt-4o",
-                messages=[
-                    {"role": "system", "content": "You are Scout, a compliance assistant for IHWAP. Respond with brief, factual policy guidance."},
-                    {"role": "user", "content": user_question}
-                ],
-                max_tokens=250
-            )
-            chat_response = completion.choices[0].message["content"]
-            return render_template("index.html", chat_response=chat_response)
+            try:
+                completion = openai.ChatCompletion.create(
+                    model="gpt-4o",
+                    messages=[
+                        {"role": "system", "content": "You are Scout, a compliance assistant for IHWAP. Respond with brief, factual policy guidance."},
+                        {"role": "user", "content": user_question}
+                    ],
+                    max_tokens=250
+                )
+                chat_response = completion.choices[0].message["content"]
+            except Exception as e:
+                chat_response = f"Error retrieving response: {str(e)}"
 
-        # Image logic
-        trigger = request.form.get("trigger", None)
+        # Handle image input
         image = request.files.get("image")
-
         if image:
             upload_dir = os.path.join("static", "uploads")
             os.makedirs(upload_dir, exist_ok=True)
@@ -50,23 +52,28 @@ def home():
 
 @app.route("/evaluate_image", methods=["POST"])
 def evaluate_image():
-    image_file = request.files.get("image")
-    if not image_file:
-        return jsonify({"error": "No image file provided"}), 400
+    try:
+        image_file = request.files.get("image")
+        if not image_file:
+            return jsonify({"error": "No image file provided"}), 400
 
-    image_bytes = image_file.read()
-    result = get_matching_trigger_from_image(image_bytes)
+        image_bytes = image_file.read()
+        result = get_matching_trigger_from_image(image_bytes)
 
-    # Build Debug Log
-    debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
-    if result["matched_triggers"]:
-        for match in result["matched_triggers"]:
-            debug_log += f"✅ Matched Trigger: {match['trigger']}\n🔧 Score Details: {match['response'].get('reason', '')}\n\n"
-    else:
-        debug_log += "❌ No matches found in logic.\n"
+        # Build Debug Log
+        debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
+        if result["matched_triggers"]:
+            for match in result["matched_triggers"]:
+                debug_log += f"✅ Matched Trigger: {match['trigger']}\n🔧 Score Details: {match['response'].get('reason', '')}\n\n"
+        else:
+            debug_log += "❌ No matches found in logic.\n"
 
-    result["debug_log"] = debug_log
-    return jsonify(result)
+        result["debug_log"] = debug_log
+        return jsonify(result)
+
+    except Exception as e:
+        print("🚨 Server Error:", str(e))  # Logs to console
+        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
 
 @app.route("/download_report")
 def download_report():
