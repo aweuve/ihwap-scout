@@ -28,6 +28,7 @@
             max-width: 100%; height: auto; border-radius: 4px;
         }
         .chat { background: #f4f4f4; padding: 10px; margin-top: 10px; border-left: 4px solid #aaa; }
+        .insight { background: #fff9f0; padding: 10px; margin-top: 10px; border-left: 4px solid orange; }
     </style>
 </head>
 <body>
@@ -53,6 +54,23 @@
     {% endif %}
 
     {% if result %}
+        {% if result.visible_elements %}
+        <div class="description">
+            <strong>🔍 Visible Elements:</strong> {{ result.visible_elements | join(', ') }}
+        </div>
+        {% endif %}
+        {% if result.hazards %}
+        <div class="description">
+            <strong>⚠️ Hazards Detected:</strong> {{ result.hazards | join(', ') }}
+        </div>
+        {% endif %}
+        {% if result.scout_thought %}
+        <div class="insight">
+            <strong>💭 Scout’s Thought:</strong><br>
+            {{ result.scout_thought }}
+        </div>
+        {% endif %}
+
         {% if result.matched_triggers %}
             {% for match in result.matched_triggers %}
                 <div class="card">
@@ -86,12 +104,14 @@
         {{ chat_response }}
     </div>
     {% endif %}
-{% if result.debug_log %}
-  <div class="debug-log" style="margin-top: 20px; background-color: #eef8ee; padding: 10px; border-left: 4px solid green;">
-    <h4>🛠️ Debug Log:</h4>
-    <pre style="white-space: pre-wrap;">{{ result.debug_log }}</pre>
-  </div>
-{% endif %}
+
+    {% if result.debug_log %}
+      <div class="debug-log" style="margin-top: 20px; background-color: #eef8ee; padding: 10px; border-left: 4px solid green;">
+        <h4>🛠️ Debug Log:</h4>
+        <pre style="white-space: pre-wrap;">{{ result.debug_log }}</pre>
+      </div>
+    {% endif %}
 
 </body>
 </html>
+
