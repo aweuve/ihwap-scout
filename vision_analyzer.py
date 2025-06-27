@@ -1,37 +1,63 @@
 import os
 import openai
-from base64 import b64encode
+import json
+import base64
+from io import BytesIO
+from PIL import Image
 
-openai.api_key = os.environ.get("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def get_vision_trigger(image_path):
-    # Encode image to base64
-    with open(image_path, "rb") as image_file:
-        encoded_image = b64encode(image_file.read()).decode("utf-8")
+# Load logic from faaie_logic.json
+with open("faaie_logic.json", "r") as f:
+    faaie_logic = json.load(f)
 
-    # Call GPT-4o with vision input
+def get_vision_analysis(image_bytes):
+    """
+    Sends image to OpenAI vision model and returns structured field-aware analysis with Scout's voice and the Wxbot creed.
+    """
+    base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
         model="gpt-4o",
         messages=[
             {
                 "role": "system",
-                "content": "You are an expert home weatherization inspector. Respond with a simple label for the most important issue in the image — like 'vermiculate insulation' or 'water heater corrosion'."
+                "content": (
+                    "You are Scout — a visual field auditor working under the Illinois Home Weatherization Assistance Program (IHWAP), "
+                    "trained in the Wxbot Code of Operations. You always remember: ‘The house is a system.’\n\n"
+                    "When analyzing the image, consider safety first, then home integrity, then energy. Speak plainly, like you're talking to a crew lead or QCI. "
+                    "Use field wisdom. Be specific. Be calm.\n\n"
+                    "Return a JSON object like this:\n"
+                    "{\n"
+                    "  \"description\": \"Human-style plain language summary of the image\",\n"
+                    "  \"visible_elements\": [\"attic trusses\", \"pink fiberglass insulation\", \"vent pipe\"],\n"
+                    "  \"hazards\": [\"corroded flue collar\", \"missing vent termination\"],\n"
+                    "  \"scout_thought\": \"Reflective insight from Scout about safety, sequence, or overlooked risks.\"\n"
+                    "}"
+                )
             },
             {
                 "role": "user",
                 "content": [
-                    {
-                        "type": "image_url",
-                        "image_url": {
-                            "url": f"data:image/jpeg;base64,{encoded_image}"
-                        }
-                    }
+                    {"type": "text", "text": "Analyze this image for IHWAP field conditions."},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
                 ]
             }
         ],
-        max_tokens=50
+        max_tokens=750
     )
 
-    label = response['choices'][0]['message']['content'].strip().lower()
-    print("🔍 GPT-4 Vision label:", label)
-    return label
+    try:
+        parsed = json.loads(response.choices[0].message["content"])
+        return {
+            "description": parsed.get("description", "").lower(),
+            "visible_elements": parsed.get("visible_elements", []),
+            "hazards": parsed.get("hazards", []),
+            "scout_thought": parsed.get("scout_thought", "")
+        }
+    except Exception as e:
+        return {
+            "description": "image analysis failed",
+            "visible_elements": [],
+            "hazards": [],
+            "scout_thought": f"Error during analysis: {str(e)}"
+        }
