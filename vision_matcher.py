@@ -13,13 +13,13 @@ with open("faaie_logic.json", "r") as f:
 
 def get_vision_description(image_bytes):
     """
-    Sends image to OpenAI vision model and returns structured analysis.
+    Sends image to OpenAI vision model and returns structured audit analysis.
     """
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are Scout, an IHWAP visual field auditor. Analyze the image and return a JSON object like this:\n\n{\n  \"description\": \"plain-language summary of the image\",\n  \"visible_elements\": [\"attic insulation\", \"bathroom fan duct\", \"vent pipe\"],\n  \"hazards\": [\"missing vent cap\", \"rust\", \"corrosion\"]\n}"},
+            {"role": "system", "content": "You are Scout, an IHWAP visual field auditor. Return JSON like this:\n\n{\n  \"description\": \"plain-language summary\",\n  \"visible_elements\": [\"attic insulation\", \"vent pipe\"],\n  \"hazards\": [\"rust\", \"missing vent cap\"]\n}"},
             {"role": "user", "content": [
                 {"type": "text", "text": "Analyze this image for IHWAP field audit."},
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
@@ -30,17 +30,26 @@ def get_vision_description(image_bytes):
 
     try:
         parsed = json.loads(response.choices[0].message["content"])
-        return parsed["description"].lower()  # continue using just description for now
-    except Exception as e:
-        return "image analysis failed"
+        return {
+            "description": parsed.get("description", "").lower(),
+            "visible_elements": parsed.get("visible_elements", []),
+            "hazards": parsed.get("hazards", [])
+        }
+    except Exception:
+        return {
+            "description": "image analysis failed",
+            "visible_elements": [],
+            "hazards": []
+        }
 
-def score_trigger_match(description, trigger_key, logic):
+def score_trigger_match(parsed, trigger_key, logic):
     """
-    Scores based on overlap between description and trigger metadata.
-    Requires minimum 2 total hits.
-    Applies exclusions based on context.
+    Scores based on matches with description, visible elements, and hazards.
+    Excludes mismatches using context rules.
     """
+    description = parsed["description"]
     words = description.split()
+    tags = parsed["visible_elements"] + parsed["hazards"]
     score = 0
 
     # Exclusion logic
@@ -63,7 +72,7 @@ def score_trigger_match(description, trigger_key, logic):
         if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "cat litter", "vermiculite"]):
             return 0
 
-    # Positive scoring
+    # Positive scoring from description + logic
     parts = [
         trigger_key,
         logic.get("reason", ""),
@@ -75,21 +84,30 @@ def score_trigger_match(description, trigger_key, logic):
             if word in words:
                 score += 1
 
+    # Bonus points for visible/hazard tag match
+    for tag in tags:
+        tag_words = tag.lower().split()
+        for tw in tag_words:
+            if any(tw in part.lower() for part in parts):
+                score += 1
+
     return score
 
 def get_matching_trigger_from_image(image_bytes, faaie_logic):
-    description = get_vision_description(image_bytes)
+    parsed = get_vision_description(image_bytes)
     matches = []
 
     for trigger_key, logic in faaie_logic.items():
-        score = score_trigger_match(description, trigger_key, logic)
+        score = score_trigger_match(parsed, trigger_key, logic)
         if score >= 2:
             matches.append((trigger_key, logic, score))
 
     matches.sort(key=lambda x: x[2], reverse=True)
 
     result = {
-        "description": description,
+        "description": parsed["description"],
+        "visible_elements": parsed["visible_elements"],
+        "hazards": parsed["hazards"],
         "matched_triggers": []
     }
 
@@ -114,3 +132,4 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         })
 
     return result
+
