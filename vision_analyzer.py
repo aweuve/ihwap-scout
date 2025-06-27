@@ -12,10 +12,6 @@ with open("faaie_logic.json", "r") as f:
     faaie_logic = json.load(f)
 
 def get_vision_analysis(image_bytes):
-    """
-    Sends image to OpenAI vision model and returns structured field-aware analysis with Scout's voice and the Wxbot creed.
-    Includes fallback for formatting errors (e.g. Markdown or code blocks).
-    """
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
         model="gpt-4o",
@@ -50,7 +46,6 @@ def get_vision_analysis(image_bytes):
     try:
         raw = response.choices[0].message["content"].strip()
 
-        # 🧼 Clean markdown/codeblock wrappers
         if "```json" in raw:
             raw = raw.split("```json")[-1].split("```")[0].strip()
         elif "```" in raw:
@@ -145,7 +140,6 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
             "response": logic
         })
 
-    # Fallback if no strong match but hazards exist
     if not result["matched_triggers"] and matches:
         best_match = matches[0]
         result["matched_triggers"].append({
@@ -162,8 +156,7 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
                 "recommendation": "No direct match found. Review photo manually.",
                 "source_policy": "N/A",
                 "category": "unsorted",
-                "visual_cue": "",
-                "tags": []
+                "visual_cue": ""
             }
         })
 
