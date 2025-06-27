@@ -13,21 +13,26 @@ with open("faaie_logic.json", "r") as f:
 
 def get_vision_description(image_bytes):
     """
-    Sends image to OpenAI vision model and returns the raw description.
+    Sends image to OpenAI vision model and returns structured analysis.
     """
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are Scout, a visual field auditor for IHWAP. Describe any visible home safety or structural issues."},
+            {"role": "system", "content": "You are Scout, an IHWAP visual field auditor. Analyze the image and return a JSON object like this:\n\n{\n  \"description\": \"plain-language summary of the image\",\n  \"visible_elements\": [\"attic insulation\", \"bathroom fan duct\", \"vent pipe\"],\n  \"hazards\": [\"missing vent cap\", \"rust\", \"corrosion\"]\n}"},
             {"role": "user", "content": [
-                {"type": "text", "text": "Describe this image for an audit report."},
+                {"type": "text", "text": "Analyze this image for IHWAP field audit."},
                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
             ]}
         ],
-        max_tokens=500
+        max_tokens=700
     )
-    return response.choices[0].message["content"].lower()
+
+    try:
+        parsed = json.loads(response.choices[0].message["content"])
+        return parsed["description"].lower()  # continue using just description for now
+    except Exception as e:
+        return "image analysis failed"
 
 def score_trigger_match(description, trigger_key, logic):
     """
