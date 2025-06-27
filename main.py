@@ -1,12 +1,17 @@
 from flask import Flask, render_template, request, send_file, jsonify
 import os
 import openai
+import json
 import datetime
 import io
 from vision_matcher import get_matching_trigger_from_image
-from evaluate_faaie import evaluate_trigger  # Optional if used
+from evaluate_faaie import evaluate_trigger
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+
+# ✅ Load FAAIE logic once
+with open("faaie_logic.json", "r") as f:
+    faaie_logic = json.load(f)
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -46,7 +51,8 @@ def home():
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
 
-            result = get_matching_trigger_from_image(image_bytes)
+            # ✅ FIXED: Pass in faaie_logic
+            result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
     return render_template("index.html", trigger=trigger, result=result, image_path=image_path, chat_response=chat_response)
 
@@ -58,7 +64,7 @@ def evaluate_image():
             return jsonify({"error": "No image file provided"}), 400
 
         image_bytes = image_file.read()
-        result = get_matching_trigger_from_image(image_bytes)
+        result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
         # Build Debug Log
         debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
@@ -72,7 +78,7 @@ def evaluate_image():
         return jsonify(result)
 
     except Exception as e:
-        print("🚨 Server Error:", str(e))  # Logs to console
+        print("🚨 Server Error:", str(e))
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
 
 @app.route("/download_report")
@@ -102,6 +108,7 @@ def download_report():
 
     return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
 
-# ✅ Port binding for Render
+# ✅ Render-compatible launch
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
+
