@@ -4,12 +4,9 @@ import openai
 import json
 import datetime
 import io
-from vision_matcher import get_matching_trigger_from_image
-from evaluate_faaie import evaluate_trigger
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from vision_analyzer import get_vision_analysis  # ✅ new import
 
-# ✅ Load FAAIE logic once
+# ✅ Load FAAIE logic (optional use)
 with open("faaie_logic.json", "r") as f:
     faaie_logic = json.load(f)
 
@@ -18,13 +15,12 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    trigger = None
     result = None
     image_path = None
     chat_response = None
 
     if request.method == "POST":
-        # Handle chat input
+        # ✅ Handle chat input
         if "chat_input" in request.form and request.form["chat_input"].strip() != "":
             user_question = request.form["chat_input"]
             try:
@@ -40,7 +36,7 @@ def home():
             except Exception as e:
                 chat_response = f"Error retrieving response: {str(e)}"
 
-        # Handle image input
+        # ✅ Handle image upload
         image = request.files.get("image")
         if image:
             upload_dir = os.path.join("static", "uploads")
@@ -51,10 +47,10 @@ def home():
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
 
-            # ✅ FIXED: Pass in faaie_logic
-            result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+            # ✅ Use new analysis
+            result = get_vision_analysis(image_bytes)
 
-    return render_template("index.html", trigger=trigger, result=result, image_path=image_path, chat_response=chat_response)
+    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response)
 
 @app.route("/evaluate_image", methods=["POST"])
 def evaluate_image():
@@ -64,15 +60,16 @@ def evaluate_image():
             return jsonify({"error": "No image file provided"}), 400
 
         image_bytes = image_file.read()
-        result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+        result = get_vision_analysis(image_bytes)
 
-        # Build Debug Log
+        # ✅ Add Debug Log
         debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
-        if result["matched_triggers"]:
-            for match in result["matched_triggers"]:
-                debug_log += f"✅ Matched Trigger: {match['trigger']}\n🔧 Score Details: {match['response'].get('reason', '')}\n\n"
-        else:
-            debug_log += "❌ No matches found in logic.\n"
+        if result["visible_elements"]:
+            debug_log += f"🔎 Visible Elements: {', '.join(result['visible_elements'])}\n"
+        if result["hazards"]:
+            debug_log += f"⚠️ Hazards: {', '.join(result['hazards'])}\n"
+        if result["scout_thought"]:
+            debug_log += f"💭 Scout's Thought: {result['scout_thought']}\n"
 
         result["debug_log"] = debug_log
         return jsonify(result)
@@ -108,7 +105,6 @@ def download_report():
 
     return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
 
-# ✅ Render-compatible launch
+# ✅ For Render or local use
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
-
