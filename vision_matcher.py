@@ -11,21 +11,39 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 with open("faaie_logic.json", "r") as f:
     faaie_logic = json.load(f)
 
-def get_vision_description(image_bytes):
+def get_vision_analysis(image_bytes):
     """
-    Sends image to OpenAI vision model and returns structured audit analysis.
+    Sends image to OpenAI vision model and returns structured field-aware analysis with Scout's voice and the Wxbot creed.
     """
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
         model="gpt-4o",
         messages=[
-            {"role": "system", "content": "You are Scout, an IHWAP visual field auditor. Return JSON like this:\n\n{\n  \"description\": \"plain-language summary\",\n  \"visible_elements\": [\"attic insulation\", \"vent pipe\"],\n  \"hazards\": [\"rust\", \"missing vent cap\"]\n}"},
-            {"role": "user", "content": [
-                {"type": "text", "text": "Analyze this image for IHWAP field audit."},
-                {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
-            ]}
+            {
+                "role": "system",
+                "content": (
+                    "You are Scout — a visual field auditor working under the Illinois Home Weatherization Assistance Program (IHWAP), "
+                    "trained in the Wxbot Code of Operations. You always remember: ‘The house is a system.’\n\n"
+                    "When analyzing the image, consider safety first, then home integrity, then energy. Speak plainly, like you're talking to a crew lead or QCI. "
+                    "Use field wisdom. Be specific. Be calm.\n\n"
+                    "Return a JSON object like this:\n"
+                    "{\n"
+                    "  \"description\": \"Human-style plain language summary of the image\",\n"
+                    "  \"visible_elements\": [\"attic trusses\", \"pink fiberglass insulation\", \"vent pipe\"],\n"
+                    "  \"hazards\": [\"corroded flue collar\", \"missing vent termination\"],\n"
+                    "  \"scout_thought\": \"Reflective insight from Scout about safety, sequence, or overlooked risks.\"\n"
+                    "}"
+                )
+            },
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": "Analyze this image for IHWAP field conditions."},
+                    {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                ]
+            }
         ],
-        max_tokens=700
+        max_tokens=750
     )
 
     try:
@@ -33,13 +51,15 @@ def get_vision_description(image_bytes):
         return {
             "description": parsed.get("description", "").lower(),
             "visible_elements": parsed.get("visible_elements", []),
-            "hazards": parsed.get("hazards", [])
+            "hazards": parsed.get("hazards", []),
+            "scout_thought": parsed.get("scout_thought", "")
         }
-    except Exception:
+    except Exception as e:
         return {
             "description": "image analysis failed",
             "visible_elements": [],
-            "hazards": []
+            "hazards": [],
+            "scout_thought": f"Error during analysis: {str(e)}"
         }
 
 def score_trigger_match(parsed, trigger_key, logic):
@@ -94,7 +114,7 @@ def score_trigger_match(parsed, trigger_key, logic):
     return score
 
 def get_matching_trigger_from_image(image_bytes, faaie_logic):
-    parsed = get_vision_description(image_bytes)
+    parsed = get_vision_analysis(image_bytes)
     matches = []
 
     for trigger_key, logic in faaie_logic.items():
@@ -108,6 +128,7 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         "description": parsed["description"],
         "visible_elements": parsed["visible_elements"],
         "hazards": parsed["hazards"],
+        "scout_thought": parsed.get("scout_thought", ""),
         "matched_triggers": []
     }
 
@@ -132,4 +153,5 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         })
 
     return result
+
 
