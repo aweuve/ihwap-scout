@@ -175,4 +175,3 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         })
 
     return result
-
