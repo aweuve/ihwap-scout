@@ -1,23 +1,13 @@
 from flask import Flask, render_template, request, send_file, jsonify
 import os
 import openai
-import json
 import datetime
 import io
-
-from vision_analyzer import get_vision_trigger
-from evaluate_faaie import evaluate_trigger
 from vision_matcher import get_matching_trigger_from_image
-
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from evaluate_faaie import evaluate_trigger  # Optional if still used
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# ✅ Load logic once
-with open("faaie_logic.json", "r") as f:
-    faaie_logic = json.load(f)
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -27,9 +17,10 @@ def home():
     chat_response = None
 
     if request.method == "POST":
+        # Chat input
         if "chat_input" in request.form and request.form["chat_input"].strip() != "":
             user_question = request.form["chat_input"]
-            completion = openai.chat.completions.create(
+            completion = openai.ChatCompletion.create(
                 model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "You are Scout, a compliance assistant for IHWAP. Respond with brief, factual policy guidance."},
@@ -37,9 +28,10 @@ def home():
                 ],
                 max_tokens=250
             )
-            chat_response = completion.choices[0].message.content
+            chat_response = completion.choices[0].message["content"]
             return render_template("index.html", chat_response=chat_response)
 
+        # Image logic
         trigger = request.form.get("trigger", None)
         image = request.files.get("image")
 
@@ -48,10 +40,11 @@ def home():
             os.makedirs(upload_dir, exist_ok=True)
             image_path = os.path.join(upload_dir, "upload.jpg")
             image.save(image_path)
-            trigger = get_vision_trigger(image_path)
 
-        if trigger:
-            result = evaluate_trigger(trigger)
+            with open(image_path, "rb") as f:
+                image_bytes = f.read()
+
+            result = get_matching_trigger_from_image(image_bytes)
 
     return render_template("index.html", trigger=trigger, result=result, image_path=image_path, chat_response=chat_response)
 
@@ -62,7 +55,17 @@ def evaluate_image():
         return jsonify({"error": "No image file provided"}), 400
 
     image_bytes = image_file.read()
-    result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+    result = get_matching_trigger_from_image(image_bytes)
+
+    # Build Debug Log
+    debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
+    if result["matched_triggers"]:
+        for match in result["matched_triggers"]:
+            debug_log += f"✅ Matched Trigger: {match['trigger']}\n🔧 Score Details: {match['response'].get('reason', '')}\n\n"
+    else:
+        debug_log += "❌ No matches found in logic.\n"
+
+    result["debug_log"] = debug_log
     return jsonify(result)
 
 @app.route("/download_report")
