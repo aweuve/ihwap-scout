@@ -133,7 +133,7 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
 
     for trigger_key, logic in faaie_logic.items():
         score = score_trigger_match(parsed, trigger_key, logic)
-        if score >= 1:
+        if score >= 2:
             matches.append((trigger_key, logic, score))
 
     matches.sort(key=lambda x: x[2], reverse=True)
@@ -146,7 +146,7 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         "matched_triggers": []
     }
 
-    for trigger_key, logic, score in matches[:3]:
+    for trigger_key, logic, score in matches[:1]:
         result["matched_triggers"].append({
             "trigger": trigger_key,
             "response": logic
