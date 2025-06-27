@@ -28,10 +28,27 @@ def home():
                 completion = openai.ChatCompletion.create(
                     model="gpt-4o",
                     messages=[
-                        {"role": "system", "content": "You are Scout, a compliance assistant for IHWAP. Respond with brief, factual policy guidance."},
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are Scout, a QCI and compliance assistant for the Illinois Home Weatherization Assistance Program (IHWAP). "
+                                "Your knowledge base includes the SWS Field Guide, IHWAP PY2026 guidance, and DOE WAP requirements. "
+                                "Use field clarity and cite policies by number (e.g. SWS 3.1201.3 or IHWAP Ch. 5.4.2). Always prioritize:\n"
+                                "1. Health & Safety\n2. Home Integrity\n3. Energy Savings.\n\n"
+                                "Be practical and concise. If policy is unclear, flag for human review.\n\n"
+                                "Example:\n"
+                                "Q: When must an attic be deferred?\n"
+                                "A: An attic must be deferred if it contains vermiculite (IHWAP 5.3.1.2), active moisture, or exposed wiring (SWS 2.0101.1a). "
+                                "Repairs or reinspection may be required before continuing.\n\n"
+                                "Example:\n"
+                                "Q: How much spray foam is required in a crawlspace?\n"
+                                "A: 2\" of closed-cell foam achieves R-13 (SWS 3.1201.2). For crawl walls, 3–4\" is typical (R-19). "
+                                "If foam is exposed, ignition barrier must be installed per code."
+                            )
+                        },
                         {"role": "user", "content": user_question}
                     ],
-                    max_tokens=250
+                    max_tokens=400
                 )
                 chat_response = completion.choices[0].message["content"]
             except Exception as e:
@@ -105,3 +122,4 @@ def download_report():
 
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
+
