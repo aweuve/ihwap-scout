@@ -76,16 +76,11 @@ def get_vision_analysis(image_bytes):
         }
 
 def score_trigger_match(parsed, trigger_key, logic):
-    """
-    Scores based on matches with description, visible elements, and hazards.
-    Excludes mismatches using context rules. Prioritizes safety, then structure, then energy.
-    """
     description = parsed["description"]
     words = description.split()
     tags = parsed["visible_elements"] + parsed["hazards"]
     score = 0
 
-    # Exclusion logic
     if "attic" in description:
         if "water heater" in trigger_key or "confined closet" in trigger_key:
             return 0
@@ -105,7 +100,6 @@ def score_trigger_match(parsed, trigger_key, logic):
         if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "cat litter", "vermiculite"]):
             return 0
 
-    # Positive scoring from description + logic
     parts = [
         trigger_key,
         logic.get("reason", ""),
@@ -117,7 +111,6 @@ def score_trigger_match(parsed, trigger_key, logic):
             if word in words:
                 score += 1
 
-    # Boost if tag directly matches trigger phrase or is embedded in logic
     for tag in tags:
         clean_tag = tag.lower().strip()
         if clean_tag in trigger_key.lower():
@@ -133,7 +126,7 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
 
     for trigger_key, logic in faaie_logic.items():
         score = score_trigger_match(parsed, trigger_key, logic)
-        if score >= 2:
+        if score >= 2 or any(h in trigger_key.lower() for h in [t.lower() for t in parsed["hazards"]]):
             matches.append((trigger_key, logic, score))
 
     matches.sort(key=lambda x: x[2], reverse=True)
@@ -150,6 +143,14 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         result["matched_triggers"].append({
             "trigger": trigger_key,
             "response": logic
+        })
+
+    # Fallback if no strong match but hazards exist
+    if not result["matched_triggers"] and matches:
+        best_match = matches[0]
+        result["matched_triggers"].append({
+            "trigger": best_match[0],
+            "response": best_match[1]
         })
 
     if not result["matched_triggers"]:
