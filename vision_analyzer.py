@@ -1,19 +1,7 @@
-import os
-import openai
-import json
-import base64
-from io import BytesIO
-from PIL import Image
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Load logic from faaie_logic.json
-with open("faaie_logic.json", "r") as f:
-    faaie_logic = json.load(f)
-
 def get_vision_analysis(image_bytes):
     """
-    Sends image to OpenAI vision model and returns structured field-aware analysis with Scout's voice and the Wxbot creed.
+    Sends image to OpenAI vision model and returns structured field-aware analysis with Scout’s voice.
+    Includes fallback for formatting errors (e.g. Markdown or code blocks).
     """
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
@@ -28,10 +16,10 @@ def get_vision_analysis(image_bytes):
                     "Use field wisdom. Be specific. Be calm.\n\n"
                     "Return a JSON object like this:\n"
                     "{\n"
-                    "  \"description\": \"Human-style plain language summary of the image\",\n"
-                    "  \"visible_elements\": [\"attic trusses\", \"pink fiberglass insulation\", \"vent pipe\"],\n"
-                    "  \"hazards\": [\"corroded flue collar\", \"missing vent termination\"],\n"
-                    "  \"scout_thought\": \"Reflective insight from Scout about safety, sequence, or overlooked risks.\"\n"
+                    "  \"description\": \"Plain language summary of the image\",\n"
+                    "  \"visible_elements\": [\"attic trusses\", \"pink fiberglass insulation\"],\n"
+                    "  \"hazards\": [\"corroded flue collar\"],\n"
+                    "  \"scout_thought\": \"A reflection from Scout about what matters in this image.\"\n"
                     "}"
                 )
             },
@@ -47,13 +35,25 @@ def get_vision_analysis(image_bytes):
     )
 
     try:
-        parsed = json.loads(response.choices[0].message["content"])
+        raw = response.choices[0].message["content"].strip()
+
+        # 🧼 Clean markdown/codeblock wrappers
+        if "```json" in raw:
+            raw = raw.split("```json")[-1].split("```")[0].strip()
+        elif "```" in raw:
+            raw = raw.split("```")[0].strip()
+
+        if not raw.startswith("{"):
+            raise ValueError("Scout returned non-JSON content.")
+
+        parsed = json.loads(raw)
         return {
             "description": parsed.get("description", "").lower(),
             "visible_elements": parsed.get("visible_elements", []),
             "hazards": parsed.get("hazards", []),
             "scout_thought": parsed.get("scout_thought", "")
         }
+
     except Exception as e:
         return {
             "description": "image analysis failed",
