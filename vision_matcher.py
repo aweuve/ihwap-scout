@@ -32,27 +32,41 @@ def get_vision_description(image_bytes):
 def score_trigger_match(description, trigger_key, logic):
     """
     Scores based on overlap between description and trigger metadata.
-    Requires minimum 2 total hits.
-    Applies exclusions based on context.
+    Applies exclusions to reduce false positives.
     """
     words = description.split()
     score = 0
 
-    # Exclusion logic
-    if "attic" in description:
-        if "water heater" in trigger_key or "confined closet" in trigger_key:
-            return 0
-    if "exposed fiberglass" in trigger_key:
-        if not any(kw in description for kw in ["living space", "occupied", "room", "habitable"]):
-            return 0
-    if "knob and tube" in trigger_key:
-        if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
-            return 0
+    # 🔒 Exclusion Rules
     if "moisture" in trigger_key or "sag" in trigger_key:
         if not any(kw in description for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
             return 0
 
-    # Positive scoring
+    if "bathroom fan" in trigger_key:
+        if not any(kw in description for kw in ["fan", "duct", "bathroom vent"]):
+            return 0
+
+    if "window" in trigger_key or "pane" in trigger_key:
+        if not any(kw in description for kw in ["glass", "crack", "broken", "shattered"]):
+            return 0
+
+    if "floor above crawlspace" in trigger_key:
+        if not any(kw in description for kw in ["joist", "subfloor", "crawlspace"]):
+            return 0
+
+    if "exposed fiberglass" in trigger_key:
+        if not any(kw in description for kw in ["living space", "occupied", "room", "habitable"]):
+            return 0
+
+    if "knob and tube" in trigger_key:
+        if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
+            return 0
+
+    if "attic" in description:
+        if "water heater" in trigger_key or "confined closet" in trigger_key:
+            return 0
+
+    # ✅ Positive scoring based on overlap
     parts = [
         trigger_key,
         logic.get("reason", ""),
