@@ -33,9 +33,26 @@ def score_trigger_match(description, trigger_key, logic):
     """
     Scores based on overlap between description and trigger metadata.
     Requires minimum 2 total hits.
+    Applies exclusions based on context.
     """
-    score = 0
     words = description.split()
+    score = 0
+
+    # Exclusion logic
+    if "attic" in description:
+        if "water heater" in trigger_key or "confined closet" in trigger_key:
+            return 0
+    if "exposed fiberglass" in trigger_key:
+        if not any(kw in description for kw in ["living space", "occupied", "room", "habitable"]):
+            return 0
+    if "knob and tube" in trigger_key:
+        if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
+            return 0
+    if "moisture" in trigger_key or "sag" in trigger_key:
+        if not any(kw in description for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
+            return 0
+
+    # Positive scoring
     parts = [
         trigger_key,
         logic.get("reason", ""),
@@ -46,21 +63,16 @@ def score_trigger_match(description, trigger_key, logic):
         for word in part.lower().split():
             if word in words:
                 score += 1
+
     return score
 
 def get_matching_trigger_from_image(image_bytes, faaie_logic):
     description = get_vision_description(image_bytes)
-    words = description.split()
-
     matches = []
-    for trigger_key, logic in faaie_logic.items():
-        # 🔒 Moisture/sag exception: skip unless keyword found
-        if "moisture" in trigger_key or "sag" in trigger_key:
-            if not any(kw in words for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
-                continue
 
+    for trigger_key, logic in faaie_logic.items():
         score = score_trigger_match(description, trigger_key, logic)
-        if score >= 2:  # ✅ Require 2+ matches
+        if score >= 2:
             matches.append((trigger_key, logic, score))
 
     matches.sort(key=lambda x: x[2], reverse=True)
