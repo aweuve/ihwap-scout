@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, jsonify
+rom flask import Flask, render_template, request, send_file, jsonify
 import os
 import openai
 import json
