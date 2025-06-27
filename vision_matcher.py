@@ -1,4 +1,3 @@
-# vision_matcher.py
 import os
 import openai
 import json
@@ -15,7 +14,6 @@ with open("faaie_logic.json", "r") as f:
 def get_vision_description(image_bytes):
     """
     Sends image to OpenAI vision model and returns the raw description.
-    (Stable for older OpenAI Python versions)
     """
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
@@ -33,9 +31,11 @@ def get_vision_description(image_bytes):
 
 def score_trigger_match(description, trigger_key, logic):
     """
-    Scores based on overlap between description and tags, reason, visual cue, AND trigger name.
+    Scores based on overlap between description and trigger metadata.
+    Requires minimum 2 total hits.
     """
     score = 0
+    words = description.split()
     parts = [
         trigger_key,
         logic.get("reason", ""),
@@ -44,17 +44,23 @@ def score_trigger_match(description, trigger_key, logic):
     ]
     for part in parts:
         for word in part.lower().split():
-            if word in description:
+            if word in words:
                 score += 1
     return score
 
 def get_matching_trigger_from_image(image_bytes, faaie_logic):
     description = get_vision_description(image_bytes)
+    words = description.split()
 
     matches = []
     for trigger_key, logic in faaie_logic.items():
+        # 🔒 Moisture/sag exception: skip unless keyword found
+        if "moisture" in trigger_key or "sag" in trigger_key:
+            if not any(kw in words for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
+                continue
+
         score = score_trigger_match(description, trigger_key, logic)
-        if score > 1:
+        if score >= 2:  # ✅ Require 2+ matches
             matches.append((trigger_key, logic, score))
 
     matches.sort(key=lambda x: x[2], reverse=True)
