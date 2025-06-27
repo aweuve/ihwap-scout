@@ -2,7 +2,7 @@ import os
 import openai
 import json
 import base64
-from io import BytesIOhttps://github.com/aweuve/ihwap-scout/edit/main/vision_analyzerbu.py#L3C11
+from io import BytesIO
 from PIL import Image
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
