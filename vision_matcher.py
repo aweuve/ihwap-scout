@@ -146,13 +146,13 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         "matched_triggers": []
     }
 
-    if matches:
-        top_match = matches[0]
+    for trigger_key, logic, score in matches[:3]:
         result["matched_triggers"].append({
-            "trigger": top_match[0],
-            "response": top_match[1]
+            "trigger": trigger_key,
+            "response": logic
         })
-    else:
+
+    if not result["matched_triggers"]:
         result["matched_triggers"].append({
             "trigger": "unlisted condition",
             "response": {
