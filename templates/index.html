@@ -1,64 +1,106 @@
-<!-- index.html: Basic Chat Thread Support -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>IHWAP SCOUT</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background: #f7f9fb; }
-        .chat-box { margin-top: 20px; border-left: 4px solid #999; padding: 10px 20px; background: white; border-radius: 6px; }
-        .chat-entry { margin-bottom: 15px; }
-        .chat-entry .user { font-weight: bold; color: #1a73e8; }
-        .chat-entry .scout { font-weight: bold; color: #d63384; }
-        .chat-entry p { margin: 4px 0; }
-        .upload-area, .chat-area { margin-bottom: 20px; }
-        button { margin-top: 5px; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f7f7f7;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            margin-bottom: 30px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        input[type="file"], input[type="text"] {
+            margin-bottom: 10px;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+        img {
+            max-width: 400px;
+            margin-top: 20px;
+        }
+        .result-block {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
+        .chat-box {
+            background: #fff7e6;
+            border: 1px solid #ffe58f;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 6px;
+        }
     </style>
 </head>
 <body>
     <h1>🧠 IHWAP SCOUT</h1>
 
+    <!-- Image Upload + Logic Trigger -->
     <form method="POST" enctype="multipart/form-data">
-        <div class="upload-area">
-            <input type="file" name="image">
-            <button type="submit">Analyze Photo</button>
-        </div>
-        <div class="chat-area">
-            <input type="text" name="chat_input" placeholder="Ask Scout a question..." style="width: 80%;">
-            <button type="submit">Ask</button>
-        </div>
+        <label for="image">Upload a Field Photo:</label>
+        <input type="file" name="image" accept="image/*">
+        <br><br>
+        <input type="submit" value="Analyze Photo">
     </form>
 
     {% if result %}
-    <div class="chat-box">
-        <strong>📸 Image Analysis</strong>
-        <p><b>Description:</b> {{ result.description }}</p>
-        <p><b>Visible Elements:</b> {{ result.visible_elements | join(", ") }}</p>
-        <p><b>Hazards:</b> {{ result.hazards | join(", ") }}</p>
-        <p><b>Scout's Thought:</b> {{ result.scout_thought }}</p>
-        {% for match in result.matched_triggers %}
-            <div style="margin-top: 10px;">
-                <b>📌 Trigger:</b> {{ match.trigger }}<br>
-                <b>⚠️ Action:</b> {{ match.response.action }}<br>
-                <b>📝 Reason:</b> {{ match.response.reason }}<br>
-                <b>🔧 Recommendation:</b> {{ match.response.recommendation }}<br>
-                <b>📘 Citation:</b> {{ match.response.source_policy }}<br>
-                <b>📂 Category:</b> {{ match.response.category }}
-            </div>
-        {% endfor %}
-    </div>
+        <div class="result-block">
+            <h2>📸 Visual Analysis</h2>
+            <p><strong>Description:</strong> {{ result.description }}</p>
+            <p><strong>Visible Elements:</strong> {{ result.visible_elements | join(", ") }}</p>
+            <p><strong>Hazards:</strong> {{ result.hazards | join(", ") }}</p>
+            <p><strong>Scout’s Thought:</strong> {{ result.scout_thought }}</p>
+
+            {% for trigger in result.matched_triggers %}
+                <hr>
+                <p><strong>📌 Trigger:</strong> {{ trigger.trigger }}</p>
+                <p><strong>⚠️ Action:</strong> {{ trigger.response.action }}</p>
+                <p><strong>📝 Reason:</strong> {{ trigger.response.reason }}</p>
+                <p><strong>🔧 Recommendation:</strong> {{ trigger.response.recommendation }}</p>
+                <p><strong>📘 Citation:</strong> {{ trigger.response.source_policy }}</p>
+                <p><strong>📂 Category:</strong> {{ trigger.response.category }}</p>
+                <p><strong>👀 Visual Cue:</strong> {{ trigger.response.visual_cue }}</p>
+            {% endfor % %}
+
+            {% if image_path %}
+                <img src="{{ image_path }}" alt="Uploaded Image">
+            {% endif %}
+        </div>
     {% endif %}
 
+    <!-- Scout Chat Input -->
+    <form method="POST">
+        <label for="chat_input">Ask Scout a question...</label>
+        <input type="text" name="chat_input" style="width: 60%;" placeholder="e.g. When do I need a deferral?">
+        <input type="submit" value="Ask">
+    </form>
+
     {% if chat_response %}
-    <div class="chat-box">
-        <div class="chat-entry">
-            <span class="user">You:</span>
-            <p>{{ request.form['chat_input'] }}</p>
+        <div class="chat-box">
+            <h2>💬 Scout Chat</h2>
+            <p>{{ chat_response | safe }}</p>
         </div>
-        <div class="chat-entry">
-            <span class="scout">🧠 Scout Chat:</span>
-            <p>{{ chat_response }}</p>
-        </div>
-    </div>
     {% endif %}
 </body>
 </html>
+
