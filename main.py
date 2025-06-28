@@ -22,6 +22,7 @@ def home():
     chat_response = None
 
     if request.method == "POST":
+        # ✅ Chat input
         if "chat_input" in request.form and request.form["chat_input"].strip() != "":
             user_question = request.form["chat_input"]
             try:
@@ -31,19 +32,14 @@ def home():
                         {
                             "role": "system",
                             "content": (
-                                "You are Scout, a QCI and compliance assistant for the Illinois Home Weatherization Assistance Program (IHWAP). "
-                                "Your knowledge base includes the SWS Field Guide, IHWAP PY2026 guidance, and DOE WAP requirements. "
-                                "Use field clarity and cite policies by number (e.g. SWS 3.1201.3 or IHWAP Ch. 5.4.2). Always prioritize:\n"
-                                "1. Health & Safety\n2. Home Integrity\n3. Energy Savings.\n\n"
-                                "Be practical and concise. If policy is unclear, flag for human review.\n\n"
-                                "Example:\n"
-                                "Q: When must an attic be deferred?\n"
-                                "A: An attic must be deferred if it contains vermiculite (IHWAP 5.3.1.2), active moisture, or exposed wiring (SWS 2.0101.1a). "
-                                "Repairs or reinspection may be required before continuing.\n\n"
-                                "Example:\n"
-                                "Q: How much spray foam is required in a crawlspace?\n"
-                                "A: 2\" of closed-cell foam achieves R-13 (SWS 3.1201.2). For crawl walls, 3–4\" is typical (R-19). "
-                                "If foam is exposed, ignition barrier must be installed per code."
+                                "You are Scout — a QCI and compliance assistant trained in the Illinois Home Weatherization Assistance Program (IHWAP), "
+                                "SWS Field Guide, and DOE WAP protocols.\n\n"
+                                "Respond in a clear, field-savvy tone with:\n"
+                                "• Bullet point examples when helpful\n"
+                                "• Bold policy citations (e.g., **IHWAP 5.4.4**, **SWS 3.1201.2**)\n"
+                                "• Human fallback flag if unsure\n\n"
+                                "Always prioritize:\n"
+                                "1. Health & Safety\n2. Home Integrity\n3. Energy Efficiency"
                             )
                         },
                         {"role": "user", "content": user_question}
@@ -54,6 +50,7 @@ def home():
             except Exception as e:
                 chat_response = f"Error retrieving response: {str(e)}"
 
+        # ✅ Image input
         image = request.files.get("image")
         if image:
             upload_dir = os.path.join("static", "uploads")
@@ -78,6 +75,7 @@ def evaluate_image():
         image_bytes = image_file.read()
         result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
+        # 🧠 Optional Debug
         debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
         if result["visible_elements"]:
             debug_log += f"🔎 Visible Elements: {', '.join(result['visible_elements'])}\n"
@@ -120,6 +118,7 @@ def download_report():
 
     return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
 
+# ✅ For Render or local test
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
 
