@@ -20,6 +20,7 @@ def home():
     result = None
     image_path = None
     chat_response = None
+    html_output = None
 
     if request.method == "POST":
         # ✅ Chat input
@@ -65,7 +66,31 @@ def home():
 
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
-    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response)
+            # Format HTML output
+            trigger_blocks = ""
+            for i, mt in enumerate(result["matched_triggers"], 1):
+                trigger_blocks += f"""
+                <div class="trigger-block">
+                  <h3>📌 {i}. {mt["trigger"]}</h3>
+                  <p><strong>⚠️ Action:</strong> {mt["response"]["action"]}</p>
+                  <p><strong>📘 Citation:</strong> {mt["response"]["source_policy"]}</p>
+                  <p><strong>🔧 Fix:</strong> {mt["response"]["recommendation"]}</p>
+                  <p><strong>👀 Clue:</strong> {mt["response"]["visual_cue"]}</p>
+                </div>
+                """
+
+            html_output = f"""
+            <div class="scout-summary">
+              <h2>🧠 FAAIE Visual Summary</h2>
+              <p><strong>📄 Description:</strong> {result['description']}</p>
+              <p><strong>🔍 Elements:</strong> {', '.join(result['visible_elements'])}</p>
+              <p><strong>💭 Scout’s Thought:</strong> {result['scout_thought']}</p>
+            </div>
+            <hr>
+            {trigger_blocks}
+            """
+
+    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, html_output=html_output)
 
 @app.route("/evaluate_image", methods=["POST"])
 def evaluate_image():
@@ -123,4 +148,3 @@ def download_report():
 # ✅ Local or Render
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
-
