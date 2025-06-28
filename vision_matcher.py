@@ -18,36 +18,30 @@ def get_vision_analysis(image_bytes):
         messages=[
             {
                 "role": "system",
-"content": (
-    "You are Scout — a field-trained visual assistant for the Illinois Home Weatherization Assistance Program (IHWAP), "
-    "operating under the Wxbot Code of Operations. Your job is to visually assess photos from the field for health, safety, and code concerns.\n\n"
-
-    "Prioritize in this order:\n"
-    "1. Health & Safety\n"
-    "2. Structural Integrity\n"
-    "3. Energy Efficiency\n\n"
-
-    "Return your results in **JSON only**. Use this format:\n"
-    "{\n"
-    "  \"description\": \"Brief, plain-language summary of the image\",\n"
-    "  \"visible_elements\": [\"furnace\", \"flex duct\", \"floor joist\", \"flue collar\"],\n"
-    "  \"hazards\": [\"corroded flue\", \"missing discharge pipe\"],\n"
-    "  \"scout_thought\": \"QCI-style insight about what the crew or auditor should do next.\"\n"
-    "}\n\n"
-
-    "Tips:\n"
-    "- Do not include markdown, headers, or explanations. Return only JSON.\n"
-    "- Use clear terms from field inspections: 'fiberglass insulation', 'unsealed duct', 'foundation wall', etc.\n"
-    "- If hazard is visible (e.g. water, rot, flame risk), name it. If unsure, say nothing.\n"
-    "- The 'scout_thought' should be a calm, actionable comment — like from a seasoned auditor.\n"
-    "- Never hallucinate tools or measurements — only describe what you **can see**.\n"
-    "- Do not invent codes. Your job is visual flagging, not quoting standards.\n\n"
-
-    "You are helping a real weatherization team. Accuracy matters. Keep it tight. JSON only."
-)
-
-                
-                
+                "content": (
+                    "You are Scout — a field-trained visual assistant for the Illinois Home Weatherization Assistance Program (IHWAP), "
+                    "operating under the Wxbot Code of Operations. Your job is to visually assess photos from the field for health, safety, and code concerns.\n\n"
+                    "Prioritize in this order:\n"
+                    "1. Health & Safety\n"
+                    "2. Structural Integrity\n"
+                    "3. Energy Efficiency\n\n"
+                    "Return your results in **JSON only**. Use this format:\n"
+                    "{\n"
+                    "  \"description\": \"Brief, plain-language summary of the image\",\n"
+                    "  \"visible_elements\": [\"furnace\", \"flex duct\", \"floor joist\", \"flue collar\"],\n"
+                    "  \"hazards\": [\"corroded flue\", \"missing discharge pipe\"],\n"
+                    "  \"scout_thought\": \"QCI-style insight about what the crew or auditor should do next.\"\n"
+                    "}\n\n"
+                    "Tips:\n"
+                    "- Do not include markdown, headers, or explanations. Return only JSON.\n"
+                    "- Use clear terms from field inspections: 'fiberglass insulation', 'unsealed duct', 'foundation wall', etc.\n"
+                    "- If hazard is visible (e.g. water, rot, flame risk), name it. If unsure, say nothing.\n"
+                    "- The 'scout_thought' should be a calm, actionable comment — like from a seasoned auditor.\n"
+                    "- Never hallucinate tools or measurements — only describe what you **can see**.\n"
+                    "- Do not invent codes. Your job is visual flagging, not quoting standards.\n\n"
+                    "You are helping a real weatherization team. Accuracy matters. Keep it tight. JSON only."
+                )
+            },
             {
                 "role": "user",
                 "content": [
@@ -65,7 +59,7 @@ def get_vision_analysis(image_bytes):
         if "```json" in raw:
             raw = raw.split("```json")[-1].split("```")[0].strip()
         elif "```" in raw:
-            raw = raw.split("```")[-1].split("```")[-1].strip()
+            raw = raw.split("```")[-1].strip()
 
         if not raw.startswith("{"):
             raise ValueError("Scout returned non-JSON content.")
@@ -102,13 +96,13 @@ def score_trigger_match(parsed, trigger_key, logic):
         if not any(kw in description for kw in ["knob", "tube", "cloth-wrapped", "old wiring"]):
             return 0
     if "moisture" in trigger_key or "sag" in trigger_key:
-        if not any(kw in description for kw in ["stain", "stains", "drooping", "wet", "mold", "sag"]):
+        if not any(kw in description for kw in ["stain", "drooping", "wet", "mold", "sag"]):
             return 0
-    if "fan duct" in trigger_key or "bathroom fan" in trigger_key or "vent fan" in trigger_key:
-        if not any(kw in description for kw in ["fan", "duct", "vent pipe", "exhaust"]):
+    if "fan duct" in trigger_key or "bathroom fan" in trigger_key:
+        if not any(kw in description for kw in ["fan", "duct", "vent", "exhaust"]):
             return 0
     if "vermiculite" in trigger_key:
-        if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "cat litter", "vermiculite"]):
+        if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "vermiculite"]):
             return 0
 
     parts = [
@@ -151,7 +145,7 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
     }
 
     if matches:
-        for trigger_key, logic, score in matches[:3]:  # Top 3 matches
+        for trigger_key, logic, score in matches[:3]:  # Return top 3 matches
             result["matched_triggers"].append({
                 "trigger": trigger_key,
                 "score": score,
