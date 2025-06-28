@@ -64,6 +64,28 @@
             <div class="section"><span class="label">👀 Visual Cue:</span> {{ match.response.visual_cue }}</div>
         </div>
         {% endfor %}
+    {% if result %}
+<div class="result-block">
+  <h3>💬 FAAIE Response</h3>
+  <p><strong>🧠 Visual Description:</strong> {{ result.description }}</p>
+  <p><strong>🔍 Visible Elements:</strong> {{ result.visible_elements | join(', ') }}</p>
+  <p><strong>⚠️ Hazards:</strong> {{ result.hazards | join(', ') }}</p>
+  <p><strong>💭 Scout’s Thought:</strong> {{ result.scout_thought }}</p>
+
+  {% for trigger in result.matched_triggers %}
+  <div class="trigger-block" style="border: 1px solid #ccc; margin: 1em 0; padding: 1em; border-radius: 6px;">
+    <h4>📌 Trigger: {{ trigger.trigger }}</h4>
+    <p><strong>⚠️ Action:</strong> {{ trigger.response.action }}</p>
+    <p><strong>📝 Reason:</strong> {{ trigger.response.reason }}</p>
+    <p><strong>🔧 Recommendation:</strong> {{ trigger.response.recommendation }}</p>
+    <p><strong>📘 Citation:</strong> {{ trigger.response.source_policy }}</p>
+    <p><strong>📂 Category:</strong> {{ trigger.response.category }}</p>
+    <p><strong>👀 Visual Cue:</strong> {{ trigger.response.visual_cue }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
     {% endif %}
 
     {% if result.visible_elements %}
