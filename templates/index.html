@@ -104,5 +104,13 @@
       </div>
     {% endif %}
 
+    {% if chat_response %}
+<div class="chat" style="background:#eef7f0; border-left:5px solid #2e7d32; padding:15px; margin-top:20px;">
+    <h3>🧠 Scout Chat:</h3>
+    <div>{{ chat_response | safe }}</div>
+</div>
+{% endif %}
+    
+
 </body>
 </html>
