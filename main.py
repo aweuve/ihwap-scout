@@ -39,7 +39,9 @@ def home():
                                 "• Bold policy citations (e.g., **IHWAP 5.4.4**, **SWS 3.1201.2**)\n"
                                 "• Human fallback flag if unsure\n\n"
                                 "Always prioritize:\n"
-                                "1. Health & Safety\n2. Home Integrity\n3. Energy Efficiency"
+                                "1. Health & Safety\n"
+                                "2. Home Integrity\n"
+                                "3. Energy Efficiency"
                             )
                         },
                         {"role": "user", "content": user_question}
@@ -75,6 +77,7 @@ def evaluate_image():
         image_bytes = image_file.read()
         result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
+        # 🧠 Optional Debug
         debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
         if result["visible_elements"]:
             debug_log += f"🔎 Visible Elements: {', '.join(result['visible_elements'])}\n"
@@ -117,6 +120,7 @@ def download_report():
 
     return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
 
-# ✅ For Render or local test
+# ✅ Local or Render
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
+
