@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template, request, send_file, jsonify, session
 import os
 import openai
 import json
@@ -13,84 +13,59 @@ with open("faaie_logic.json", "r") as f:
     faaie_logic = json.load(f)
 
 app = Flask(__name__)
+app.secret_key = "super_secret_key"  # Needed for session chat history
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# ✅ Scout Chat personality
+SYSTEM_PROMPT = (
+    "You are Scout — a QCI and compliance assistant trained in the Illinois Home Weatherization Assistance Program (IHWAP), "
+    "SWS Field Guide, and DOE WAP protocols.\n\n"
+    "Respond in a clear, field-savvy tone with:\n"
+    "• Bullet point examples when helpful\n"
+    "• Bold policy citations (e.g., **IHWAP 5.4.4**, **SWS 3.1201.2**)\n"
+    "• Human fallback flag if unsure\n\n"
+    "Always prioritize:\n"
+    "1. Health & Safety\n"
+    "2. Home Integrity\n"
+    "3. Energy Efficiency"
+)
 
 @app.route("/", methods=["GET", "POST"])
 def home():
     result = None
     image_path = None
     chat_response = None
-    html_output = None
 
     if request.method == "POST":
-        # ✅ Chat input
         if "chat_input" in request.form and request.form["chat_input"].strip() != "":
             user_question = request.form["chat_input"]
+            if "chat_history" not in session:
+                session["chat_history"] = []
+            session["chat_history"].append({"role": "user", "content": user_question})
+
             try:
                 completion = openai.ChatCompletion.create(
                     model="gpt-4o",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": (
-                                "You are Scout — a QCI and compliance assistant trained in the Illinois Home Weatherization Assistance Program (IHWAP), "
-                                "SWS Field Guide, and DOE WAP protocols.\n\n"
-                                "Respond in a clear, field-savvy tone with:\n"
-                                "• Bullet point examples when helpful\n"
-                                "• Bold policy citations (e.g., **IHWAP 5.4.4**, **SWS 3.1201.2**)\n"
-                                "• Human fallback flag if unsure\n\n"
-                                "Always prioritize:\n"
-                                "1. Health & Safety\n"
-                                "2. Home Integrity\n"
-                                "3. Energy Efficiency"
-                            )
-                        },
-                        {"role": "user", "content": user_question}
-                    ],
+                    messages=[{"role": "system", "content": SYSTEM_PROMPT}] + session["chat_history"],
                     max_tokens=400
                 )
-                chat_response = completion.choices[0].message["content"]
+                reply = completion.choices[0].message["content"]
+                session["chat_history"].append({"role": "assistant", "content": reply})
+                chat_response = reply
             except Exception as e:
                 chat_response = f"Error retrieving response: {str(e)}"
 
-        # ✅ Image input
         image = request.files.get("image")
         if image:
             upload_dir = os.path.join("static", "uploads")
             os.makedirs(upload_dir, exist_ok=True)
             image_path = os.path.join(upload_dir, "upload.jpg")
             image.save(image_path)
-
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
-            # Format HTML output
-            trigger_blocks = ""
-            for i, mt in enumerate(result["matched_triggers"], 1):
-                trigger_blocks += f"""
-                <div class="trigger-block">
-                  <h3>📌 {i}. {mt["trigger"]}</h3>
-                  <p><strong>⚠️ Action:</strong> {mt["response"]["action"]}</p>
-                  <p><strong>📘 Citation:</strong> {mt["response"]["source_policy"]}</p>
-                  <p><strong>🔧 Fix:</strong> {mt["response"]["recommendation"]}</p>
-                  <p><strong>👀 Clue:</strong> {mt["response"]["visual_cue"]}</p>
-                </div>
-                """
-
-            html_output = f"""
-            <div class="scout-summary">
-              <h2>🧠 FAAIE Visual Summary</h2>
-              <p><strong>📄 Description:</strong> {result['description']}</p>
-              <p><strong>🔍 Elements:</strong> {', '.join(result['visible_elements'])}</p>
-              <p><strong>💭 Scout’s Thought:</strong> {result['scout_thought']}</p>
-            </div>
-            <hr>
-            {trigger_blocks}
-            """
-
-    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, html_output=html_output)
+    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response)
 
 @app.route("/evaluate_image", methods=["POST"])
 def evaluate_image():
@@ -102,7 +77,6 @@ def evaluate_image():
         image_bytes = image_file.read()
         result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
-        # 🧠 Optional Debug
         debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
         if result["visible_elements"]:
             debug_log += f"🔎 Visible Elements: {', '.join(result['visible_elements'])}\n"
@@ -145,6 +119,7 @@ def download_report():
 
     return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
 
-# ✅ Local or Render
+# ✅ Run locally or on Render
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
+
