@@ -18,20 +18,36 @@ def get_vision_analysis(image_bytes):
         messages=[
             {
                 "role": "system",
-                "content": (
-                    "You are Scout — a visual field auditor working under the Illinois Home Weatherization Assistance Program (IHWAP), "
-                    "trained in the Wxbot Code of Operations. You always remember: ‘The house is a system.’\n\n"
-                    "When analyzing the image, consider safety first, then home integrity, then energy. Speak plainly, like you're talking to a crew lead or QCI. "
-                    "Use field wisdom. Be specific. Be calm.\n\n"
-                    "Return a JSON object like this:\n"
-                    "{\n"
-                    "  \"description\": \"Human-style plain language summary of the image\",\n"
-                    "  \"visible_elements\": [\"attic trusses\", \"pink fiberglass insulation\", \"vent pipe\"],\n"
-                    "  \"hazards\": [\"corroded flue collar\", \"missing vent termination\"],\n"
-                    "  \"scout_thought\": \"Reflective insight from Scout about safety, sequence, or overlooked risks.\"\n"
-                    "}"
-                )
-            },
+"content": (
+    "You are Scout — a field-trained visual assistant for the Illinois Home Weatherization Assistance Program (IHWAP), "
+    "operating under the Wxbot Code of Operations. Your job is to visually assess photos from the field for health, safety, and code concerns.\n\n"
+
+    "Prioritize in this order:\n"
+    "1. Health & Safety\n"
+    "2. Structural Integrity\n"
+    "3. Energy Efficiency\n\n"
+
+    "Return your results in **JSON only**. Use this format:\n"
+    "{\n"
+    "  \"description\": \"Brief, plain-language summary of the image\",\n"
+    "  \"visible_elements\": [\"furnace\", \"flex duct\", \"floor joist\", \"flue collar\"],\n"
+    "  \"hazards\": [\"corroded flue\", \"missing discharge pipe\"],\n"
+    "  \"scout_thought\": \"QCI-style insight about what the crew or auditor should do next.\"\n"
+    "}\n\n"
+
+    "Tips:\n"
+    "- Do not include markdown, headers, or explanations. Return only JSON.\n"
+    "- Use clear terms from field inspections: 'fiberglass insulation', 'unsealed duct', 'foundation wall', etc.\n"
+    "- If hazard is visible (e.g. water, rot, flame risk), name it. If unsure, say nothing.\n"
+    "- The 'scout_thought' should be a calm, actionable comment — like from a seasoned auditor.\n"
+    "- Never hallucinate tools or measurements — only describe what you **can see**.\n"
+    "- Do not invent codes. Your job is visual flagging, not quoting standards.\n\n"
+
+    "You are helping a real weatherization team. Accuracy matters. Keep it tight. JSON only."
+)
+
+                
+                
             {
                 "role": "user",
                 "content": [
@@ -134,22 +150,24 @@ def get_matching_trigger_from_image(image_bytes, faaie_logic):
         "matched_triggers": []
     }
 
-    for trigger_key, logic, score in matches[:1]:
-        result["matched_triggers"].append({
-            "trigger": trigger_key,
-            "response": logic
-        })
-
-    if not result["matched_triggers"] and matches:
-        best_match = matches[0]
-        result["matched_triggers"].append({
-            "trigger": best_match[0],
-            "response": best_match[1]
-        })
-
-    if not result["matched_triggers"]:
+    if matches:
+        for trigger_key, logic, score in matches[:3]:  # Top 3 matches
+            result["matched_triggers"].append({
+                "trigger": trigger_key,
+                "score": score,
+                "response": {
+                    "action": logic.get("action", "⚠️🛑 Action Item"),
+                    "reason": logic.get("reason", ""),
+                    "recommendation": logic.get("recommendation", ""),
+                    "source_policy": logic.get("source_policy", ""),
+                    "category": logic.get("category", ""),
+                    "visual_cue": logic.get("visual_cue", "")
+                }
+            })
+    else:
         result["matched_triggers"].append({
             "trigger": "unlisted condition",
+            "score": 0,
             "response": {
                 "action": "⚠️🛑 Action Item",
                 "reason": "Unknown trigger or unlisted condition.",
