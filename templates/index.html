@@ -1,56 +1,64 @@
+<!-- index.html: Basic Chat Thread Support -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>IHWAP Scout</title>
+    <title>IHWAP SCOUT</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 30px; background: #f6f8fa; color: #222; }
-        h1 { color: #444; }
-        form { margin-bottom: 20px; }
-        input[type="file"], input[type="text"] { padding: 8px; width: 60%; margin-right: 10px; }
-        input[type="submit"] { padding: 8px 16px; }
-        .response-box, .chat-box, .trigger-block, .scout-summary {
-            background: white; padding: 15px; margin-top: 20px; border-radius: 8px;
-            border-left: 5px solid #777; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        img.preview { margin-top: 10px; max-width: 400px; border: 1px solid #ccc; }
-        .scout-summary { border-left-color: #0a7f8f; }
-        .trigger-block { border-left-color: #d35400; }
-        .chat-box { border-left-color: #2c3e50; }
-        hr { margin: 30px 0; }
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f7f9fb; }
+        .chat-box { margin-top: 20px; border-left: 4px solid #999; padding: 10px 20px; background: white; border-radius: 6px; }
+        .chat-entry { margin-bottom: 15px; }
+        .chat-entry .user { font-weight: bold; color: #1a73e8; }
+        .chat-entry .scout { font-weight: bold; color: #d63384; }
+        .chat-entry p { margin: 4px 0; }
+        .upload-area, .chat-area { margin-bottom: 20px; }
+        button { margin-top: 5px; }
     </style>
 </head>
 <body>
+    <h1>🧠 IHWAP SCOUT</h1>
 
-<h1>🛠️ IHWAP Scout</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="upload-area">
+            <input type="file" name="image">
+            <button type="submit">Analyze Photo</button>
+        </div>
+        <div class="chat-area">
+            <input type="text" name="chat_input" placeholder="Ask Scout a question..." style="width: 80%;">
+            <button type="submit">Ask</button>
+        </div>
+    </form>
 
-<form method="post" enctype="multipart/form-data">
-    <input type="file" name="image" accept="image/*">
-    <input type="submit" value="Analyze Photo">
-</form>
-
-<form method="post">
-    <input type="text" name="chat_input" placeholder="Ask Scout a question...">
-    <input type="submit" value="Ask">
-</form>
-
-{% if chat_response %}
+    {% if result %}
     <div class="chat-box">
-        <h2>🧠 Scout Chat</h2>
-        <p>{{ chat_response|safe }}</p>
+        <strong>📸 Image Analysis</strong>
+        <p><b>Description:</b> {{ result.description }}</p>
+        <p><b>Visible Elements:</b> {{ result.visible_elements | join(", ") }}</p>
+        <p><b>Hazards:</b> {{ result.hazards | join(", ") }}</p>
+        <p><b>Scout's Thought:</b> {{ result.scout_thought }}</p>
+        {% for match in result.matched_triggers %}
+            <div style="margin-top: 10px;">
+                <b>📌 Trigger:</b> {{ match.trigger }}<br>
+                <b>⚠️ Action:</b> {{ match.response.action }}<br>
+                <b>📝 Reason:</b> {{ match.response.reason }}<br>
+                <b>🔧 Recommendation:</b> {{ match.response.recommendation }}<br>
+                <b>📘 Citation:</b> {{ match.response.source_policy }}<br>
+                <b>📂 Category:</b> {{ match.response.category }}
+            </div>
+        {% endfor %}
     </div>
-{% endif %}
+    {% endif %}
 
-{% if image_path %}
-    <h3>📸 Uploaded Image:</h3>
-    <img class="preview" src="{{ image_path }}" alt="Uploaded image preview">
-{% endif %}
-
-{% if html_output %}
-    <div class="response-box">
-        {{ html_output|safe }}
+    {% if chat_response %}
+    <div class="chat-box">
+        <div class="chat-entry">
+            <span class="user">You:</span>
+            <p>{{ request.form['chat_input'] }}</p>
+        </div>
+        <div class="chat-entry">
+            <span class="scout">🧠 Scout Chat:</span>
+            <p>{{ chat_response }}</p>
+        </div>
     </div>
-{% endif %}
-
+    {% endif %}
 </body>
 </html>
