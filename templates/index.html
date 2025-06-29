@@ -2,78 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IHWAP SCOUT</title>
+    <title>IHWAP Scout</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f7f7f7; color: #333; }
-        h1 { color: #2c3e50; }
-        .section { margin-bottom: 30px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-        .label { font-weight: bold; margin-bottom: 8px; display: block; }
-        input[type="file"], input[type="text"], button { margin-top: 10px; }
-        .chat-entry { margin-bottom: 15px; }
-        .user { font-weight: bold; color: #2980b9; }
-        .assistant { color: #27ae60; margin-left: 20px; }
-        .response-block { background: #eef6f6; padding: 10px; border-left: 4px solid #27ae60; margin-top: 10px; border-radius: 5px; }
-        .image-preview { max-width: 300px; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; }
-        pre { white-space: pre-wrap; word-wrap: break-word; }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f2f2f2; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        .chat-box { background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
+        .chat-entry { margin-bottom: 10px; }
+        .chat-entry strong { color: #333; }
+        .form-section { margin-bottom: 20px; }
+        .form-section label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-section input[type="file"],
+        .form-section input[type="text"] { width: 100%; padding: 8px; margin-bottom: 10px; }
+        .form-section button { padding: 8px 16px; }
+        .image-preview { margin-top: 10px; max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; }
+        pre { background-color: #eee; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
     </style>
 </head>
 <body>
-    <h1>🧠 IHWAP SCOUT</h1>
+    <div class="container">
+        <h1>🧠 IHWAP SCOUT</h1>
 
-    <div class="section">
         <form method="POST" enctype="multipart/form-data">
-            <label class="label">Analyze Photo</label>
-            <input type="file" name="image" accept="image/*">
-            <button type="submit">Upload</button>
-        </form>
-
-        {% if image_path %}
-            <p><strong>Uploaded Image:</strong></p>
-            <img src="{{ image_path }}" class="image-preview">
-        {% endif %}
-
-        {% if result %}
-            <div class="response-block">
-                <p><strong>📄 Visual Description:</strong> {{ result.description }}</p>
-                <p><strong>🔍 Visible Elements:</strong> {{ result.visible_elements | join(', ') }}</p>
-                <p><strong>⚠️ Hazards:</strong> {{ result.hazards | join(', ') }}</p>
-                <p><strong>💭 Scout's Thought:</strong> {{ result.scout_thought }}</p>
-                {% for match in result.matched_triggers %}
-                    <hr>
-                    <p><strong>📌 Trigger:</strong> {{ match.trigger }}</p>
-                    <p><strong>⚠️ Action:</strong> {{ match.response.action }}</p>
-                    <p><strong>📝 Reason:</strong> {{ match.response.reason }}</p>
-                    <p><strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}</p>
-                    <p><strong>📘 Citation:</strong> {{ match.response.source_policy }}</p>
-                    <p><strong>📂 Category:</strong> {{ match.response.category }}</p>
-                    <p><strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}</p>
-                {% endfor %}
+            <div class="form-section">
+                <label for="image">Analyze a field photo</label>
+                <input type="file" name="image" id="image">
             </div>
-        {% endif %}
-    </div>
-
-    <div class="section">
-        <form method="POST">
-            <label class="label">Ask Scout a question...</label>
-            <input type="text" name="chat_input" placeholder="e.g. What R-value should I target for knee walls?" style="width: 80%;">
-            <button type="submit">Ask</button>
+            <div class="form-section">
+                <label for="chat_input">Ask Scout a question</label>
+                <input type="text" name="chat_input" id="chat_input" placeholder="e.g., What is the R-value requirement for attics?">
+            </div>
+            <div class="form-section">
+                <button type="submit">Submit</button>
+                <button type="submit" name="clear_chat" value="1">Clear Chat</button>
+            </div>
         </form>
 
-        {% if session.chat_history %}
-            <div>
-                <h3>💬 Scout Chat:</h3>
-                {% for entry in session.chat_history %}
+        {% if chat_history %}
+            <div class="chat-box">
+                {% for entry in chat_history %}
                     <div class="chat-entry">
-                        {% if entry.role == "user" %}
-                            <div class="user">You: {{ entry.content }}</div>
-                        {% elif entry.role == "assistant" %}
-                            <div class="assistant">🧠 Scout: {{ entry.content | safe }}</div>
-                        {% endif %}
+                        <strong>{{ "You" if entry.role == 'user' else "🧠 Scout" }}:</strong> {{ entry.content }}
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
+
+        {% if chat_response %}
+            <div class="chat-box">
+                <strong>🧠 Scout:</strong> {{ chat_response }}
+            </div>
+        {% endif %}
+
+        {% if result %}
+            <hr>
+            <h3>🔍 FAAIE Result</h3>
+            <p><strong>Description:</strong> {{ result.description }}</p>
+            <p><strong>Scout Thought:</strong> {{ result.scout_thought }}</p>
+            <p><strong>Visible Elements:</strong> {{ result.visible_elements | join(", ") }}</p>
+            <p><strong>Hazards:</strong> {{ result.hazards | join(", ") }}</p>
+
+            {% for match in result.matched_triggers %}
+                <h4>📌 Trigger: {{ match.trigger }}</h4>
+                <p><strong>⚠️ Action:</strong> {{ match.response.action }}</p>
+                <p><strong>📝 Reason:</strong> {{ match.response.reason }}</p>
+                <p><strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}</p>
+                <p><strong>📘 Citation:</strong> {{ match.response.source_policy }}</p>
+                <p><strong>📂 Category:</strong> {{ match.response.category }}</p>
+                <p><strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}</p>
+            {% endfor %}
+
+            {% if image_path %}
+                <img src="{{ image_path }}" class="image-preview">
+            {% endif %}
+        {% endif %}
     </div>
 </body>
 </html>
-
