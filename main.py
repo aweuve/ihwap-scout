@@ -55,7 +55,6 @@ def home():
                 )
                 reply = completion.choices[0].message["content"]
                 session["chat_history"].append({"role": "assistant", "content": reply})
-                chat_response = reply
             except Exception as e:
                 chat_response = f"Error retrieving response: {str(e)}"
 
