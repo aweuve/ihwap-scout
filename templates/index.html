@@ -4,100 +4,76 @@
     <meta charset="UTF-8">
     <title>IHWAP SCOUT</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 2rem auto;
-            max-width: 800px;
-            background: #f9f9f9;
-            padding: 1rem;
-        }
-        h1 { color: #333; }
-        form { margin-bottom: 2rem; }
-        label { display: block; margin-top: 1rem; }
-        textarea, input[type="text"] {
-            width: 100%;
-            padding: 0.5rem;
-            font-size: 1rem;
-        }
-        .response-box {
-            background: #fff;
-            border: 1px solid #ccc;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
-        .image-preview {
-            margin-top: 1rem;
-        }
-        .chat-thread {
-            background: #eef;
-            padding: 1rem;
-            border-radius: 6px;
-            margin-top: 1rem;
-        }
-        .chat-thread div { margin-bottom: 0.5rem; }
-        .chat-user { font-weight: bold; color: #003366; }
-        .chat-assistant { font-weight: bold; color: #660000; }
+        body { font-family: Arial, sans-serif; margin: 40px; background-color: #f7f7f7; color: #333; }
+        h1 { color: #2c3e50; }
+        .section { margin-bottom: 30px; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+        .label { font-weight: bold; margin-bottom: 8px; display: block; }
+        input[type="file"], input[type="text"], button { margin-top: 10px; }
+        .chat-entry { margin-bottom: 15px; }
+        .user { font-weight: bold; color: #2980b9; }
+        .assistant { color: #27ae60; margin-left: 20px; }
+        .response-block { background: #eef6f6; padding: 10px; border-left: 4px solid #27ae60; margin-top: 10px; border-radius: 5px; }
+        .image-preview { max-width: 300px; margin-top: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        pre { white-space: pre-wrap; word-wrap: break-word; }
     </style>
 </head>
 <body>
     <h1>🧠 IHWAP SCOUT</h1>
 
-    <!-- Image Upload Form -->
-    <form method="POST" enctype="multipart/form-data">
-        <label for="image">Upload Field Photo:</label>
-        <input type="file" name="image" accept="image/*">
-        <button type="submit">Analyze Photo</button>
-    </form>
+    <div class="section">
+        <form method="POST" enctype="multipart/form-data">
+            <label class="label">Analyze Photo</label>
+            <input type="file" name="image" accept="image/*">
+            <button type="submit">Upload</button>
+        </form>
 
-    {% if result %}
-        <div class="response-box">
-            <h3>🧠 FAAIE Response</h3>
-            <p><strong>Description:</strong> {{ result.description }}</p>
-            <p><strong>Visible Elements:</strong> {{ result.visible_elements|join(", ") }}</p>
-            <p><strong>Hazards:</strong> {{ result.hazards|join(", ") }}</p>
-            <p><strong>Scout’s Thought:</strong> {{ result.scout_thought }}</p>
+        {% if image_path %}
+            <p><strong>Uploaded Image:</strong></p>
+            <img src="{{ image_path }}" class="image-preview">
+        {% endif %}
 
-            {% for match in result.matched_triggers %}
-                <hr>
-                <p><strong>📌 Trigger:</strong> {{ match.trigger }}</p>
-                <p><strong>⚠️ Action:</strong> {{ match.response.action }}</p>
-                <p><strong>📝 Reason:</strong> {{ match.response.reason }}</p>
-                <p><strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}</p>
-                <p><strong>📘 Citation:</strong> {{ match.response.source_policy }}</p>
-                <p><strong>📂 Category:</strong> {{ match.response.category }}</p>
-                <p><strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}</p>
-            {% endfor %}
+        {% if result %}
+            <div class="response-block">
+                <p><strong>📄 Visual Description:</strong> {{ result.description }}</p>
+                <p><strong>🔍 Visible Elements:</strong> {{ result.visible_elements | join(', ') }}</p>
+                <p><strong>⚠️ Hazards:</strong> {{ result.hazards | join(', ') }}</p>
+                <p><strong>💭 Scout's Thought:</strong> {{ result.scout_thought }}</p>
+                {% for match in result.matched_triggers %}
+                    <hr>
+                    <p><strong>📌 Trigger:</strong> {{ match.trigger }}</p>
+                    <p><strong>⚠️ Action:</strong> {{ match.response.action }}</p>
+                    <p><strong>📝 Reason:</strong> {{ match.response.reason }}</p>
+                    <p><strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}</p>
+                    <p><strong>📘 Citation:</strong> {{ match.response.source_policy }}</p>
+                    <p><strong>📂 Category:</strong> {{ match.response.category }}</p>
+                    <p><strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 
-            {% if image_path %}
-                <div class="image-preview">
-                    <img src="{{ image_path }}" alt="Uploaded Image" style="max-width:100%;">
-                </div>
-            {% endif %}
-        </div>
-    {% endif %}
+    <div class="section">
+        <form method="POST">
+            <label class="label">Ask Scout a question...</label>
+            <input type="text" name="chat_input" placeholder="e.g. What R-value should I target for knee walls?" style="width: 80%;">
+            <button type="submit">Ask</button>
+        </form>
 
-    <!-- Scout Chat Form -->
-    <form method="POST">
-        <label for="chat_input">Ask Scout a question...</label>
-        <textarea name="chat_input" rows="3" placeholder="e.g., When is a health & safety waiver required?"></textarea>
-        <button type="submit">Ask</button>
-    </form>
-
-    {% if chat_history %}
-        <div class="chat-thread">
-            <h3>🧵 Chat History</h3>
-            {% for msg in chat_history %}
-                <div>
-                    {% if msg.role == "user" %}
-                        <span class="chat-user">You:</span> {{ msg.content }}
-                    {% else %}
-                        <span class="chat-assistant">🧠 Scout:</span> {{ msg.content }}
-                    {% endif %}
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+        {% if session.chat_history %}
+            <div>
+                <h3>💬 Scout Chat:</h3>
+                {% for entry in session.chat_history %}
+                    <div class="chat-entry">
+                        {% if entry.role == "user" %}
+                            <div class="user">You: {{ entry.content }}</div>
+                        {% elif entry.role == "assistant" %}
+                            <div class="assistant">🧠 Scout: {{ entry.content | safe }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
 </body>
 </html>
-
 
