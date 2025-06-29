@@ -6,113 +6,98 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
-            background-color: #f7f7f7;
+            margin: 2rem auto;
+            max-width: 800px;
+            background: #f9f9f9;
+            padding: 1rem;
         }
-        h1 {
-            color: #333;
-        }
-        form {
-            margin-bottom: 30px;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-        }
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-        input[type="file"], input[type="text"] {
-            margin-bottom: 10px;
-        }
-        textarea {
+        h1 { color: #333; }
+        form { margin-bottom: 2rem; }
+        label { display: block; margin-top: 1rem; }
+        textarea, input[type="text"] {
             width: 100%;
-            height: 120px;
-            margin-bottom: 10px;
-            font-family: monospace;
+            padding: 0.5rem;
+            font-size: 1rem;
         }
-        img {
-            max-width: 400px;
-            margin-top: 20px;
+        .response-box {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
-        .result-block {
-            background: #e6f7ff;
-            border: 1px solid #91d5ff;
-            padding: 20px;
-            margin-top: 20px;
+        .image-preview {
+            margin-top: 1rem;
+        }
+        .chat-thread {
+            background: #eef;
+            padding: 1rem;
             border-radius: 6px;
+            margin-top: 1rem;
         }
-        .chat-box {
-            background: #fff7e6;
-            border: 1px solid #ffe58f;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 6px;
-        }
+        .chat-thread div { margin-bottom: 0.5rem; }
+        .chat-user { font-weight: bold; color: #003366; }
+        .chat-assistant { font-weight: bold; color: #660000; }
     </style>
 </head>
 <body>
     <h1>🧠 IHWAP SCOUT</h1>
 
-    <!-- Image Upload + Logic Trigger -->
+    <!-- Image Upload Form -->
     <form method="POST" enctype="multipart/form-data">
-        <label for="image">Upload a Field Photo:</label>
+        <label for="image">Upload Field Photo:</label>
         <input type="file" name="image" accept="image/*">
-        <br><br>
-        <input type="submit" value="Analyze Photo">
+        <button type="submit">Analyze Photo</button>
     </form>
 
     {% if result %}
-        <div class="result-block">
-            <h2>📸 Visual Analysis</h2>
+        <div class="response-box">
+            <h3>🧠 FAAIE Response</h3>
             <p><strong>Description:</strong> {{ result.description }}</p>
-            <p><strong>Visible Elements:</strong> {{ result.visible_elements | join(", ") }}</p>
-            <p><strong>Hazards:</strong> {{ result.hazards | join(", ") }}</p>
+            <p><strong>Visible Elements:</strong> {{ result.visible_elements|join(", ") }}</p>
+            <p><strong>Hazards:</strong> {{ result.hazards|join(", ") }}</p>
             <p><strong>Scout’s Thought:</strong> {{ result.scout_thought }}</p>
 
-            {% for trigger in result.matched_triggers %}
+            {% for match in result.matched_triggers %}
                 <hr>
-                <p><strong>📌 Trigger:</strong> {{ trigger.trigger }}</p>
-                <p><strong>⚠️ Action:</strong> {{ trigger.response.action }}</p>
-                <p><strong>📝 Reason:</strong> {{ trigger.response.reason }}</p>
-                <p><strong>🔧 Recommendation:</strong> {{ trigger.response.recommendation }}</p>
-                <p><strong>📘 Citation:</strong> {{ trigger.response.source_policy }}</p>
-                <p><strong>📂 Category:</strong> {{ trigger.response.category }}</p>
-                <p><strong>👀 Visual Cue:</strong> {{ trigger.response.visual_cue }}</p>
-            {% endfor  %}
+                <p><strong>📌 Trigger:</strong> {{ match.trigger }}</p>
+                <p><strong>⚠️ Action:</strong> {{ match.response.action }}</p>
+                <p><strong>📝 Reason:</strong> {{ match.response.reason }}</p>
+                <p><strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}</p>
+                <p><strong>📘 Citation:</strong> {{ match.response.source_policy }}</p>
+                <p><strong>📂 Category:</strong> {{ match.response.category }}</p>
+                <p><strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}</p>
+            {% endfor %}
 
             {% if image_path %}
-                <img src="{{ image_path }}" alt="Uploaded Image">
+                <div class="image-preview">
+                    <img src="{{ image_path }}" alt="Uploaded Image" style="max-width:100%;">
+                </div>
             {% endif %}
         </div>
     {% endif %}
 
-    <!-- Scout Chat Input -->
+    <!-- Scout Chat Form -->
     <form method="POST">
         <label for="chat_input">Ask Scout a question...</label>
-        <input type="text" name="chat_input" style="width: 60%;" placeholder="e.g. When do I need a deferral?">
-        <input type="submit" value="Ask">
+        <textarea name="chat_input" rows="3" placeholder="e.g., When is a health & safety waiver required?"></textarea>
+        <button type="submit">Ask</button>
     </form>
 
-    {% if chat_response %}
-        <div class="chat-box">
-            <h2>💬 Scout Chat</h2>
-            <p>{{ chat_response | safe }}</p>
+    {% if chat_history %}
+        <div class="chat-thread">
+            <h3>🧵 Chat History</h3>
+            {% for msg in chat_history %}
+                <div>
+                    {% if msg.role == "user" %}
+                        <span class="chat-user">You:</span> {{ msg.content }}
+                    {% else %}
+                        <span class="chat-assistant">🧠 Scout:</span> {{ msg.content }}
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
     {% endif %}
-    {% if chat_history %}
-<div class="container chat-box">
-    <h2>💬 Scout Chat</h2>
-    {% for entry in chat_history %}
-        {% if entry.role == 'user' %}
-            <div class="chat-entry"><strong>You:</strong> {{ entry.content }}</div>
-        {% elif entry.role == 'assistant' %}
-            <div class="chat-entry"><strong>🧠 Scout:</strong> {{ entry.content }}</div>
-        {% endif %}
-    {% endfor %}
-</div>
-{% endif %}
 </body>
 </html>
+
 
