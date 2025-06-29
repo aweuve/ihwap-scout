@@ -101,6 +101,18 @@
             <p>{{ chat_response | safe }}</p>
         </div>
     {% endif %}
+    {% if chat_history %}
+<div class="container chat-box">
+    <h2>💬 Scout Chat</h2>
+    {% for entry in chat_history %}
+        {% if entry.role == 'user' %}
+            <div class="chat-entry"><strong>You:</strong> {{ entry.content }}</div>
+        {% elif entry.role == 'assistant' %}
+            <div class="chat-entry"><strong>🧠 Scout:</strong> {{ entry.content }}</div>
+        {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 </body>
 </html>
 
