@@ -118,6 +118,56 @@ def download_report():
     buffer.seek(0)
 
     return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
+    chat_history = []
+
+@app.route("/", methods=["GET", "POST"])
+def home():
+    global chat_history
+    result = None
+    image_path = None
+
+    if request.method == "POST":
+        # Chat input
+        if "chat_input" in request.form and request.form["chat_input"].strip() != "":
+            user_question = request.form["chat_input"]
+            chat_history.append({"role": "user", "content": user_question})
+
+            try:
+                completion = openai.ChatCompletion.create(
+                    model="gpt-4o",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are Scout — a QCI and compliance assistant trained in the Illinois Home Weatherization Assistance Program (IHWAP), "
+                                "SWS Field Guide, and DOE WAP protocols.\n\n"
+                                "Respond in a clear, field-savvy tone with:\n"
+                                "• Bullet point examples when helpful\n"
+                                "• Bold policy citations (e.g., **IHWAP 5.4.4**, **SWS 3.1201.2**)\n"
+                                "• Human fallback flag if unsure\n\n"
+                                "Always prioritize:\n"
+                                "1. Health & Safety\n"
+                                "2. Home Integrity\n"
+                                "3. Energy Efficiency"
+                            )
+                        },
+                        *chat_history
+                    ],
+                    max_tokens=400
+                )
+                reply = completion.choices[0].message["content"]
+                chat_history.append({"role": "assistant", "content": reply})
+            except Exception as e:
+                chat_history.append({"role": "assistant", "content": f"Error: {str(e)}"})
+
+        # Image analysis
+        image = request.files.get("image")
+        if image:
+            # process as usual...
+            pass
+
+    return render_template("index.html", result=result, image_path=image_path, chat_history=chat_history)
+
 
 # ✅ Run locally or on Render
 port = int(os.environ.get("PORT", 5000))
