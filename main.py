@@ -39,11 +39,9 @@ def home():
         session["chat_history"] = []
 
     if request.method == "POST":
-        # 🔄 Optional: Clear chat
         if "clear_chat" in request.form:
             session["chat_history"] = []
 
-        # 💬 Chat input
         elif "chat_input" in request.form and request.form["chat_input"].strip() != "":
             user_question = request.form["chat_input"]
             session["chat_history"].append({"role": "user", "content": user_question})
@@ -58,7 +56,6 @@ def home():
             except Exception as e:
                 chat_response = f"Error retrieving response: {str(e)}"
 
-        # 🖼️ Image input
         image = request.files.get("image")
         if image:
             upload_dir = os.path.join("static", "uploads")
@@ -81,7 +78,7 @@ def evaluate_image():
         image_bytes = image_file.read()
         result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
-        debug_log = f"📤 Image upload received\n🧠 Description:\n{result['description'][:500]}\n\n"
+        debug_log = f"📤 Image upload received\n🧐 Description:\n{result['description'][:500]}\n\n"
         if result["visible_elements"]:
             debug_log += f"🔎 Visible Elements: {', '.join(result['visible_elements'])}\n"
         if result["hazards"]:
@@ -96,33 +93,36 @@ def evaluate_image():
         print("🚨 Server Error:", str(e))
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
 
-@app.route("/download_report")
+@app.route("/download_report", methods=["POST"])
 def download_report():
-    trigger = request.args.get("trigger", "N/A")
-    result = request.args.get("result", "N/A")
-    image_path = request.args.get("image_path", None)
+    result_data = request.form.get("result_data")
+    if not result_data:
+        return "No result data provided", 400
 
+    result = json.loads(result_data)
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=letter)
     pdf.setFont("Helvetica", 12)
 
-    pdf.drawString(50, 750, "🧠 IHWAP Scout Report")
+    pdf.drawString(50, 750, "IHWAP Scout Report")
     pdf.drawString(50, 730, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    pdf.drawString(50, 710, f"Trigger: {trigger}")
-    pdf.drawString(50, 690, f"Result: {result}")
+    pdf.drawString(50, 710, f"Description: {result.get('description', 'N/A')[:100]}...")
 
-    if image_path and os.path.exists(image_path):
-        try:
-            pdf.drawImage(image_path, 50, 500, width=200, height=150)
-        except Exception as e:
-            pdf.drawString(50, 670, f"Image error: {str(e)}")
+    y = 690
+    for hazard in result.get("hazards", []):
+        pdf.drawString(50, y, f"Hazard: {hazard}")
+        y -= 20
+        if y < 100:
+            pdf.showPage()
+            y = 750
 
     pdf.showPage()
     pdf.save()
     buffer.seek(0)
 
-    return send_file(buffer, as_attachment=True, download_name="scout_report.pdf", mimetype="application/pdf")
+    return send_file(buffer, as_attachment=True, download_name="Scout_Report.pdf", mimetype="application/pdf")
 
 # ✅ Start app
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
+
