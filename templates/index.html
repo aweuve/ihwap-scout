@@ -14,7 +14,31 @@
         .form-section label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-section input[type="file"],
         .form-section input[type="text"] { width: 100%; padding: 8px; margin-bottom: 10px; }
-        .form-section button { padding: 8px 16px; }
+        .form-section button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .form-section button:hover {
+            background-color: #45a049;
+        }
+        .form-section button[type="button"] {
+            background-color: #e7e7e7;
+            color: #333;
+            border: 1px solid #ccc;
+        }
+        .form-section button[type="button"]:hover {
+            background-color: #d7d7d7;
+        }
+        .form-section .quick-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
         .image-preview { margin-top: 10px; max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; }
         pre { background-color: #eee; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
         .safety-note { font-size: 0.9em; color: #666; margin-top: -10px; margin-bottom: 15px; }
@@ -36,7 +60,7 @@
                 <label for="chat_input">Ask Scout a question</label>
                 <input type="text" name="chat_input" id="chat_input" placeholder="Ask about attic R-values, combustion safety, deferral rules…">
 
-                <div style="margin-top: 10px;">
+                <div class="quick-buttons">
                     <button type="button" onclick="fillQuestion('What’s the IHWAP deferral rule for mold?')">Mold Deferral</button>
                     <button type="button" onclick="fillQuestion('How do I calculate attic R-value?')">Attic R-Value</button>
                     <button type="button" onclick="fillQuestion('When are CO alarms required?')">CO Alarm Rule</button>
@@ -107,4 +131,3 @@
     </script>
 </body>
 </html>
-
