@@ -103,6 +103,11 @@
             {% if image_path %}
                 <img src="{{ image_path }}" class="image-preview">
             {% endif %}
+
+            <form method="POST" action="/download_report">
+                <input type="hidden" name="result_data" value='{{ result | tojson }}'>
+                <button type="submit">Download PDF Report</button>
+            </form>
         {% endif %}
     </div>
 
