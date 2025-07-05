@@ -106,6 +106,7 @@ def home():
                 trig for trig in result.get("matched_triggers", [])
                 if trig.get("response", {}).get("category") in allowed
             ]
+            result["scene_type"] = scene_type
 
     return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []))
 
@@ -126,6 +127,10 @@ def download_report():
     pdf.drawString(50, 755, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     y = 730
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, f"Scene Type Detected: {result.get('scene_type', 'Unknown').capitalize()}")
+    y -= 30
+
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(50, y, "Description")
     y -= 15
@@ -178,7 +183,7 @@ def download_report():
     y -= 20
     pdf.setFont("Helvetica-Oblique", 9)
     pdf.drawString(50, y, "Prepared by IHWAP SCOUT — Field-Aware Artificial Intelligence Engine")
-    pdf.drawString(50, y - 15, "All triggers and hazard flags are automated predictions. Field verification required prior to action.")
+    pdf.drawString(50, y - 15, "All triggers and hazard flags are automated predictions. Field verification by certified staff is required before any work or deferral.")
 
     pdf.showPage()
     pdf.save()
@@ -189,5 +194,3 @@ def download_report():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
