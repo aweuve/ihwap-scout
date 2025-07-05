@@ -17,6 +17,7 @@
         .form-section button { padding: 8px 16px; }
         .image-preview { margin-top: 10px; max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; }
         pre { background-color: #eee; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
+        .safety-note { font-size: 0.9em; color: #666; margin-top: -10px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -26,7 +27,9 @@
         <form method="POST" enctype="multipart/form-data">
             <div class="form-section">
                 <label for="image">Analyze a field photo</label>
-                <input type="file" name="image" id="image">
+                <input type="file" name="image" id="image" accept="image/png, image/jpeg" required>
+                <p class="safety-note">⚠️ Please upload only field photos related to home weatherization inspections. Do not upload personal or unrelated images.</p>
+                <img id="preview" src="#" alt="Image preview..." class="image-preview" style="display:none;">
             </div>
             <div class="form-section">
                 <label for="chat_input">Ask Scout a question</label>
@@ -71,5 +74,17 @@
             {% endif %}
         {% endif %}
     </div>
+
+    <script>
+        document.getElementById("image").onchange = function (event) {
+            const [file] = event.target.files;
+            if (file) {
+                const preview = document.getElementById("preview");
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            }
+        };
+    </script>
 </body>
 </html>
+
