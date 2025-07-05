@@ -113,16 +113,20 @@ def download_report():
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(50, y, "Description")
     y -= 15
-    pdf.setFont("Helvetica", 10)
-    pdf.drawString(50, y, result.get("description", "N/A"))
-    y -= 30
+    textobject = pdf.beginText(50, y)
+    textobject.setFont("Helvetica", 10)
+    textobject.textLines(result.get("description", "N/A"))
+    pdf.drawText(textobject)
+    y = textobject.getY() - 20
 
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(50, y, "Scout Thought")
     y -= 15
-    pdf.setFont("Helvetica", 10)
-    pdf.drawString(50, y, result.get("scout_thought", "N/A"))
-    y -= 30
+    textobject = pdf.beginText(50, y)
+    textobject.setFont("Helvetica", 10)
+    textobject.textLines(result.get("scout_thought", "N/A"))
+    pdf.drawText(textobject)
+    y = textobject.getY() - 30
 
     pdf.setFont("Helvetica-Bold", 12)
     pdf.drawString(50, y, "Visible Elements")
