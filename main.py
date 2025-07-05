@@ -106,11 +106,23 @@ def download_report():
 
     pdf.drawString(50, 750, "IHWAP Scout Report")
     pdf.drawString(50, 730, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    pdf.drawString(50, 710, f"Description: {result.get('description', 'N/A')[:100]}...")
 
-    y = 690
+    y = 710
+    pdf.drawString(50, y, f"Description: {result.get('description', 'N/A')}")
+    y -= 20
+    pdf.drawString(50, y, f"Scout Thought: {result.get('scout_thought', 'N/A')}")
+    y -= 40
+
+    pdf.drawString(50, y, "Visible Elements:")
+    y -= 20
+    for element in result.get("visible_elements", []):
+        pdf.drawString(60, y, f"- {element}")
+        y -= 20
+
+    pdf.drawString(50, y, "Hazards:")
+    y -= 20
     for hazard in result.get("hazards", []):
-        pdf.drawString(50, y, f"Hazard: {hazard}")
+        pdf.drawString(60, y, f"- {hazard}")
         y -= 20
         if y < 100:
             pdf.showPage()
@@ -125,4 +137,3 @@ def download_report():
 # ✅ Start app
 port = int(os.environ.get("PORT", 5000))
 app.run(host="0.0.0.0", port=port)
-
