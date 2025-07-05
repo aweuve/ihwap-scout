@@ -22,18 +22,25 @@
 </head>
 <body>
     <div class="container">
-        <h1>🧠 IHWAP SCOUT</h1>
+        <h1>🧐 IHWAP SCOUT</h1>
 
         <form method="POST" enctype="multipart/form-data">
             <div class="form-section">
                 <label for="image">Analyze a field photo</label>
                 <input type="file" name="image" id="image" accept="image/png, image/jpeg" required>
-                <p class="safety-note">⚠️ Please upload only field photos related to home weatherization inspections. Do not upload personal or unrelated images.</p>
+                <p class="safety-note">⚠️ Please upload only field photos related to home weatherization inspections. Do not upload personal or unrelated images.
+                </p>
                 <img id="preview" src="#" alt="Image preview..." class="image-preview" style="display:none;">
             </div>
             <div class="form-section">
                 <label for="chat_input">Ask Scout a question</label>
-                <input type="text" name="chat_input" id="chat_input" placeholder="e.g., What is the R-value requirement for attics?">
+                <input type="text" name="chat_input" id="chat_input" placeholder="Ask about attic R-values, combustion safety, deferral rules…">
+
+                <div style="margin-top: 10px;">
+                    <button type="button" onclick="fillQuestion('What’s the IHWAP deferral rule for mold?')">Mold Deferral</button>
+                    <button type="button" onclick="fillQuestion('How do I calculate attic R-value?')">Attic R-Value</button>
+                    <button type="button" onclick="fillQuestion('When are CO alarms required?')">CO Alarm Rule</button>
+                </div>
             </div>
             <div class="form-section">
                 <button type="submit">Submit</button>
@@ -45,7 +52,7 @@
             <div class="chat-box">
                 {% for entry in chat_history %}
                     <div class="chat-entry">
-                        <strong>{{ "You" if entry.role == 'user' else "🧠 Scout" }}:</strong> {{ entry.content }}
+                        <strong>{{ "You" if entry.role == 'user' else "🧐 Scout" }}:</strong> {{ entry.content }}
                     </div>
                 {% endfor %}
             </div>
@@ -64,7 +71,7 @@
                 <p><strong>⚠️ Action:</strong> {{ match.response.action }}</p>
                 <p><strong>📝 Reason:</strong> {{ match.response.reason }}</p>
                 <p><strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}</p>
-                <p><strong>📘 Citation:</strong> {{ match.response.source_policy }}</p>
+                <p><strong>📚 Citation:</strong> {{ match.response.source_policy }}</p>
                 <p><strong>📂 Category:</strong> {{ match.response.category }}</p>
                 <p><strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}</p>
             {% endfor %}
@@ -84,7 +91,15 @@
                 preview.style.display = 'block';
             }
         };
+
+        function fillQuestion(text) {
+            document.getElementById('chat_input').value = text;
+        }
+
+        const chatBox = document.querySelector('.chat-box');
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
     </script>
 </body>
 </html>
-
