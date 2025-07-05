@@ -102,31 +102,51 @@ def download_report():
     result = json.loads(result_data)
     buffer = io.BytesIO()
     pdf = canvas.Canvas(buffer, pagesize=letter)
-    pdf.setFont("Helvetica", 12)
 
-    pdf.drawString(50, 750, "IHWAP Scout Report")
-    pdf.drawString(50, 730, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(50, 770, "IHWAP SCOUT — FIELD REPORT")
 
-    y = 710
-    pdf.drawString(50, y, f"Description: {result.get('description', 'N/A')}")
-    y -= 20
-    pdf.drawString(50, y, f"Scout Thought: {result.get('scout_thought', 'N/A')}")
-    y -= 40
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(50, 755, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    pdf.drawString(50, y, "Visible Elements:")
-    y -= 20
+    y = 730
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Description")
+    y -= 15
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(50, y, result.get("description", "N/A"))
+    y -= 30
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Scout Thought")
+    y -= 15
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(50, y, result.get("scout_thought", "N/A"))
+    y -= 30
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Visible Elements")
+    y -= 15
+    pdf.setFont("Helvetica", 10)
     for element in result.get("visible_elements", []):
         pdf.drawString(60, y, f"- {element}")
-        y -= 20
+        y -= 15
 
-    pdf.drawString(50, y, "Hazards:")
-    y -= 20
+    y -= 10
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Hazards")
+    y -= 15
+    pdf.setFont("Helvetica", 10)
     for hazard in result.get("hazards", []):
         pdf.drawString(60, y, f"- {hazard}")
-        y -= 20
+        y -= 15
         if y < 100:
             pdf.showPage()
             y = 750
+
+    y -= 20
+    pdf.setFont("Helvetica-Oblique", 9)
+    pdf.drawString(50, y, "Prepared by IHWAP SCOUT — Field-Aware Artificial Intelligence Engine")
 
     pdf.showPage()
     pdf.save()
