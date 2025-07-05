@@ -3,136 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <title>IHWAP Scout</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f2f2f2; }
-        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; letter-spacing: 1px; font-weight: bold; }
-        .chat-box { background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
-        .chat-entry { margin-bottom: 10px; }
-        .chat-entry strong { color: #333; }
-        .form-section { margin-bottom: 20px; }
-        .form-section label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-section input[type="file"],
-        .form-section input[type="text"] { width: 100%; padding: 8px; margin-bottom: 10px; }
-        .form-section button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #4CAF50;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .form-section button:hover {
-            background-color: #45a049;
-        }
-        .form-section button[type="button"] {
-            background-color: #e7e7e7;
-            color: #333;
-            border: 1px solid #ccc;
-        }
-        .form-section button[type="button"]:hover {
-            background-color: #d7d7d7;
-        }
-        .form-section .quick-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        .image-preview { margin-top: 10px; max-width: 100%; height: auto; border: 1px solid #ddd; border-radius: 5px; }
-        pre { background-color: #eee; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
-        .safety-note { font-size: 0.9em; color: #666; margin-top: -10px; margin-bottom: 15px; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/flatly/bootstrap.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>IHWAP SCOUT</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4">IHWAP SCOUT</h1>
 
         <form method="POST" enctype="multipart/form-data">
-            <div class="form-section">
+            <div class="form-group">
                 <label for="image">Analyze a field photo</label>
-                <input type="file" name="image" id="image" accept="image/png, image/jpeg">
-                <p class="safety-note">⚠️ Please upload only field photos related to home weatherization inspections. Do not upload personal or unrelated images.
-                </p>
-                <img id="preview" src="#" alt="Image preview..." class="image-preview" style="display:none;">
+                <input type="file" name="image" id="image" class="form-control-file">
+                <small class="form-text text-muted">
+                    ⚠️ Please upload only field photos related to home weatherization inspections. Do not upload personal or unrelated images.
+                </small>
             </div>
-            <div class="form-section">
-                <label for="chat_input">Ask Scout a question</label>
-                <input type="text" name="chat_input" id="chat_input" placeholder="Ask about attic R-values, combustion safety, deferral rules…">
 
-                <div class="quick-buttons">
-                    <button type="button" onclick="fillQuestion('What’s the IHWAP deferral rule for mold?')">Mold Deferral</button>
-                    <button type="button" onclick="fillQuestion('How do I calculate attic R-value?')">Attic R-Value</button>
-                    <button type="button" onclick="fillQuestion('When are CO alarms required?')">CO Alarm Rule</button>
-                </div>
+            <div class="form-group">
+                <label for="chat_input">Ask Scout a question</label>
+                <input type="text" name="chat_input" id="chat_input" class="form-control" placeholder="Ask about attic R-values, combustion safety, deferral rules...">
             </div>
-            <div class="form-section">
-                <button type="submit">Submit</button>
-                <button type="submit" name="clear_chat" value="1">Clear Chat</button>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Submit</button>
+                <button type="submit" name="clear_chat" value="1" class="btn btn-danger">Clear Chat</button>
             </div>
         </form>
 
         {% if chat_history %}
-            <div class="chat-box">
+            <h3>Chat History</h3>
+            <ul class="list-group mb-4">
                 {% for entry in chat_history %}
-                    <div class="chat-entry">
-                        <strong>{{ "You" if entry.role == 'user' else "Scout" }}:</strong> {{ entry.content }}
-                    </div>
+                    <li class="list-group-item">
+                        <strong>{{ "You" if entry.role == 'user' else "🤖 Scout" }}:</strong> {{ entry.content }}
+                    </li>
                 {% endfor %}
-            </div>
+            </ul>
         {% endif %}
 
         {% if result %}
             <hr>
             <h3>FAAIE Result</h3>
+            <p><strong>Scene Type Detected:</strong> {{ result.scene_type.capitalize() }}</p>
             <p><strong>Description:</strong> {{ result.description }}</p>
             <p><strong>Scout Thought:</strong> {{ result.scout_thought }}</p>
             <p><strong>Visible Elements:</strong> {{ result.visible_elements | join(", ") }}</p>
-            <p><strong>Hazards:</strong> {{ result.hazards | join(", ") }}</p>
 
-            {% for match in result.matched_triggers %}
-                <h4>Trigger: {{ match.trigger }}</h4>
-                <p><strong>Action:</strong> {{ match.response.action }}</p>
-                <p><strong>Reason:</strong> {{ match.response.reason }}</p>
-                <p><strong>Recommendation:</strong> {{ match.response.recommendation }}</p>
-                <p><strong>Citation:</strong> {{ match.response.source_policy }}</p>
-                <p><strong>Category:</strong> {{ match.response.category }}</p>
-                <p><strong>Visual Cue:</strong> {{ match.response.visual_cue }}</p>
-            {% endfor %}
-
-            {% if image_path %}
-                <img src="{{ image_path }}" class="image-preview">
+            <h4>Triggers:</h4>
+            {% if result.matched_triggers %}
+                <ul class="list-group">
+                    {% for trigger in result.matched_triggers %}
+                        <li class="list-group-item">
+                            <strong>Trigger:</strong> {{ trigger.trigger }}<br>
+                            <strong>Action:</strong> {{ trigger.response.action }}<br>
+                            <strong>Reason:</strong> {{ trigger.response.reason }}<br>
+                            <strong>Recommendation:</strong> {{ trigger.response.recommendation }}<br>
+                            <strong>Citation:</strong> {{ trigger.response.source_policy }}<br>
+                            <strong>Category:</strong> {{ trigger.response.category }}<br>
+                            <strong>Visual Cue:</strong> {{ trigger.response.visual_cue }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No relevant triggers detected for this scene type.</p>
             {% endif %}
 
+            <div class="alert alert-warning mt-3">
+                ⚠️ Automated analysis &mdash; Field verification by certified staff is required before any work or deferral.
+            </div>
+
             <form method="POST" action="/download_report">
-                <input type="hidden" name="result_data" value='{{ result | tojson }}'>
-                <button type="submit">Download PDF Report</button>
+                <input type="hidden" name="result_data" value='{{ result | tojson | safe }}'>
+                <button type="submit" class="btn btn-primary mt-3">Download PDF Report</button>
             </form>
         {% endif %}
+
+        {% if image_path %}
+            <hr>
+            <h4>Uploaded Photo:</h4>
+            <img src="{{ image_path }}" alt="Uploaded Field Photo" class="img-fluid">
+        {% endif %}
     </div>
-
-    <footer style="text-align:center; font-size: 0.85em; color: #888; margin-top: 40px;">
-        Powered by FAAIE — Field-Aware Artificial Intelligence Engine. Always verify compliance decisions per IHWAP protocols before proceeding with work.
-    </footer>
-
-    <script>
-        document.getElementById("image").onchange = function (event) {
-            const [file] = event.target.files;
-            if (file) {
-                const preview = document.getElementById("preview");
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-            }
-        };
-
-        function fillQuestion(text) {
-            document.getElementById('chat_input').value = text;
-        }
-
-        const chatBox = document.querySelector('.chat-box');
-        if (chatBox) {
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-    </script>
 </body>
 </html>
+
