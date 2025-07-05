@@ -29,12 +29,6 @@ SYSTEM_PROMPT = (
     "3. Energy Efficiency"
 )
 
-SCENE_PROMPT = (
-    "You are a home inspection assistant. Identify the location or part of the home shown in this image.\n"
-    "Choose from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\n"
-    "Respond ONLY with the category name."
-)
-
 scene_categories = {
     "attic": ["attic", "ventilation", "hazardous materials", "structural"],
     "crawlspace": ["crawlspace", "mechanical", "moisture", "structural"],
@@ -82,17 +76,31 @@ def home():
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
 
-            # Scene classification via API call
+            # Scene classification using OpenAI Vision
             try:
-                scene_completion = openai.ChatCompletion.create(
-                    model="gpt-4o",
+                base64_image = base64.b64encode(image_bytes).decode("utf-8")
+                vision_response = openai.ChatCompletion.create(
+                    model="gpt-4-vision-preview",
                     messages=[
-                        {"role": "system", "content": SCENE_PROMPT},
-                        {"role": "user", "content": "[Image uploaded]"}
+                        {
+                            "role": "system",
+                            "content": "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo.\nChoose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\nRespond ONLY with the category name."
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/jpeg;base64,{base64_image}"
+                                    }
+                                }
+                            ]
+                        }
                     ],
                     max_tokens=10
                 )
-                scene_type = scene_completion.choices[0].message["content"].strip().lower()
+                scene_type = vision_response.choices[0].message["content"].strip().lower()
                 if scene_type not in scene_categories:
                     scene_type = "other"
             except Exception as e:
