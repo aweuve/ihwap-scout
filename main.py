@@ -149,8 +149,32 @@ def download_report():
             y = 750
 
     y -= 20
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Triggers")
+    y -= 15
+    pdf.setFont("Helvetica", 10)
+    for trigger in result.get("matched_triggers", []):
+        lines = [
+            f"Trigger: {trigger.get('trigger')}",
+            f"Action: {trigger.get('response', {}).get('action')}",
+            f"Reason: {trigger.get('response', {}).get('reason')}",
+            f"Recommendation: {trigger.get('response', {}).get('recommendation')}",
+            f"Citation: {trigger.get('response', {}).get('source_policy')}",
+            f"Category: {trigger.get('response', {}).get('category')}",
+            f"Visual Cue: {trigger.get('response', {}).get('visual_cue')}"
+        ]
+        for line in lines:
+            pdf.drawString(60, y, line)
+            y -= 15
+            if y < 100:
+                pdf.showPage()
+                y = 750
+        y -= 10
+
+    y -= 20
     pdf.setFont("Helvetica-Oblique", 9)
     pdf.drawString(50, y, "Prepared by IHWAP SCOUT — Field-Aware Artificial Intelligence Engine")
+    pdf.drawString(50, y - 15, "All triggers and hazard flags are automated predictions. Field verification required prior to action.")
 
     pdf.showPage()
     pdf.save()
