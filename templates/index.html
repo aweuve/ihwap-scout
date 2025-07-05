@@ -22,12 +22,12 @@
 </head>
 <body>
     <div class="container">
-        <h1>🧐 IHWAP SCOUT</h1>
+        <h1>IHWAP SCOUT</h1>
 
         <form method="POST" enctype="multipart/form-data">
             <div class="form-section">
                 <label for="image">Analyze a field photo</label>
-                <input type="file" name="image" id="image" accept="image/png, image/jpeg" required>
+                <input type="file" name="image" id="image" accept="image/png, image/jpeg">
                 <p class="safety-note">⚠️ Please upload only field photos related to home weatherization inspections. Do not upload personal or unrelated images.
                 </p>
                 <img id="preview" src="#" alt="Image preview..." class="image-preview" style="display:none;">
@@ -52,7 +52,7 @@
             <div class="chat-box">
                 {% for entry in chat_history %}
                     <div class="chat-entry">
-                        <strong>{{ "You" if entry.role == 'user' else "🧐 Scout" }}:</strong> {{ entry.content }}
+                        <strong>{{ "You" if entry.role == 'user' else "Scout" }}:</strong> {{ entry.content }}
                     </div>
                 {% endfor %}
             </div>
@@ -60,20 +60,20 @@
 
         {% if result %}
             <hr>
-            <h3>🔍 FAAIE Result</h3>
+            <h3>FAAIE Result</h3>
             <p><strong>Description:</strong> {{ result.description }}</p>
             <p><strong>Scout Thought:</strong> {{ result.scout_thought }}</p>
             <p><strong>Visible Elements:</strong> {{ result.visible_elements | join(", ") }}</p>
             <p><strong>Hazards:</strong> {{ result.hazards | join(", ") }}</p>
 
             {% for match in result.matched_triggers %}
-                <h4>📌 Trigger: {{ match.trigger }}</h4>
-                <p><strong>⚠️ Action:</strong> {{ match.response.action }}</p>
-                <p><strong>📝 Reason:</strong> {{ match.response.reason }}</p>
-                <p><strong>🔧 Recommendation:</strong> {{ match.response.recommendation }}</p>
-                <p><strong>📚 Citation:</strong> {{ match.response.source_policy }}</p>
-                <p><strong>📂 Category:</strong> {{ match.response.category }}</p>
-                <p><strong>👀 Visual Cue:</strong> {{ match.response.visual_cue }}</p>
+                <h4>Trigger: {{ match.trigger }}</h4>
+                <p><strong>Action:</strong> {{ match.response.action }}</p>
+                <p><strong>Reason:</strong> {{ match.response.reason }}</p>
+                <p><strong>Recommendation:</strong> {{ match.response.recommendation }}</p>
+                <p><strong>Citation:</strong> {{ match.response.source_policy }}</p>
+                <p><strong>Category:</strong> {{ match.response.category }}</p>
+                <p><strong>Visual Cue:</strong> {{ match.response.visual_cue }}</p>
             {% endfor %}
 
             {% if image_path %}
