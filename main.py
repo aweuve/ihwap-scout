@@ -109,7 +109,85 @@ def home():
 
     return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []))
 
+@app.route("/download_report", methods=["POST"])
+def download_report():
+    result_data = request.form.get("result_data")
+    if not result_data:
+        return "No result data provided", 400
+
+    result = json.loads(result_data)
+    buffer = io.BytesIO()
+    pdf = canvas.Canvas(buffer, pagesize=letter)
+
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(50, 770, "IHWAP SCOUT — FIELD REPORT")
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(50, 755, f"Date: {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+
+    y = 730
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Description")
+    y -= 15
+    textobject = pdf.beginText(50, y)
+    textobject.setFont("Helvetica", 10)
+    textobject.textLines(result.get("description", "N/A"))
+    pdf.drawText(textobject)
+    y = textobject.getY() - 20
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Scout Thought")
+    y -= 15
+    textobject = pdf.beginText(50, y)
+    textobject.setFont("Helvetica", 10)
+    textobject.textLines(result.get("scout_thought", "N/A"))
+    pdf.drawText(textobject)
+    y = textobject.getY() - 30
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Visible Elements")
+    y -= 15
+    pdf.setFont("Helvetica", 10)
+    for element in result.get("visible_elements", []):
+        pdf.drawString(60, y, f"- {element}")
+        y -= 15
+
+    y -= 10
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(50, y, "Triggers")
+    y -= 15
+    pdf.setFont("Helvetica", 10)
+    for trigger in result.get("matched_triggers", []):
+        lines = [
+            f"Trigger: {trigger.get('trigger')}",
+            f"Action: {trigger.get('response', {}).get('action')}",
+            f"Reason: {trigger.get('response', {}).get('reason')}",
+            f"Recommendation: {trigger.get('response', {}).get('recommendation')}",
+            f"Citation: {trigger.get('response', {}).get('source_policy')}",
+            f"Category: {trigger.get('response', {}).get('category')}",
+            f"Visual Cue: {trigger.get('response', {}).get('visual_cue')}"
+        ]
+        for line in lines:
+            pdf.drawString(60, y, line)
+            y -= 15
+            if y < 100:
+                pdf.showPage()
+                y = 750
+        y -= 10
+
+    y -= 20
+    pdf.setFont("Helvetica-Oblique", 9)
+    pdf.drawString(50, y, "Prepared by IHWAP SCOUT — Field-Aware Artificial Intelligence Engine")
+    pdf.drawString(50, y - 15, "All triggers and hazard flags are automated predictions. Field verification required prior to action.")
+
+    pdf.showPage()
+    pdf.save()
+    buffer.seek(0)
+
+    return send_file(buffer, as_attachment=True, download_name="Scout_Report.pdf", mimetype="application/pdf")
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
