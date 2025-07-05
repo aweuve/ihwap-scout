@@ -6,7 +6,7 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background-color: #f2f2f2; }
         .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #333; }
+        h1 { text-align: center; color: #333; letter-spacing: 1px; font-weight: bold; }
         .chat-box { background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
         .chat-entry { margin-bottom: 10px; }
         .chat-entry strong { color: #333; }
@@ -82,6 +82,10 @@
         {% endif %}
     </div>
 
+    <footer style="text-align:center; font-size: 0.85em; color: #888; margin-top: 40px;">
+        Powered by FAAIE — Field-Aware Artificial Intelligence Engine. Always verify compliance decisions per IHWAP protocols before proceeding with work.
+    </footer>
+
     <script>
         document.getElementById("image").onchange = function (event) {
             const [file] = event.target.files;
@@ -103,3 +107,4 @@
     </script>
 </body>
 </html>
+
