@@ -67,8 +67,17 @@
                 <p>No relevant triggers detected for this scene type.</p>
             {% endif %}
 
+            {% if result.auto_triggered %}
+                <h4>Auto-Detected Triggers (Scene + Visual Combo):</h4>
+                <ul class="list-group">
+                    {% for trigger in result.auto_triggered %}
+                        <li class="list-group-item">{{ trigger }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
             <div class="alert alert-warning mt-3">
-                ⚠️ Automated analysis &mdash; Field verification by certified staff is required before any work or deferral.
+                ⚠️ Automated analysis — Field verification by certified staff is required before any work or deferral.
             </div>
 
             <form method="POST" action="/download_report">
@@ -85,5 +94,6 @@
     </div>
 </body>
 </html>
+
 
 
