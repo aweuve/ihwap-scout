@@ -48,7 +48,8 @@ trigger_rules = {
     ],
     "attic": [
         {"elements": ["insulation", "rafters"], "trigger": "Uninsulated Attic Hatch Door"},
-        {"elements": ["insulation", "vents"], "trigger": "Insulation Blocking Attic Ventilation"}
+        {"elements": ["insulation", "vents"], "trigger": "Insulation Blocking Attic Ventilation"},
+        {"elements": ["fiberglass insulation", "rafters"], "trigger": "Attic Insulation Review Suggested"}
     ],
     "crawlspace": [
         {"elements": ["vapor barrier", "duct"], "trigger": "Unsealed Vapor Barrier in Crawlspace"},
@@ -101,7 +102,16 @@ def home():
                     messages=[
                         {
                             "role": "system",
-                            "content": "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo.\nChoose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\n\nDefinitions:\n- Mechanical room or appliance includes HVAC systems, furnaces, water heaters, boilers, electrical panels, or appliance close-ups.\n\nIf the image shows a water heater, it falls under mechanical room or appliance.\n\nRespond ONLY with the category name."
+                            "content": (
+                                "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo.\n"
+                                "Choose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\n\n"
+                                "Definitions:\n"
+                                "- Mechanical room or appliance includes HVAC systems, furnaces, water heaters, boilers, electrical panels, or appliance close-ups.\n\n"
+                                "If the image shows a water heater, it falls under mechanical room or appliance.\n\n"
+                                "Also, carefully inspect the image for signs of these issues:\n"
+                                "- Moisture damage, staining, mold, corrosion, rust, insulation damage, air leakage, duct damage, electrical risks, combustion venting problems, or structural failure.\n\n"
+                                "Respond ONLY with the category name."
+                            )
                         },
                         {
                             "role": "user",
