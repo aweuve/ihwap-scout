@@ -4,6 +4,7 @@ import openai
 import json
 import datetime
 import io
+import base64
 from vision_matcher import get_matching_trigger_from_image
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
@@ -84,7 +85,7 @@ def home():
                     messages=[
                         {
                             "role": "system",
-                            "content": "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo.\nChoose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\nRespond ONLY with the category name."
+                            "content": "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo.\nChoose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\n\nDefinitions:\n- Mechanical room or appliance includes HVAC systems, furnaces, water heaters, boilers, electrical panels, or appliance close-ups.\n\nIf the image shows a water heater, it falls under mechanical room or appliance.\n\nRespond ONLY with the category name."
                         },
                         {
                             "role": "user",
@@ -103,6 +104,9 @@ def home():
                 scene_type = vision_response.choices[0].message["content"].strip().lower()
                 if scene_type not in scene_categories:
                     scene_type = "other"
+                # Auto-map safety net
+                if "water heater" in vision_response.choices[0].message["content"].lower():
+                    scene_type = "mechanical room or appliance"
             except Exception as e:
                 scene_type = "other"
 
