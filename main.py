@@ -137,6 +137,16 @@ def home():
 
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
+            # Fallback scene detection based on visible elements
+            visible_elements = result.get("visible_elements", [])
+            if scene_type == "other":
+                if any(kw in visible_elements for kw in {"rafters", "fiberglass insulation", "attic floor"}):
+                    scene_type = "attic"
+                elif any(kw in visible_elements for kw in {"vapor barrier", "floor joist", "duct"}):
+                    scene_type = "crawlspace"
+                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe"}):
+                    scene_type = "mechanical room or appliance"
+
             # Filter triggers based on scene
             allowed = scene_categories.get(scene_type, [])
             result["matched_triggers"] = [
@@ -145,7 +155,6 @@ def home():
             ]
 
             # Auto-trigger logic based on scene + visible elements
-            visible_elements = result.get("visible_elements", [])
             auto_triggered = []
             for rule in trigger_rules.get(scene_type, []):
                 if all(elem in visible_elements for elem in rule["elements"]):
