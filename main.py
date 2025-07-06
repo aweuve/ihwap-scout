@@ -40,6 +40,22 @@ scene_categories = {
     "other": []
 }
 
+# ✅ Auto-trigger rules: Scene + Visible Elements combo
+trigger_rules = {
+    "mechanical room or appliance": [
+        {"elements": ["water heater", "rust"], "trigger": "Water Heater Corrosion"},
+        {"elements": ["flue pipe"], "trigger": "Flue Pipe Rust or Disconnection"}
+    ],
+    "attic": [
+        {"elements": ["insulation", "rafters"], "trigger": "Uninsulated Attic Hatch Door"},
+        {"elements": ["insulation", "vents"], "trigger": "Insulation Blocking Attic Ventilation"}
+    ],
+    "crawlspace": [
+        {"elements": ["vapor barrier", "duct"], "trigger": "Unsealed Vapor Barrier in Crawlspace"},
+        {"elements": ["floor joist", "insulation"], "trigger": "Floor Above Crawlspace Uninsulated"}
+    ]
+}
+
 @app.route("/", methods=["GET", "POST"])
 def home():
     result = None
@@ -104,7 +120,6 @@ def home():
                 scene_type = vision_response.choices[0].message["content"].strip().lower()
                 if scene_type not in scene_categories:
                     scene_type = "other"
-                # Auto-map safety net
                 if "water heater" in vision_response.choices[0].message["content"].lower():
                     scene_type = "mechanical room or appliance"
             except Exception as e:
@@ -118,6 +133,14 @@ def home():
                 trig for trig in result.get("matched_triggers", [])
                 if trig.get("response", {}).get("category") in allowed
             ]
+
+            # Auto-trigger logic based on scene + visible elements
+            visible_elements = result.get("visible_elements", [])
+            auto_triggered = []
+            for rule in trigger_rules.get(scene_type, []):
+                if all(elem in visible_elements for elem in rule["elements"]):
+                    auto_triggered.append(rule["trigger"])
+            result["auto_triggered"] = auto_triggered
             result["scene_type"] = scene_type
 
     return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []))
