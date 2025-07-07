@@ -3,97 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <title>IHWAP Scout</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/flatly/bootstrap.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f2f2f2; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #333; }
+        .chat-box { background: #f9f9f9; padding: 10px; border-radius: 5px; margin-bottom: 20px; max-height: 300px; overflow-y: auto; }
+        .chat-entry { margin-bottom: 10px; }
+        .form-section { margin-bottom: 20px; }
+        button { padding: 8px 16px; }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="mb-4">IHWAP SCOUT</h1>
+<div class="container">
+    <h1>🧠 IHWAP Scout</h1>
 
-        <form method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="image">Analyze a field photo</label>
-                <input type="file" name="image" id="image" class="form-control-file">
-                <small class="form-text text-muted">
-                    ⚠️ Please upload only field photos related to home weatherization inspections. Do not upload personal or unrelated images.
-                </small>
-            </div>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-section">
+            <label>Analyze a field photo</label>
+            <input type="file" name="image">
+        </div>
+        <div class="form-section">
+            <label>Ask Scout a question</label>
+            <input type="text" name="chat_input" placeholder="e.g., What is the R-value for attics?">
+        </div>
+        <div class="form-section">
+            <button type="submit">Submit</button>
+            <button type="submit" name="clear_chat" value="1">Clear Chat</button>
+        </div>
+    </form>
 
-            <div class="form-group">
-                <label for="chat_input">Ask Scout a question</label>
-                <input type="text" name="chat_input" id="chat_input" class="form-control" placeholder="Ask about attic R-values, combustion safety, deferral rules...">
-            </div>
+    {% if chat_history %}
+        <div class="chat-box">
+            {% for entry in chat_history %}
+                <div class="chat-entry"><strong>{{ "You" if entry.role == 'user' else "🧠 Scout" }}:</strong> {{ entry.content }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">Submit</button>
-                <button type="submit" name="clear_chat" value="1" class="btn btn-danger">Clear Chat</button>
-            </div>
-        </form>
+    {% if result %}
+        <hr>
+        <h3>🔍 FAAIE Result</h3>
+        <p><strong>Scene Type Detected:</strong> {{ result.scene_type }}</p>
 
-        {% if chat_history %}
-            <h3>Chat History</h3>
-            <ul class="list-group mb-4">
-                {% for entry in chat_history %}
-                    <li class="list-group-item">
-                        <strong>{{ "You" if entry.role == 'user' else "🤖 Scout" }}:</strong> {{ entry.content }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
+        <h4>Matched Triggers:</h4>
+        <ul>
+            {% for match in result.matched_triggers %}
+                <li>
+                    <strong>{{ match.trigger }}</strong> — {{ match.response.reason }}
+                    <br>📘 Fix: {{ match.response.recommendation }}
+                    <br>🔖 Policy: {{ match.response.source_policy }}
+                </li>
+            {% endfor %}
+        </ul>
 
-        {% if result %}
-            <hr>
-            <h3>FAAIE Result</h3>
-            <p><strong>Scene Type Detected:</strong> {{ result.scene_type.capitalize() }}</p>
-            <p><strong>Description:</strong> {{ result.description }}</p>
-            <p><strong>Scout Thought:</strong> {{ result.scout_thought }}</p>
-            <p><strong>Visible Elements:</strong> {{ result.visible_elements | join(", ") }}</p>
+        <h4>Auto-Detected Triggers:</h4>
+        <ul>
+            {% for trigger in result.auto_triggered %}
+                <li>{{ trigger }}</li>
+            {% endfor %}
+        </ul>
 
-            <h4>Triggers:</h4>
-            {% if result.matched_triggers %}
-                <ul class="list-group">
-                    {% for trigger in result.matched_triggers %}
-                        <li class="list-group-item">
-                            <strong>Trigger:</strong> {{ trigger.trigger }}<br>
-                            <strong>Action:</strong> {{ trigger.response.action }}<br>
-                            <strong>Reason:</strong> {{ trigger.response.reason }}<br>
-                            <strong>Recommendation:</strong> {{ trigger.response.recommendation }}<br>
-                            <strong>Citation:</strong> {{ trigger.response.source_policy }}<br>
-                            <strong>Category:</strong> {{ trigger.response.category }}<br>
-                            <strong>Visual Cue:</strong> {{ trigger.response.visual_cue }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>No relevant triggers detected for this scene type.</p>
-            {% endif %}
+        <button onclick="qciReview()">QCI This Photo</button>
 
-            {% if result.auto_triggered %}
-                <h4>Auto-Detected Triggers (Scene + Visual Combo):</h4>
-                <ul class="list-group">
-                    {% for trigger in result.auto_triggered %}
-                        <li class="list-group-item">{{ trigger }}</li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-
-            <div class="alert alert-warning mt-3">
-                ⚠️ Automated analysis — Field verification by certified staff is required before any work or deferral.
-            </div>
-
-            <form method="POST" action="/download_report">
-                <input type="hidden" name="result_data" value='{{ result | tojson | safe }}'>
-                <button type="submit" class="btn btn-primary mt-3">Download PDF Report</button>
-            </form>
-        {% endif %}
+        <h4>Scope of Work Summary:</h4>
+        <ul>
+            {% for match in result.matched_triggers %}
+                <li><strong>{{ match.trigger }}</strong>: {{ match.response.recommendation }}</li>
+            {% endfor %}
+            {% for trigger in result.auto_triggered %}
+                <li><strong>{{ trigger }}</strong>: (Auto-Triggered Item — Manual review may be required.)</li>
+            {% endfor %}
+        </ul>
 
         {% if image_path %}
-            <hr>
-            <h4>Uploaded Photo:</h4>
-            <img src="{{ image_path }}" alt="Uploaded Field Photo" class="img-fluid">
+            <img src="{{ image_path }}" alt="Uploaded Image" style="max-width:100%; border:1px solid #ccc; margin-top:10px;">
         {% endif %}
-    </div>
+    {% endif %}
+</div>
+
+<script>
+function qciReview() {
+    fetch("/qci_review", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            scene_type: "{{ result.scene_type }}",
+            matched_triggers: {{ result.matched_triggers | tojson }},
+            auto_triggered: {{ result.auto_triggered | tojson }}
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert("QCI Review Completed — See Chat Box.");
+        window.location.reload();
+    })
+    .catch(error => alert("Error during QCI Review: " + error));
+}
+</script>
 </body>
 </html>
-
-
-
