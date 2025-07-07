@@ -2,20 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Chat with Scout</title>
+    <title>Chat with Scout (IHWAP Assistant)</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 700px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        .chat-log { max-height: 400px; overflow-y: auto; margin-bottom: 20px; border: 1px solid #ccc; padding: 10px; border-radius: 6px; background: #fafafa; }
+        .chat-entry { margin-bottom: 10px; }
+        .chat-entry strong { color: #333; }
+        form { display: flex; flex-direction: column; gap: 10px; }
+        input[type="text"] { padding: 8px; width: 100%; }
+        button { padding: 10px; background-color: #007BFF; color: white; border: none; cursor: pointer; border-radius: 5px; }
+        button:hover { background-color: #0056b3; }
+    </style>
 </head>
 <body>
-    <h1>💬 Chat with Scout</h1>
-    <form method="POST">
-        <input type="text" name="chat_input" placeholder="Ask a question..." required>
-        <button type="submit">Send</button>
-    </form>
-    <h3>Conversation:</h3>
-    <ul>
-        {% for entry in chat_history %}
-            <li><strong>{{ "You" if entry.role == 'user' else "Scout" }}:</strong> {{ entry.content }}</li>
-        {% endfor %}
-    </ul>
-    <a href="{{ url_for('landing') }}">⬅️ Back to Home</a>
+    <div class="container">
+        <h1>💬 Chat with Scout</h1>
+        <p><em>Scout only answers IHWAP and weatherization-related questions.</em></p>
+
+        <div class="chat-log">
+            {% for entry in chat_history %}
+                <div class="chat-entry">
+                    <strong>{{ 'You' if entry.role == 'user' else '🧠 Scout' }}:</strong> {{ entry.content }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <form method="POST">
+            <input type="text" name="chat_input" placeholder="Type your question..." required>
+            <button type="submit">Ask Scout</button>
+        </form>
+
+        <p><a href="{{ url_for('landing') }}">⬅️ Back to Home</a></p>
+    </div>
 </body>
 </html>
+
