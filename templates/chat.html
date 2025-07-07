@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat with Scout</title>
+</head>
+<body>
+    <h1>💬 Chat with Scout</h1>
+    <form method="POST">
+        <input type="text" name="chat_input" placeholder="Ask a question..." required>
+        <button type="submit">Send</button>
+    </form>
+    <h3>Conversation:</h3>
+    <ul>
+        {% for entry in chat_history %}
+            <li><strong>{{ "You" if entry.role == 'user' else "Scout" }}:</strong> {{ entry.content }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('landing') }}">⬅️ Back to Home</a>
+</body>
+</html>
