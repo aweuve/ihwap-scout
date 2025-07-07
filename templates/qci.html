@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <title>QCI Photo Review</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px; }
-        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; margin-bottom: 20px; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 700px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
         .section { margin-bottom: 20px; }
-        button { padding: 10px 15px; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>📸 QCI Photo Review</h1>
+
         <form method="POST" enctype="multipart/form-data">
             <div class="section">
-                <label>Upload Field Photo:</label>
+                <label>Select a photo to analyze:</label>
                 <input type="file" name="image" required>
             </div>
             <button type="submit">Analyze Photo</button>
@@ -24,48 +24,29 @@
 
         {% if session.get("last_result") %}
             <hr>
-            <h2>🔍 Analysis Result</h2>
-            <p><strong>Scene Type Detected:</strong> {{ session['last_result'].scene_type }}</p>
+            <h2>🔍 Analysis Result:</h2>
+            <p><strong>Scene Type Detected:</strong> {{ session["last_result"].scene_type }}</p>
 
             <h3>Matched Triggers:</h3>
             <ul>
-            {% for trigger in session['last_result'].matched_triggers %}
-                <li><strong>{{ trigger.trigger }}</strong> — {{ trigger.response.reason }}</li>
+            {% for trigger in session["last_result"].matched_triggers %}
+                <li><strong>{{ trigger.trigger }}</strong>: {{ trigger.response.reason }}</li>
             {% endfor %}
             </ul>
 
             <h3>Auto-Detected Triggers:</h3>
             <ul>
-            {% for trigger in session['last_result'].auto_triggered %}
+            {% for trigger in session["last_result"].auto_triggered %}
                 <li>{{ trigger }}</li>
             {% endfor %}
             </ul>
 
-            <button onclick="qciReview()">QCI This Photo</button>
+            <p><a href="{{ url_for('scope') }}">➡️ See Scope Summary</a></p>
+        {% else %}
+            <p><em>No photo analyzed yet. Please upload a photo above to begin.</em></p>
         {% endif %}
-        
-        <br><br>
-        <a href="{{ url_for('landing') }}">⬅️ Back to Home</a>
-    </div>
 
-    <script>
-    function qciReview() {
-        fetch("/qci_review", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                scene_type: "{{ session['last_result'].scene_type }}",
-                matched_triggers: {{ session['last_result'].matched_triggers | tojson }},
-                auto_triggered: {{ session['last_result'].auto_triggered | tojson }}
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            alert("QCI Review Completed. See Chat Page for Review Note.");
-            window.location.href = "/chat";
-        })
-        .catch(error => alert("QCI Review Failed: " + error));
-    }
-    </script>
+        <p><a href="{{ url_for('landing') }}">⬅️ Back to Home</a></p>
+    </div>
 </body>
 </html>
