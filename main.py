@@ -63,6 +63,7 @@ def home():
     image_path = None
     chat_response = None
     scene_type = None
+    scope_of_work = []
 
     if "chat_history" not in session:
         session["chat_history"] = []
@@ -144,7 +145,7 @@ def home():
                     scene_type = "attic"
                 elif any(kw in visible_elements for kw in {"vapor barrier", "floor joist", "duct"}):
                     scene_type = "crawlspace"
-                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe"}):
+                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe", "tank"}):
                     scene_type = "mechanical room or appliance"
 
             # Filter triggers based on scene
@@ -162,7 +163,17 @@ def home():
             result["auto_triggered"] = auto_triggered
             result["scene_type"] = scene_type
 
-    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []))
+            # Generate IHWAP Scope of Work
+            scope_of_work = []
+            for idx, trig in enumerate(result.get("matched_triggers", []), 1):
+                scope_of_work.append({
+                    "number": idx,
+                    "work_item": trig.get("trigger"),
+                    "fix": trig.get("response", {}).get("recommendation"),
+                    "policy": trig.get("response", {}).get("source_policy")
+                })
+
+    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []), scope_of_work=scope_of_work)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
