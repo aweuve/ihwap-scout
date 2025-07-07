@@ -14,21 +14,8 @@ with open("faaie_logic.json", "r") as f:
     faaie_logic = json.load(f)
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key"  # Needed for session handling
+app.secret_key = "super_secret_key"
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-SYSTEM_PROMPT = (
-    "You are Scout — a QCI and compliance assistant trained in the Illinois Home Weatherization Assistance Program (IHWAP), "
-    "SWS Field Guide, and DOE WAP protocols.\n\n"
-    "Respond in a clear, field-savvy tone with:\n"
-    "• Bullet point examples when helpful\n"
-    "• Bold policy citations (e.g., **IHWAP 5.4.4**, **SWS 3.1201.2**)\n"
-    "• Human fallback flag if unsure\n\n"
-    "Always prioritize:\n"
-    "1. Health & Safety\n"
-    "2. Home Integrity\n"
-    "3. Energy Efficiency"
-)
 
 scene_categories = {
     "attic": ["attic", "ventilation", "hazardous materials", "structural"],
@@ -40,7 +27,6 @@ scene_categories = {
     "other": []
 }
 
-# ✅ Auto-trigger rules: Scene + Visible Elements combo
 trigger_rules = {
     "mechanical room or appliance": [
         {"elements": ["water heater", "rust"], "trigger": "Water Heater Corrosion"},
@@ -63,7 +49,6 @@ def home():
     image_path = None
     chat_response = None
     scene_type = None
-    scope_of_work = []
 
     if "chat_history" not in session:
         session["chat_history"] = []
@@ -78,7 +63,7 @@ def home():
             try:
                 completion = openai.ChatCompletion.create(
                     model="gpt-4o",
-                    messages=[{"role": "system", "content": SYSTEM_PROMPT}] + session["chat_history"],
+                    messages=[{"role": "system", "content": "You are Scout, a compliance assistant for IHWAP."}] + session["chat_history"],
                     max_tokens=400
                 )
                 reply = completion.choices[0].message["content"]
@@ -95,67 +80,52 @@ def home():
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
 
-            # Scene classification using OpenAI Vision
+            # Scene classification
             try:
                 base64_image = base64.b64encode(image_bytes).decode("utf-8")
                 vision_response = openai.ChatCompletion.create(
                     model="gpt-4-vision-preview",
                     messages=[
-                        {
-                            "role": "system",
-                            "content": (
-                                "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo.\n"
-                                "Choose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\n\n"
-                                "Definitions:\n"
-                                "- Mechanical room or appliance includes HVAC systems, furnaces, water heaters, boilers, electrical panels, or appliance close-ups.\n\n"
-                                "If the image shows a water heater, it falls under mechanical room or appliance.\n\n"
-                                "Also, carefully inspect the image for signs of these issues:\n"
-                                "- Moisture damage, staining, mold, corrosion, rust, insulation damage, air leakage, duct damage, electrical risks, combustion venting problems, or structural failure.\n\n"
-                                "Respond ONLY with the category name."
-                            )
-                        },
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "image_url",
-                                    "image_url": {
-                                        "url": f"data:image/jpeg;base64,{base64_image}"
-                                    }
-                                }
-                            ]
-                        }
+                        {"role": "system", "content": (
+                            "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo. "
+                            "Choose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\n\n"
+                            "Definitions:\n"
+                            "- Mechanical room or appliance includes HVAC systems, furnaces, water heaters, boilers, electrical panels, or appliance close-ups.\n\n"
+                            "Also carefully inspect for: moisture, corrosion, rust, mold, insulation issues, venting issues, and structural damage.\n\n"
+                            "Respond ONLY with the category name."
+                        )},
+                        {"role": "user", "content": [
+                            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
+                        ]}
                     ],
                     max_tokens=10
                 )
                 scene_type = vision_response.choices[0].message["content"].strip().lower()
                 if scene_type not in scene_categories:
                     scene_type = "other"
-                if "water heater" in vision_response.choices[0].message["content"].lower():
-                    scene_type = "mechanical room or appliance"
-            except Exception as e:
+            except Exception:
                 scene_type = "other"
 
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
-            # Fallback scene detection based on visible elements
+            # Fallback scene detection
             visible_elements = result.get("visible_elements", [])
             if scene_type == "other":
                 if any(kw in visible_elements for kw in {"rafters", "fiberglass insulation", "attic floor"}):
                     scene_type = "attic"
                 elif any(kw in visible_elements for kw in {"vapor barrier", "floor joist", "duct"}):
                     scene_type = "crawlspace"
-                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe", "tank"}):
+                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe"}):
                     scene_type = "mechanical room or appliance"
 
-            # Filter triggers based on scene
+            # Filter triggers
             allowed = scene_categories.get(scene_type, [])
             result["matched_triggers"] = [
                 trig for trig in result.get("matched_triggers", [])
                 if trig.get("response", {}).get("category") in allowed
             ]
 
-            # Auto-trigger logic based on scene + visible elements
+            # Auto-trigger logic
             auto_triggered = []
             for rule in trigger_rules.get(scene_type, []):
                 if all(elem in visible_elements for elem in rule["elements"]):
@@ -163,17 +133,34 @@ def home():
             result["auto_triggered"] = auto_triggered
             result["scene_type"] = scene_type
 
-            # Generate IHWAP Scope of Work
-            scope_of_work = []
-            for idx, trig in enumerate(result.get("matched_triggers", []), 1):
-                scope_of_work.append({
-                    "number": idx,
-                    "work_item": trig.get("trigger"),
-                    "fix": trig.get("response", {}).get("recommendation"),
-                    "policy": trig.get("response", {}).get("source_policy")
-                })
+    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []))
 
-    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []), scope_of_work=scope_of_work)
+@app.route("/qci_review", methods=["POST"])
+def qci_review():
+    data = request.json
+    scene_type = data.get("scene_type", "unknown")
+    matched_triggers = data.get("matched_triggers", [])
+    auto_triggers = data.get("auto_triggered", [])
+
+    qci_prompt = (
+        f"You are acting as a certified IHWAP Quality Control Inspector (QCI). Review this photo based on its scene type: {scene_type}.\n"
+        f"The detected issues are: {', '.join([t['trigger'] for t in matched_triggers] + auto_triggers)}.\n\n"
+        "Provide a professional field-style inspection note listing specific corrections, documentation needs, or verification steps required before approval.\n"
+    )
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[{"role": "system", "content": qci_prompt}],
+            max_tokens=300
+        )
+        review = response.choices[0].message["content"]
+    except Exception as e:
+        review = f"Error generating QCI review: {str(e)}"
+
+    # Save review in chat history
+    session["chat_history"].append({"role": "assistant", "content": review})
+    return jsonify({"qci_review": review})
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
