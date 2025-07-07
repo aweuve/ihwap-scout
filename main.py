@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = "super_secret_key"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Scene categories & trigger rules (your existing logic)
+# Scene categories & trigger rules
 scene_categories = {
     "attic": ["attic", "ventilation", "hazardous materials", "structural"],
     "crawlspace": ["crawlspace", "mechanical", "moisture", "structural"],
@@ -49,6 +49,7 @@ def landing():
 def chat():
     if "chat_history" not in session:
         session["chat_history"] = []
+
     if request.method == "POST":
         question = request.form.get("chat_input")
         if question:
@@ -57,23 +58,32 @@ def chat():
                 completion = openai.ChatCompletion.create(
                     model="gpt-4o",
                     messages=[
-                        {"role": "system", "content":
-                            "You are Scout, an Illinois Home Weatherization Assistance Program (IHWAP) compliance assistant.\n\n"
-                            "You only answer questions about:\n"
-                            "- Weatherization\n"
-                            "- IHWAP policies or manuals\n"
-                            "- DOE WAP rules\n"
-                            "- Field inspections, combustion safety, insulation, ventilation, and energy efficiency.\n\n"
-                            "If asked off-topic questions, politely respond:\n"
-                            '\"I can only assist with IHWAP and weatherization-related questions. Please ask about inspections, measures, or policies.\"'
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are Scout, an IHWAP 2026 compliance assistant for Illinois Weatherization staff.\n\n"
+                                "✅ Always follow the Weatherization Creed:\n"
+                                "1. Health & Safety\n2. Home Integrity\n3. Energy Efficiency\n\n"
+                                "Answer format:\n"
+                                "• First, identify any Health & Safety concerns.\n"
+                                "• Second, list deferral or ineligibility conditions.\n"
+                                "• Third, provide technical compliance measures (if safe).\n\n"
+                                "Mandatory:\n"
+                                "- Include IHWAP 2026 section citations.\n"
+                                "- Keep responses brief and direct for field use.\n"
+                                "- Only answer IHWAP, Weatherization, DOE WAP, and related inspection questions.\n\n"
+                                "If asked unrelated questions, reply:\n"
+                                '\"I can only assist with IHWAP 2026 and weatherization-related topics. Please ask about inspections, measures, or policies.\"'
+                            )
                         }
                     ] + session["chat_history"],
-                    max_tokens=400
+                    max_tokens=500
                 )
                 reply = completion.choices[0].message["content"]
                 session["chat_history"].append({"role": "assistant", "content": reply})
             except Exception as e:
                 session["chat_history"].append({"role": "assistant", "content": f"Error: {e}"})
+
     return render_template("chat.html", chat_history=session.get("chat_history", []))
 
 @app.route("/qci", methods=["GET", "POST"])
@@ -186,3 +196,4 @@ def qci_review():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
