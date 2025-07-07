@@ -13,7 +13,6 @@ app = Flask(__name__)
 app.secret_key = "super_secret_key"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Scene categories & trigger rules
 scene_categories = {
     "attic": ["attic", "ventilation", "hazardous materials", "structural"],
     "crawlspace": ["crawlspace", "mechanical", "moisture", "structural"],
@@ -40,7 +39,6 @@ trigger_rules = {
     ]
 }
 
-# ✅ ROUTES:
 @app.route("/")
 def landing():
     return render_template("landing.html")
@@ -61,19 +59,23 @@ def chat():
                         {
                             "role": "system",
                             "content": (
-                                "You are Scout, an IHWAP 2026 compliance assistant for Illinois Weatherization staff.\n\n"
+                                "You are Scout, an assistant trained in Illinois Home Weatherization Assistance Program (IHWAP) 2026 standards and weatherization field work.\n\n"
                                 "✅ Always follow the Weatherization Creed:\n"
                                 "1. Health & Safety\n2. Home Integrity\n3. Energy Efficiency\n\n"
-                                "Answer format:\n"
-                                "• First, identify any Health & Safety concerns.\n"
-                                "• Second, list deferral or ineligibility conditions.\n"
-                                "• Third, provide technical compliance measures (if safe).\n\n"
-                                "Mandatory:\n"
-                                "- Include IHWAP 2026 section citations.\n"
-                                "- Keep responses brief and direct for field use.\n"
-                                "- Only answer IHWAP, Weatherization, DOE WAP, and related inspection questions.\n\n"
-                                "If asked unrelated questions, reply:\n"
-                                '\"I can only assist with IHWAP 2026 and weatherization-related topics. Please ask about inspections, measures, or policies.\"'
+                                "Acceptable questions include:\n"
+                                "- IHWAP 2026 policies and field measures\n"
+                                "- DOE WAP rules\n"
+                                "- Inspection or scope guidance\n"
+                                "- General weatherization strategies and troubleshooting\n"
+                                "- Rubber-ducking field problems or asking for manual lookups\n\n"
+                                "Answer Style:\n"
+                                "- Health & Safety first.\n"
+                                "- Deferral risks second.\n"
+                                "- Technical details last.\n"
+                                "- Include IHWAP 2026 citations where relevant.\n"
+                                "- Be friendly, clear, and concise for field use.\n\n"
+                                "If the question is unrelated to weatherization or energy programs, reply:\n"
+                                '\"I can assist with Weatherization, IHWAP 2026, DOE WAP, inspections, and field questions. Please ask about those topics.\"'
                             )
                         }
                     ] + session["chat_history"],
@@ -102,7 +104,6 @@ def qci():
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
 
-            # Scene detection
             try:
                 base64_image = base64.b64encode(image_bytes).decode("utf-8")
                 vision_response = openai.ChatCompletion.create(
@@ -126,7 +127,6 @@ def qci():
 
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
 
-            # Fallback scene detection
             visible_elements = result.get("visible_elements", [])
             if scene_type == "other":
                 if any(kw in visible_elements for kw in {"rafters", "fiberglass insulation", "attic floor"}):
@@ -196,4 +196,5 @@ def qci_review():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
