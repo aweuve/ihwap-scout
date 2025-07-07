@@ -56,7 +56,18 @@ def chat():
             try:
                 completion = openai.ChatCompletion.create(
                     model="gpt-4o",
-                    messages=[{"role": "system", "content": "You are Scout, a compliance assistant for IHWAP."}] + session["chat_history"],
+                    messages=[
+                        {"role": "system", "content":
+                            "You are Scout, an Illinois Home Weatherization Assistance Program (IHWAP) compliance assistant.\n\n"
+                            "You only answer questions about:\n"
+                            "- Weatherization\n"
+                            "- IHWAP policies or manuals\n"
+                            "- DOE WAP rules\n"
+                            "- Field inspections, combustion safety, insulation, ventilation, and energy efficiency.\n\n"
+                            "If asked off-topic questions, politely respond:\n"
+                            '\"I can only assist with IHWAP and weatherization-related questions. Please ask about inspections, measures, or policies.\"'
+                        }
+                    ] + session["chat_history"],
                     max_tokens=400
                 )
                 reply = completion.choices[0].message["content"]
@@ -175,5 +186,3 @@ def qci_review():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
