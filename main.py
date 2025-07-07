@@ -1,167 +1,50 @@
-from flask import Flask, render_template, request, send_file, jsonify, session
-import os
-import openai
-import json
-import datetime
-import io
-import base64
-from vision_matcher import get_matching_trigger_from_image
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-
-# ✅ Load FAAIE logic
-with open("faaie_logic.json", "r") as f:
-    faaie_logic = json.load(f)
+from flask import Flask, render_template, request, redirect, url_for, session
 
 app = Flask(__name__)
 app.secret_key = "super_secret_key"
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
-scene_categories = {
-    "attic": ["attic", "ventilation", "hazardous materials", "structural"],
-    "crawlspace": ["crawlspace", "mechanical", "moisture", "structural"],
-    "basement": ["mechanical", "structural", "moisture", "electrical"],
-    "mechanical room or appliance": ["mechanical", "combustion safety", "electrical"],
-    "exterior": ["shell", "ventilation", "hazardous materials"],
-    "living space": ["health and safety", "electrical", "shell", "windows"],
-    "other": []
-}
+# ✅ Landing Page Route
+@app.route("/")
+def landing():
+    return render_template("landing.html")
 
-trigger_rules = {
-    "mechanical room or appliance": [
-        {"elements": ["water heater", "rust"], "trigger": "Water Heater Corrosion"},
-        {"elements": ["flue pipe"], "trigger": "Flue Pipe Rust or Disconnection"}
-    ],
-    "attic": [
-        {"elements": ["insulation", "rafters"], "trigger": "Uninsulated Attic Hatch Door"},
-        {"elements": ["insulation", "vents"], "trigger": "Insulation Blocking Attic Ventilation"},
-        {"elements": ["fiberglass insulation", "rafters"], "trigger": "Attic Insulation Review Suggested"}
-    ],
-    "crawlspace": [
-        {"elements": ["vapor barrier", "duct"], "trigger": "Unsealed Vapor Barrier in Crawlspace"},
-        {"elements": ["floor joist", "insulation"], "trigger": "Floor Above Crawlspace Uninsulated"}
-    ]
-}
-
-@app.route("/", methods=["GET", "POST"])
-def home():
-    result = None
-    image_path = None
-    chat_response = None
-    scene_type = None
-
+# ✅ Chat Route (Chat with Scout)
+@app.route("/chat", methods=["GET", "POST"])
+def chat():
     if "chat_history" not in session:
         session["chat_history"] = []
-
     if request.method == "POST":
-        if "clear_chat" in request.form:
-            session["chat_history"] = []
+        question = request.form.get("chat_input")
+        if question:
+            session["chat_history"].append({"role": "user", "content": question})
+            # Placeholder reply — replace with your real Scout chat logic later
+            reply = f"🧠 Scout says: I'm answering your question about '{question}'."
+            session["chat_history"].append({"role": "assistant", "content": reply})
+    return render_template("chat.html", chat_history=session.get("chat_history", []))
 
-        elif "chat_input" in request.form and request.form["chat_input"].strip() != "":
-            user_question = request.form["chat_input"]
-            session["chat_history"].append({"role": "user", "content": user_question})
-            try:
-                completion = openai.ChatCompletion.create(
-                    model="gpt-4o",
-                    messages=[{"role": "system", "content": "You are Scout, a compliance assistant for IHWAP."}] + session["chat_history"],
-                    max_tokens=400
-                )
-                reply = completion.choices[0].message["content"]
-                session["chat_history"].append({"role": "assistant", "content": reply})
-            except Exception as e:
-                chat_response = f"Error retrieving response: {str(e)}"
+# ✅ QCI Photo Review Route
+@app.route("/qci", methods=["GET", "POST"])
+def qci():
+    # Placeholder — replace with your real QCI photo logic later
+    return render_template("qci.html")
 
-        image = request.files.get("image")
-        if image:
-            upload_dir = os.path.join("static", "uploads")
-            os.makedirs(upload_dir, exist_ok=True)
-            image_path = os.path.join(upload_dir, "upload.jpg")
-            image.save(image_path)
-            with open(image_path, "rb") as f:
-                image_bytes = f.read()
+# ✅ Scope of Work Route
+@app.route("/scope")
+def scope():
+    # Placeholder — replace with your scope display logic later
+    return render_template("scope.html")
 
-            # Scene classification
-            try:
-                base64_image = base64.b64encode(image_bytes).decode("utf-8")
-                vision_response = openai.ChatCompletion.create(
-                    model="gpt-4-vision-preview",
-                    messages=[
-                        {"role": "system", "content": (
-                            "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo. "
-                            "Choose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other.\n\n"
-                            "Definitions:\n"
-                            "- Mechanical room or appliance includes HVAC systems, furnaces, water heaters, boilers, electrical panels, or appliance close-ups.\n\n"
-                            "Also carefully inspect for: moisture, corrosion, rust, mold, insulation issues, venting issues, and structural damage.\n\n"
-                            "Respond ONLY with the category name."
-                        )},
-                        {"role": "user", "content": [
-                            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
-                        ]}
-                    ],
-                    max_tokens=10
-                )
-                scene_type = vision_response.choices[0].message["content"].strip().lower()
-                if scene_type not in scene_categories:
-                    scene_type = "other"
-            except Exception:
-                scene_type = "other"
+# ✅ Deferral Preventer Route (Preview)
+@app.route("/prevent", methods=["GET", "POST"])
+def prevent():
+    return render_template("prevent.html")
 
-            result = get_matching_trigger_from_image(image_bytes, faaie_logic)
-
-            # Fallback scene detection
-            visible_elements = result.get("visible_elements", [])
-            if scene_type == "other":
-                if any(kw in visible_elements for kw in {"rafters", "fiberglass insulation", "attic floor"}):
-                    scene_type = "attic"
-                elif any(kw in visible_elements for kw in {"vapor barrier", "floor joist", "duct"}):
-                    scene_type = "crawlspace"
-                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe"}):
-                    scene_type = "mechanical room or appliance"
-
-            # Filter triggers
-            allowed = scene_categories.get(scene_type, [])
-            result["matched_triggers"] = [
-                trig for trig in result.get("matched_triggers", [])
-                if trig.get("response", {}).get("category") in allowed
-            ]
-
-            # Auto-trigger logic
-            auto_triggered = []
-            for rule in trigger_rules.get(scene_type, []):
-                if all(elem in visible_elements for elem in rule["elements"]):
-                    auto_triggered.append(rule["trigger"])
-            result["auto_triggered"] = auto_triggered
-            result["scene_type"] = scene_type
-
-    return render_template("index.html", result=result, image_path=image_path, chat_response=chat_response, chat_history=session.get("chat_history", []))
-
-@app.route("/qci_review", methods=["POST"])
-def qci_review():
-    data = request.json
-    scene_type = data.get("scene_type", "unknown")
-    matched_triggers = data.get("matched_triggers", [])
-    auto_triggers = data.get("auto_triggered", [])
-
-    qci_prompt = (
-        f"You are acting as a certified IHWAP Quality Control Inspector (QCI). Review this photo based on its scene type: {scene_type}.\n"
-        f"The detected issues are: {', '.join([t['trigger'] for t in matched_triggers] + auto_triggers)}.\n\n"
-        "Provide a professional field-style inspection note listing specific corrections, documentation needs, or verification steps required before approval.\n"
-    )
-
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o",
-            messages=[{"role": "system", "content": qci_prompt}],
-            max_tokens=300
-        )
-        review = response.choices[0].message["content"]
-    except Exception as e:
-        review = f"Error generating QCI review: {str(e)}"
-
-    # Save review in chat history
-    session["chat_history"].append({"role": "assistant", "content": review})
-    return jsonify({"qci_review": review})
+# ✅ HVAC / Appliance Age Finder Route (Preview)
+@app.route("/age", methods=["GET", "POST"])
+def age():
+    return render_template("age.html")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
