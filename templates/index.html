@@ -85,11 +85,11 @@
 function qciReview() {
     fetch("/qci_review", {
         method: "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            scene_type: "{{ result.scene_type }}",
-            matched_triggers: {{ result.matched_triggers | tojson }},
-            auto_triggered: {{ result.auto_triggered | tojson }}
+            scene_type: "{{ result.scene_type | default('other') }}",
+            matched_triggers: {{ result.matched_triggers | default([]) | tojson }},
+            auto_triggered: {{ result.auto_triggered | default([]) | tojson }}
         })
     })
     .then(response => response.json())
