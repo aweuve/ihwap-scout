@@ -3,10 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <title>Scope of Work Summary</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 800px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; margin-bottom: 20px; }
+        .section { margin-bottom: 20px; }
+        ul { padding-left: 20px; }
+    </style>
 </head>
 <body>
-    <h1>📝 Scope of Work Summary (Coming Soon)</h1>
-    <p>This page will summarize required work items and recommendations.</p>
-    <a href="{{ url_for('landing') }}">⬅️ Back to Home</a>
+    <div class="container">
+        <h1>📝 Scope of Work Summary</h1>
+
+        {% if result %}
+            <div class="section">
+                <p><strong>Scene Type:</strong> {{ result.scene_type }}</p>
+            </div>
+
+            <div class="section">
+                <h3>Matched Triggers:</h3>
+                <ul>
+                {% for trigger in result.matched_triggers %}
+                    <li><strong>{{ trigger.trigger }}</strong>: {{ trigger.response.recommendation }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+
+            <div class="section">
+                <h3>Auto-Detected Triggers:</h3>
+                <ul>
+                {% for trigger in result.auto_triggered %}
+                    <li>{{ trigger }} (Auto-detected — review recommended)</li>
+                {% endfor %}
+                </ul>
+            </div>
+        {% else %}
+            <p><em>No recent QCI results available. Please analyze a photo first.</em></p>
+        {% endif %}
+
+        <br>
+        <a href="{{ url_for('landing') }}">⬅️ Back to Home</a>
+    </div>
 </body>
 </html>
+
