@@ -1,12 +1,14 @@
-# IHWAP Scout – Flask back‑end (rev 4 – adds /scope placeholder)
+# IHWAP Scout – Flask back‑end (rev 5 – adds /prevent + /index placeholders)
 # -------------------------------------------------------------
-# • Landing page (/)
-# • Threaded chat (/chat)
-# • Age‑finder demo (/age_finder)
+# • Landing page (/) – hub of tool buttons
+# • Threaded chat (/chat) – AJAX + fallback
+# • Age‑finder helper (/age_finder) – demo utility
 # • QCI Photo Review placeholder (/qci)
 # • Scope‑of‑Work Summary placeholder (/scope)
+# • Preventive Measures placeholder (/prevent)
+# • Index placeholder (/index) – optional template link
 #
-# Replace FAKE_FAIIE_REPLY with real inference.
+# NOTE: Replace FAKE_FAIIE_REPLY stub with real FAAIE inference call when ready.
 
 from datetime import datetime
 import os
@@ -39,7 +41,7 @@ def chat():
         ts = datetime.now().strftime("%H:%M:%S")
         messages.append({"role": "user", "text": prompt, "ts": ts})
 
-        # ✂️ stub FAAIE call
+        # ✂️ stub FAAIE call – replace with real logic
         reply = "FAKE_FAIIE_REPLY"
         messages.append({"role": "assistant", "text": reply, "ts": ts})
         session["messages"] = messages
@@ -67,15 +69,29 @@ def age_finder():
 # ---------------------------------------------------------------------------
 @app.route("/qci")
 def qci():
-    return render_template("qci.html")  # create this template or swap to string
+    return render_template("qci.html")  # ensure template exists
 
 # ---------------------------------------------------------------------------
 # Scope‑of‑Work Summary placeholder – prevents url_for BuildError
 # ---------------------------------------------------------------------------
 @app.route("/scope")
 def scope():
-    return render_template("scope.html")  # placeholder template
+    return render_template("scope.html")
+
+# ---------------------------------------------------------------------------
+# Preventive Measures placeholder – prevents url_for BuildError
+# ---------------------------------------------------------------------------
+@app.route("/prevent")
+def prevent():
+    return render_template("prevent.html")
+
+# ---------------------------------------------------------------------------
+# Optional index page if linked – safe no‑op
+# ---------------------------------------------------------------------------
+@app.route("/index")
+def index_page():
+    return render_template("index.html")
 
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
