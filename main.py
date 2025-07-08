@@ -1,13 +1,17 @@
-# IHWAP Scout – Flask back‑end (clean rebuild)
-# ------------------------------------------------
-# This single file spins up:
-# • Landing page
-# • Threaded chat interface (AJAX‑enabled)
-# • Age‑finder demo (fixed bug)
-# NOTE: Replace the FAKE_FAIIE_REPLY stub with your real FAAIE inference call.
+# IHWAP Scout – Flask back‑end (rev 2 – adds /qci placeholder)
+# -------------------------------------------------------------
+# Routes:
+#   • /               → landing page (tool hub)
+#   • /chat           → threaded chat (AJAX + full‑page POST fallback)
+#   • /age_finder     → demo serial‑decode helper
+#   • /qci            → NEW: placeholder for QCI Photo Review (fixes BuildError)
+#
+# NOTE: swap FAKE_FAIIE_REPLY for a live call when ready.
 
 from datetime import datetime
+from pathlib import Path
 from typing import List, Dict
+import os
 
 from flask import (
     Flask,
@@ -17,105 +21,84 @@ from flask import (
     url_for,
     jsonify,
     session,
+    make_response,
 )
 
 app = Flask(__name__)
-app.secret_key = "CHANGE_ME_🚨"  # Needed for session storage
+app.secret_key = os.getenv("FLASK_SECRET", "scout‑dev‑key")
 
-# ------------------------------------------------
-# Helpers
-# ------------------------------------------------
-
-def _init_history() -> List[Dict]:
-    """Seed chat history if not present in session."""
-    if "messages" not in session:
-        session["messages"] = [
-            {
-                "role": "assistant",
-                "text": (
-                    "Hello! How can I assist you today with the Illinois Home "
-                    "Weatherization Assistance Program or related protocols?"
-                ),
-                "ts": datetime.now().strftime("%I:%M %p"),
-            }
-        ]
-    return session["messages"]
-
-
-def _faaie_stub(prompt: str) -> str:
-    """Placeholder for FAAIE / OpenAI call – returns a canned reply."""
-    # TODO: wire your real model here
-    return (
-        "[Stub] I received your message: '" + prompt + "'. "
-        "Real FAAIE logic will respond once integrated."
-    )
-
-
-# ------------------------------------------------
-# Routes
-# ------------------------------------------------
-
+# ----------------------------- Landing -----------------------------
 @app.route("/")
 def landing():
+    """Tool hub with links to Chat, Age‑Finder, QCI, etc."""
     return render_template("landing.html")
 
-
+# ------------------------------ Chat -------------------------------
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-    history = _init_history()
-
     if request.method == "POST":
         prompt = request.form.get("prompt", "").strip()
         if not prompt:
-            # Empty prompt – no processing
             return redirect(url_for("chat"))
 
-        # 1️⃣  store user message
-        history.append({
-            "role": "user",
-            "text": prompt,
-            "ts": datetime.now().strftime("%I:%M %p"),
-        })
+        history: List[Dict] = session.get("history", [])
+        history.append({"role": "user", "text": prompt, "ts": datetime.now().strftime("%H:%M")})
 
-        # 2️⃣  get assistant reply (stub → FAAIE later)
-        reply = _faaie_stub(prompt)
-        history.append({
-            "role": "assistant",
-            "text": reply,
-            "ts": datetime.now().strftime("%I:%M %p"),
-        })
-        session.modified = True  # mark session dirty
+        # TODO: replace with real FAAIE logic call
+        assistant_reply = FAKE_FAIIE_REPLY(prompt)
+        history.append({"role": "assistant", "text": assistant_reply, "ts": datetime.now().strftime("%H:%M")})
 
-        # JSON‑aware response (AJAX fetch)
-        if request.accept_mimetypes["application/json"] >= request.accept_mimetypes["text/html"]:
-            return jsonify({"reply": reply, "ts": history[-1]["ts"]})
+        session["history"] = history
+
+        # AJAX? → return JSON
+        if request.headers.get("HX-Request") or request.accept_mimetypes.best == "application/json":
+            return jsonify({"reply": assistant_reply, "ts": history[-1]["ts"]})
 
         return redirect(url_for("chat"))
 
+    # GET
+    history = session.get("history", [])
     return render_template("chat.html", messages=history)
 
 
-@app.route("/age_finder", methods=["GET", "POST"])
+def FAKE_FAIIE_REPLY(prompt: str) -> str:
+    """Temporary stub until FAAIE inference is wired in."""
+    return f"(stub) You said: {prompt[:60]}…"
+
+# --------------------------- Age Finder ----------------------------
+@app.route("/age_finder", methods=["POST"])
 def age_finder():
-    """Simple demo form that calculates appliance age from manufacture year."""
-    age = None
+    serial = request.form.get("serial", "").strip()
+    if not serial:
+        return jsonify(error="Missing serial number"), 400
+
+    # very rudimentary example – real logic will map serial → manufacture date
+    try:
+        year = int(serial[-2:]) + 2000  # e.g., "AB1234 24" ⇒ 2024
+        return jsonify({"estimated_year": year})
+    except ValueError:
+        return jsonify(error="Could not parse year from serial"), 422
+
+# ----------------------------- QCI ---------------------------------
+@app.route("/qci", methods=["GET", "POST"])
+def qci():
+    """Minimal placeholder so landing.html’s link resolves.
+    Expand later to accept image uploads & call FAAIE."""
+
     if request.method == "POST":
-        year_raw = request.form.get("year")
-        try:
-            year_int = int(year_raw)
-            current_year = datetime.now().year
-            age = current_year - year_int
-        except (TypeError, ValueError):
-            age = "Invalid year input."
-    return render_template("age_finder.html", age=age)
+        # In future: handle file upload & return JSON verdict
+        return jsonify({"status": "upload received – processing TBD"})
 
+    # Simple inline HTML avoids template‑not‑found error
+    html = """
+    <h1>QCI Photo Review (Placeholder)</h1>
+    <p>The endpoint is wired; UI coming soon.</p>
+    <p><a href='/'>Back to tool hub</a></p>
+    """
+    return make_response(html)
 
-# ------------------------------------------------
-# Entry‑point for Render / gunicorn
-# ------------------------------------------------
-
+# ---------------------------- Run dev ------------------------------
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
-
-
-
+    debug_host = os.getenv("HOST", "127.0.0.1")
+    debug_port = int(os.getenv("PORT", 5000))
+    app.run(debug=True, host=debug_host, port=debug_port)
