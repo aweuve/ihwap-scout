@@ -1,205 +1,121 @@
-from flask import Flask, render_template, request, jsonify, session
-import os
-import openai
-import json
-import base64
-from vision_matcher import get_matching_trigger_from_image
-from decoders import decode_serial
+# IHWAP Scout – Flask back‑end (clean rebuild)
+# ------------------------------------------------
+# This single file spins up:
+# • Landing page
+# • Threaded chat interface (AJAX‑enabled)
+# • Age‑finder demo (fixed bug)
+# NOTE: Replace the FAKE_FAIIE_REPLY stub with your real FAAIE inference call.
 
-# Load FAAIE logic
-with open("faaie_logic.json", "r") as f:
-    faaie_logic = json.load(f)
+from datetime import datetime
+from typing import List, Dict
+
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    jsonify,
+    session,
+)
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key"
-openai.api_key = os.getenv("OPENAI_API_KEY")
+app.secret_key = "CHANGE_ME_🚨"  # Needed for session storage
 
-# Scene categories & trigger rules
-scene_categories = {
-    "attic": ["attic", "ventilation", "hazardous materials", "structural"],
-    "crawlspace": ["crawlspace", "mechanical", "moisture", "structural"],
-    "basement": ["mechanical", "structural", "moisture", "electrical"],
-    "mechanical room or appliance": ["mechanical", "combustion safety", "electrical"],
-    "exterior": ["shell", "ventilation", "hazardous materials"],
-    "living space": ["health and safety", "electrical", "shell", "windows"],
-    "other": []
-}
+# ------------------------------------------------
+# Helpers
+# ------------------------------------------------
 
-trigger_rules = {
-    "mechanical room or appliance": [
-        {"elements": ["water heater", "rust"], "trigger": "Water Heater Corrosion"},
-        {"elements": ["flue pipe"], "trigger": "Flue Pipe Rust or Disconnection"}
-    ],
-    "attic": [
-        {"elements": ["insulation", "rafters"], "trigger": "Uninsulated Attic Hatch Door"},
-        {"elements": ["insulation", "vents"], "trigger": "Insulation Blocking Attic Ventilation"},
-        {"elements": ["fiberglass insulation", "rafters"], "trigger": "Attic Insulation Review Suggested"}
-    ],
-    "crawlspace": [
-        {"elements": ["vapor barrier", "duct"], "trigger": "Unsealed Vapor Barrier in Crawlspace"},
-        {"elements": ["floor joist", "insulation"], "trigger": "Floor Above Crawlspace Uninsulated"}
-    ]
-}
+def _init_history() -> List[Dict]:
+    """Seed chat history if not present in session."""
+    if "messages" not in session:
+        session["messages"] = [
+            {
+                "role": "assistant",
+                "text": (
+                    "Hello! How can I assist you today with the Illinois Home "
+                    "Weatherization Assistance Program or related protocols?"
+                ),
+                "ts": datetime.now().strftime("%I:%M %p"),
+            }
+        ]
+    return session["messages"]
 
-# ROUTES
+
+def _faaie_stub(prompt: str) -> str:
+    """Placeholder for FAAIE / OpenAI call – returns a canned reply."""
+    # TODO: wire your real model here
+    return (
+        "[Stub] I received your message: '" + prompt + "'. "
+        "Real FAAIE logic will respond once integrated."
+    )
+
+
+# ------------------------------------------------
+# Routes
+# ------------------------------------------------
+
 @app.route("/")
 def landing():
     return render_template("landing.html")
 
+
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-    if "chat_history" not in session:
-        session["chat_history"] = []
-    if request.method == "POST":
-        question = request.form.get("chat_input")
-        if question:
-            session["chat_history"].append({"role": "user", "content": question})
-            try:
-                completion = openai.ChatCompletion.create(
-                    model="gpt-4o",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": (
-                                "You are Scout, an IHWAP 2026 assistant for Weatherization staff.\n\n"
-                                "✅ Follow the Weatherization Creed:\n"
-                                "1. Health & Safety\n2. Home Integrity\n3. Energy Efficiency\n\n"
-                                "Acceptable topics:\n"
-                                "- IHWAP 2026 policies & measures\n"
-                                "- DOE WAP rules\n"
-                                "- Field inspections, scopes, and troubleshooting\n"
-                                "- Rubber-ducking field issues or manual lookups\n\n"
-                                "Answer structure:\n"
-                                "- Health & Safety concerns first\n"
-                                "- Deferral risks second\n"
-                                "- Compliance or tech details last\n"
-                                "- Include IHWAP 2026 citations if applicable\n"
-                                "- Be friendly, clear, and concise for field use\n\n"
-                                "If unrelated, say:\n"
-                                '"I can assist with IHWAP 2026, Weatherization, and inspection topics only."'
-                            )
-                        }
-                    ] + session["chat_history"],
-                    max_tokens=500
-                )
-                reply = completion.choices[0].message["content"]
-                session["chat_history"].append({"role": "assistant", "content": reply})
-            except Exception as e:
-                session["chat_history"].append({"role": "assistant", "content": f"Error: {e}"})
-    return render_template("chat.html", chat_history=session.get("chat_history", []))
-
-@app.route("/qci", methods=["GET", "POST"])
-def qci():
-    result = None
-    image_path = None
-    scene_type = None
+    history = _init_history()
 
     if request.method == "POST":
-        image = request.files.get("image")
-        if image:
-            upload_dir = os.path.join("static", "uploads")
-            os.makedirs(upload_dir, exist_ok=True)
-            image_path = os.path.join(upload_dir, "upload.jpg")
-            image.save(image_path)
-            with open(image_path, "rb") as f:
-                image_bytes = f.read()
+        prompt = request.form.get("prompt", "").strip()
+        if not prompt:
+            # Empty prompt – no processing
+            return redirect(url_for("chat"))
 
-            try:
-                base64_image = base64.b64encode(image_bytes).decode("utf-8")
-                vision_response = openai.ChatCompletion.create(
-                    model="gpt-4-vision-preview",
-                    messages=[
-                        {"role": "system", "content": (
-                            "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo. "
-                            "Choose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other."
-                        )},
-                        {"role": "user", "content": [
-                            {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}
-                        ]}
-                    ],
-                    max_tokens=10
-                )
-                scene_type = vision_response.choices[0].message["content"].strip().lower()
-                if scene_type not in scene_categories:
-                    scene_type = "other"
-            except Exception:
-                scene_type = "other"
+        # 1️⃣  store user message
+        history.append({
+            "role": "user",
+            "text": prompt,
+            "ts": datetime.now().strftime("%I:%M %p"),
+        })
 
-            result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+        # 2️⃣  get assistant reply (stub → FAAIE later)
+        reply = _faaie_stub(prompt)
+        history.append({
+            "role": "assistant",
+            "text": reply,
+            "ts": datetime.now().strftime("%I:%M %p"),
+        })
+        session.modified = True  # mark session dirty
 
-            visible_elements = result.get("visible_elements", [])
-            if scene_type == "other":
-                if any(kw in visible_elements for kw in {"rafters", "fiberglass insulation", "attic floor"}):
-                    scene_type = "attic"
-                elif any(kw in visible_elements for kw in {"vapor barrier", "floor joist", "duct"}):
-                    scene_type = "crawlspace"
-                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe"}):
-                    scene_type = "mechanical room or appliance"
+        # JSON‑aware response (AJAX fetch)
+        if request.accept_mimetypes["application/json"] >= request.accept_mimetypes["text/html"]:
+            return jsonify({"reply": reply, "ts": history[-1]["ts"]})
 
-            allowed = scene_categories.get(scene_type, [])
-            result["matched_triggers"] = [
-                trig for trig in result.get("matched_triggers", [])
-                if trig.get("response", {}).get("category") in allowed
-            ]
+        return redirect(url_for("chat"))
 
-            auto_triggered = []
-            for rule in trigger_rules.get(scene_type, []):
-                if all(elem in visible_elements for elem in rule["elements"]):
-                    auto_triggered.append(rule["trigger"])
-            result["auto_triggered"] = auto_triggered
-            result["scene_type"] = scene_type
+    return render_template("chat.html", messages=history)
 
-            session["last_result"] = result
-            session["last_scene"] = scene_type
-
-    return render_template("qci.html", result=session.get("last_result"))
-
-@app.route("/scope")
-def scope():
-    result = session.get("last_result")
-    return render_template("scope.html", result=result)
-
-@app.route("/prevent")
-def prevent():
-    return render_template("prevent.html")
 
 @app.route("/age_finder", methods=["GET", "POST"])
 def age_finder():
-    result = None
+    """Simple demo form that calculates appliance age from manufacture year."""
+    age = None
     if request.method == "POST":
-        serial = request.form['serial']
-        brand = request.form['brand']
-        result = decode_serial(serial, brand)
-    return render_template("age_finder.html", result=result)
+        year_raw = request.form.get("year")
+        try:
+            year_int = int(year_raw)
+            current_year = datetime.now().year
+            age = current_year - year_int
+        except (TypeError, ValueError):
+            age = "Invalid year input."
+    return render_template("age_finder.html", age=age)
 
-@app.route("/qci_review", methods=["POST"])
-def qci_review():
-    data = request.json
-    scene_type = data.get("scene_type", "unknown")
-    matched_triggers = data.get("matched_triggers", [])
-    auto_triggers = data.get("auto_triggered", [])
 
-    qci_prompt = (
-        f"You are a certified IHWAP Quality Control Inspector (QCI). Review this photo for scene type '{scene_type}'.\n"
-        f"Issues detected: {', '.join([t['trigger'] for t in matched_triggers] + auto_triggers)}.\n\n"
-        "Write a field-ready inspection note listing corrections, documentation, or reinspection needs before approval."
-    )
-
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o",
-            messages=[{"role": "system", "content": qci_prompt}],
-            max_tokens=300
-        )
-        review = response.choices[0].message["content"]
-    except Exception as e:
-        review = f"Error generating QCI review: {str(e)}"
-
-    session.setdefault("chat_history", []).append({"role": "assistant", "content": review})
-    return jsonify({"qci_review": review})
+# ------------------------------------------------
+# Entry‑point for Render / gunicorn
+# ------------------------------------------------
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=5000)
+
 
 
