@@ -1,33 +1,57 @@
-<form method="POST">
-    <label for="brand">Select Brand:</label>
-    <select name="brand" id="brand" required>
-        <option value="Rheem / Ruud">Rheem / Ruud</option>
-        <option value="AO Smith / State">AO Smith / State</option>
-        <option value="Bradford White">Bradford White</option>
-        <option value="Goodman / Amana">Goodman / Amana</option>
-        <option value="Lennox">Lennox</option>
-        <option value="York / Luxaire / Coleman">York / Luxaire / Coleman</option>
-        <option value="Carrier / Bryant / Payne">Carrier / Bryant / Payne</option>
-        <option value="American Standard / Trane">American Standard / Trane</option>
-        <option value="GE Water Heater">GE Water Heater</option>
-    </select>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HVAC / Appliance Age Finder – IHWAP Scout</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; margin-bottom: 30px; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-weight: bold; }
+        select, input, button { padding: 10px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #007bff; color: white; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .result { margin-top: 20px; background-color: #f9f9f9; padding: 15px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛠️ HVAC / Appliance Age Finder</h1>
+        <form method="POST">
+            <label for="brand">Select Brand:</label>
+            <select name="brand" id="brand" required>
+                <option value="Rheem / Ruud">Rheem / Ruud</option>
+                <option value="AO Smith / State">AO Smith / State</option>
+                <option value="Bradford White">Bradford White</option>
+                <option value="Goodman / Amana">Goodman / Amana</option>
+                <option value="Lennox">Lennox</option>
+                <option value="York / Luxaire / Coleman">York / Luxaire / Coleman</option>
+                <option value="Carrier / Bryant / Payne">Carrier / Bryant / Payne</option>
+                <option value="American Standard / Trane">American Standard / Trane</option>
+                <option value="GE Water Heater">GE Water Heater</option>
+            </select>
 
-    <label for="serial">Enter Serial Number:</label>
-    <input type="text" name="serial" id="serial" required>
+            <label for="serial">Enter Serial Number:</label>
+            <input type="text" name="serial" id="serial" placeholder="e.g., 0519XXXXXX" required>
 
-    <button type="submit">Find Age</button>
-</form>
+            <button type="submit">Find Age</button>
+        </form>
 
-{% if result %}
-    <h2>Results:</h2>
-    {% if result.get('brand') %}
-        <p><strong>Brand:</strong> {{ result['brand'] }}</p>
-        <p><strong>Manufacture Date:</strong> {{ result['manufacture_date'] }}</p>
-        <p><strong>Age:</strong> {{ result['age'] }} years</p>
-        {% if result['action_flag'] %}
-            <p><strong>{{ result['action_flag'] }}</strong></p>
+        {% if result %}
+        <div class="result">
+            {% if result.get('brand') %}
+                <p><strong>Brand:</strong> {{ result['brand'] }}</p>
+                <p><strong>Manufacture Date:</strong> {{ result['manufacture_date'] }}</p>
+                <p><strong>Age:</strong> {{ result['age'] }} years</p>
+                {% if result['action_flag'] %}
+                    <p><strong>{{ result['action_flag'] }}</strong></p>
+                {% endif %}
+            {% else %}
+                <p>{{ result }}</p>
+            {% endif %}
+        </div>
         {% endif %}
-    {% else %}
-        <p>{{ result }}</p>
-    {% endif %}
-{% endif %}
+    </div>
+</body>
+</html>
