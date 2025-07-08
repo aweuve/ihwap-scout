@@ -40,7 +40,7 @@
 
         {% if result %}
         <div class="result">
-            {% if result.get('brand') %}
+            {% if result is mapping %}
                 <p><strong>Brand:</strong> {{ result['brand'] }}</p>
                 <p><strong>Manufacture Date:</strong> {{ result['manufacture_date'] }}</p>
                 <p><strong>Age:</strong> {{ result['age'] }} years</p>
