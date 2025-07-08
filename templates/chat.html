@@ -4,48 +4,132 @@
     <meta charset="UTF-8">
     <title>Chat with Scout – IHWAP Scout</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f2f2f2; margin: 0; padding: 0; }
-        .container { max-width: 700px; margin: 50px auto; background: #fff; padding: 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; margin-bottom: 30px; }
-        .chat-history { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
-        .chat-message {
-            padding: 12px;
-            border-radius: 10px;
-            max-width: 80%;
-            word-wrap: break-word;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e5eaf1;
+            margin: 0; padding: 0;
         }
-        .user-message {
-            background-color: #d1ecf1;
-            align-self: flex-end;
-            border: 1px solid #bee5eb;
+        .container {
+            max-width: 520px;
+            margin: 48px auto 0 auto;
+            background: #fff;
+            padding: 0 0 16px 0;
+            border-radius: 16px;
+            box-shadow: 0 2px 20px rgba(70,60,110,0.09);
+            min-height: 700px;
+            display: flex;
+            flex-direction: column;
         }
-        .assistant-message {
-            background-color: #f8d7da;
-            align-self: flex-start;
-            border: 1px solid #f5c6cb;
+        h1 {
+            text-align: center;
+            margin: 30px 0 15px 0;
+            font-size: 2rem;
+            color: #323d50;
         }
-        form { display: flex; flex-direction: column; gap: 15px; }
-        textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; }
-        button { padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .chat-history {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 24px 20px 8px 20px;
+            overflow-y: auto;
+            height: 470px;
+            background: #f7fafd;
+            border-radius: 12px 12px 0 0;
+        }
+        .chat-row {
+            display: flex;
+            align-items: flex-end;
+        }
+        .user-row { justify-content: flex-end; }
+        .assistant-row { justify-content: flex-start; }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #d1ecf1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 8px;
+            font-size: 1.4rem;
+            box-shadow: 0 2px 8px rgba(140,160,200,0.14);
+        }
+        .assistant-avatar { background: #f8d7da; }
+        .bubble {
+            padding: 13px 16px;
+            border-radius: 16px;
+            max-width: 75%;
+            word-break: break-word;
+            box-shadow: 0 2px 6px rgba(130,130,160,0.11);
+            font-size: 1rem;
+        }
+        .user-bubble {
+            background: linear-gradient(120deg, #d1ecf1 80%, #bee5eb 100%);
+            border-bottom-right-radius: 8px;
+        }
+        .assistant-bubble {
+            background: linear-gradient(120deg, #f8d7da 90%, #f5c6cb 100%);
+            border-bottom-left-radius: 8px;
+        }
+        form {
+            display: flex;
+            padding: 12px 20px 0 20px;
+            gap: 8px;
+            border-top: 1px solid #e2e7ed;
+            background: #fff;
+        }
+        textarea {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #ccd3db;
+            border-radius: 7px;
+            resize: none;
+            font-size: 1rem;
+        }
+        button {
+            padding: 11px 24px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 1px 5px rgba(80,100,160,0.07);
+            transition: background 0.18s;
+        }
         button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>💬 Chat with Scout</h1>
-        <div class="chat-history">
+        <div class="chat-history" id="chat-history">
             {% for message in chat_history %}
-                <div class="chat-message {% if message['role'] == 'user' %}user-message{% else %}assistant-message{% endif %}">
-                    {{ message['content'] | safe }}
+                <div class="chat-row {% if message['role'] == 'user' %}user-row{% else %}assistant-row{% endif %}">
+                    {% if message['role'] == 'assistant' %}
+                        <span class="avatar assistant-avatar">🤖</span>
+                        <span class="bubble assistant-bubble">{{ message['content'] | safe }}</span>
+                    {% else %}
+                        <span class="bubble user-bubble">{{ message['content'] | safe }}</span>
+                        <span class="avatar">🧑</span>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>
-        <form method="POST">
-            <textarea name="chat_input" rows="3" placeholder="Type your question..." required></textarea>
+        <form method="POST" autocomplete="off">
+            <textarea name="chat_input" rows="2" placeholder="Type your question..." required></textarea>
             <button type="submit">Send</button>
         </form>
     </div>
+    <script>
+        // Auto-scroll to bottom of chat on load
+        var chatHistory = document.getElementById('chat-history');
+        if(chatHistory) chatHistory.scrollTop = chatHistory.scrollHeight;
+    </script>
 </body>
 </html>
+
 
 
