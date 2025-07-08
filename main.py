@@ -1,14 +1,9 @@
-# IHWAP Scout – Flask back‑end (rev 5 – adds /prevent + /index placeholders)
+# IHWAP Scout – Flask back‑end (rev 6 – fixes UndefinedError in /qci)
 # -------------------------------------------------------------
-# • Landing page (/) – hub of tool buttons
-# • Threaded chat (/chat) – AJAX + fallback
-# • Age‑finder helper (/age_finder) – demo utility
-# • QCI Photo Review placeholder (/qci)
-# • Scope‑of‑Work Summary placeholder (/scope)
-# • Preventive Measures placeholder (/prevent)
-# • Index placeholder (/index) – optional template link
+# • Adds safe‑context payload to /qci so qci.html can reference {{ result.* }}
+# • No other logic changed.
 #
-# NOTE: Replace FAKE_FAIIE_REPLY stub with real FAAIE inference call when ready.
+# NOTE: Replace FAKE_FAIIE_REPLY with real FAAIE inference call when ready.
 
 from datetime import datetime
 import os
@@ -20,14 +15,14 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "supersecret")
 
 # ---------------------------------------------------------------------------
-# Landing page – lists tool buttons
+# Landing page
 # ---------------------------------------------------------------------------
 @app.route("/")
 def landing():
     return render_template("landing.html")
 
 # ---------------------------------------------------------------------------
-# Chat – AJAX + full‑page fallback
+# Chat
 # ---------------------------------------------------------------------------
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
@@ -36,17 +31,15 @@ def chat():
         if not prompt:
             return redirect(url_for("chat"))
 
-        # Persist thread in session for demo purposes
         messages: List[Dict] = session.setdefault("messages", [])
         ts = datetime.now().strftime("%H:%M:%S")
         messages.append({"role": "user", "text": prompt, "ts": ts})
 
-        # ✂️ stub FAAIE call – replace with real logic
+        # ▶️  stub – replace with real FAAIE call
         reply = "FAKE_FAIIE_REPLY"
         messages.append({"role": "assistant", "text": reply, "ts": ts})
         session["messages"] = messages
 
-        # AJAX response
         if request.accept_mimetypes.accept_json:
             return jsonify({"reply": reply, "ts": ts})
         return redirect(url_for("chat"))
@@ -65,28 +58,33 @@ def age_finder():
     return jsonify(age=age)
 
 # ---------------------------------------------------------------------------
-# QCI Photo Review placeholder – prevents url_for BuildError
+# QCI Photo Review – now passes default context to template
 # ---------------------------------------------------------------------------
 @app.route("/qci")
 def qci():
-    return render_template("qci.html")  # ensure template exists
+    placeholder_result = {
+        "scene_type": "unknown",
+        "flags": [],
+        "recommendations": []
+    }
+    return render_template("qci.html", result=placeholder_result)
 
 # ---------------------------------------------------------------------------
-# Scope‑of‑Work Summary placeholder – prevents url_for BuildError
+# Scope‑of‑Work Summary placeholder
 # ---------------------------------------------------------------------------
 @app.route("/scope")
 def scope():
     return render_template("scope.html")
 
 # ---------------------------------------------------------------------------
-# Preventive Measures placeholder – prevents url_for BuildError
+# Preventive Measures placeholder
 # ---------------------------------------------------------------------------
 @app.route("/prevent")
 def prevent():
     return render_template("prevent.html")
 
 # ---------------------------------------------------------------------------
-# Optional index page if linked – safe no‑op
+# Optional index page
 # ---------------------------------------------------------------------------
 @app.route("/index")
 def index_page():
