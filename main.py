@@ -1,8 +1,5 @@
 # IHWAP Scout – Flask back‑end (syntax‑safe patch)
 # ---------------------------------------------------------------------
-#  • Fixes unterminated string literal in the system prompt block (line 93)
-#  • No other logic changed – retains user‑supplied working code + patches
-# ---------------------------------------------------------------------
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os
@@ -112,6 +109,7 @@ If unrelated, say:
                 assistant_reply = f"Error: {e}"
 
             session["chat_history"].append({"role": "assistant", "content": assistant_reply})
+            session.modified = True    # Ensures chat persists across redirect.
 
             wants_json = (
                 request.is_json
@@ -216,8 +214,6 @@ def scope():
     result = session.get("last_result", {"scene_type": "unset", "matched_triggers": [], "auto_triggered": []})
     return render_template("scope.html", result=result)
 
-# ----------- Optionally add more routes here ------------
-
 @app.route("/age_finder", methods=["GET", "POST"])
 def age_finder():
     # You can expand this logic later. For now, just renders the page.
@@ -228,9 +224,7 @@ def prevent():
     # You can add logic here later—right now it just loads your template.
     return render_template("prevent.html")
 
-
 # MAIN GUARD – run locally or on Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
-
