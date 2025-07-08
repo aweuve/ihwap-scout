@@ -1,52 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>QCI Photo Review</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; }
-        .container { background-color: #fff; padding: 20px; border-radius: 8px; max-width: 700px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        h1 { text-align: center; }
-        .section { margin-bottom: 20px; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>📸 QCI Photo Review</h1>
+<div class="qci-report">
+  <h2>📸 QCI Photo Review Report</h2>
+  <p><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</p>
+  <p><strong>Photo Analysis Date:</strong> {{ analysis_date }}</p>
 
-        <form method="POST" enctype="multipart/form-data">
-            <div class="section">
-                <label>Select a photo to analyze:</label>
-                <input type="file" name="image" required>
-            </div>
-            <button type="submit">Analyze Photo</button>
-        </form>
+  <hr>
 
-        {% if session.get("last_result") %}
-            <hr>
-            <h2>🔍 Analysis Result:</h2>
-            <p><strong>Scene Type Detected:</strong> {{ session["last_result"].scene_type }}</p>
+  <!-- ⚠️ Critical Health & Safety -->
+  <h3>⚠️ Health & Safety & Combustion Risks (Priority 1)</h3>
+  <ul>
+    {% for trigger in result.matched_triggers %}
+      {% if trigger.response.priority == 1 %}
+        <li>
+          <strong>{{ trigger.trigger }}</strong><br>
+          Reason: {{ trigger.response.reason }}<br>
+          Action: {{ trigger.response.recommendation }}<br>
+          Policy: {{ trigger.response.source_policy }}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
 
-            <h3>Matched Triggers:</h3>
-            <ul>
-            {% for trigger in session["last_result"].matched_triggers %}
-                <li><strong>{{ trigger.trigger }}</strong>: {{ trigger.response.reason }}</li>
-            {% endfor %}
-            </ul>
+  <!-- 🚫 Deferral Risks -->
+  <h3>🚫 Deferral Risks Identified</h3>
+  <ul>
+    {% for trigger in result.matched_triggers %}
+      {% if 'deferral' in trigger.response.tags %}
+        <li>
+          <strong>{{ trigger.trigger }}</strong><br>
+          Reason: {{ trigger.response.reason }}<br>
+          Action: {{ trigger.response.recommendation }}<br>
+          Policy: {{ trigger.response.source_policy }}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
 
-            <h3>Auto-Detected Triggers:</h3>
-            <ul>
-            {% for trigger in session["last_result"].auto_triggered %}
-                <li>{{ trigger }}</li>
-            {% endfor %}
-            </ul>
+  <!-- 🔧 Technical Compliance Issues -->
+  <h3>🔧 Technical & Compliance Issues (Field Fixes)</h3>
+  <ul>
+    {% for trigger in result.matched_triggers %}
+      {% if trigger.response.priority == 2 and 'deferral' not in trigger.response.tags %}
+        <li>
+          <strong>{{ trigger.trigger }}</strong><br>
+          Reason: {{ trigger.response.reason }}<br>
+          Action: {{ trigger.response.recommendation }}<br>
+          Policy: {{ trigger.response.source_policy }}
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
 
-            <p><a href="{{ url_for('scope') }}">➡️ See Scope Summary</a></p>
-        {% else %}
-            <p><em>No photo analyzed yet. Please upload a photo above to begin.</em></p>
-        {% endif %}
+  <!-- Scope of Work Summary -->
+  <h3>📋 Scope of Work Summary:</h3>
+  <ul>
+    {% for trigger in result.matched_triggers %}
+      <li>{{ trigger.trigger }}</li>
+    {% endfor %}
+  </ul>
 
-        <p><a href="{{ url_for('landing') }}">⬅️ Back to Home</a></p>
-    </div>
-</body>
-</html>
+  <hr>
+  <p class="footer-note">
+    ✔️ All corrections must follow IHWAP 2026 standards and be photo-documented before project approval.
+  </p>
+</div>
