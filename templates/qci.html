@@ -1,65 +1,83 @@
-<div class="qci-report">
-  <h2>📸 QCI Photo Review Report</h2>
-  <p><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</p>
-  <p><strong>Photo Analysis Date:</strong> {{ analysis_date }}</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>📸 QCI Photo Review</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; }
+        .qci-report { background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #ccc; }
+        h2, h3 { color: #333; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        .footer-note { font-size: 0.9em; color: #666; margin-top: 20px; }
+        .btn { display: inline-block; padding: 8px 12px; margin: 5px 0; background: #007bff; color: #fff; text-decoration: none; border-radius: 4px; }
+        .btn:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
 
-  <hr>
+<h2>📸 QCI Photo Review Report</h2>
 
-  <!-- ⚠️ Critical Health & Safety -->
-  <h3>⚠️ Health & Safety & Combustion Risks (Priority 1)</h3>
-  <ul>
-    {% for trigger in result.matched_triggers %}
-      {% if trigger.response.priority == 1 %}
-        <li>
-          <strong>{{ trigger.trigger }}</strong><br>
-          Reason: {{ trigger.response.reason }}<br>
-          Action: {{ trigger.response.recommendation }}<br>
-          Policy: {{ trigger.response.source_policy }}
-        </li>
-      {% endif %}
-    {% endfor %}
-  </ul>
+<p><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</p>
+<p><strong>Photo Analysis Date:</strong> {{ analysis_date }}</p>
 
-  <!-- 🚫 Deferral Risks -->
-  <h3>🚫 Deferral Risks Identified</h3>
-  <ul>
-    {% for trigger in result.matched_triggers %}
-      {% if 'deferral' in trigger.response.tags %}
-        <li>
-          <strong>{{ trigger.trigger }}</strong><br>
-          Reason: {{ trigger.response.reason }}<br>
-          Action: {{ trigger.response.recommendation }}<br>
-          Policy: {{ trigger.response.source_policy }}
-        </li>
-      {% endif %}
-    {% endfor %}
-  </ul>
+<hr>
 
-  <!-- 🔧 Technical Compliance Issues -->
-  <h3>🔧 Technical & Compliance Issues (Field Fixes)</h3>
-  <ul>
-    {% for trigger in result.matched_triggers %}
-      {% if trigger.response.priority == 2 and 'deferral' not in trigger.response.tags %}
-        <li>
-          <strong>{{ trigger.trigger }}</strong><br>
-          Reason: {{ trigger.response.reason }}<br>
-          Action: {{ trigger.response.recommendation }}<br>
-          Policy: {{ trigger.response.source_policy }}
-        </li>
-      {% endif %}
-    {% endfor %}
-  </ul>
+<h3>⚠️ Health & Safety & Combustion Risks (Priority 1)</h3>
+<ul>
+{% for trigger in result.matched_triggers %}
+  {% if trigger.response.priority == 1 %}
+  <li>
+    <strong>{{ trigger.trigger }}</strong><br>
+    Reason: {{ trigger.response.reason }}<br>
+    Action: {{ trigger.response.recommendation }}<br>
+    Policy: {{ trigger.response.source_policy }}
+  </li>
+  {% endif %}
+{% endfor %}
+</ul>
 
-  <!-- Scope of Work Summary -->
-  <h3>📋 Scope of Work Summary:</h3>
-  <ul>
-    {% for trigger in result.matched_triggers %}
-      <li>{{ trigger.trigger }}</li>
-    {% endfor %}
-  </ul>
+<h3>🚫 Deferral Risks Identified</h3>
+<ul>
+{% for trigger in result.matched_triggers %}
+  {% if 'deferral' in trigger.response.tags %}
+  <li>
+    <strong>{{ trigger.trigger }}</strong><br>
+    Reason: {{ trigger.response.reason }}<br>
+    Action: {{ trigger.response.recommendation }}<br>
+    Policy: {{ trigger.response.source_policy }}
+  </li>
+  {% endif %}
+{% endfor %}
+</ul>
 
-  <hr>
-  <p class="footer-note">
-    ✔️ All corrections must follow IHWAP 2026 standards and be photo-documented before project approval.
-  </p>
-</div>
+<h3>🔧 Technical & Compliance Issues (Field Fixes)</h3>
+<ul>
+{% for trigger in result.matched_triggers %}
+  {% if trigger.response.priority == 2 and 'deferral' not in trigger.response.tags %}
+  <li>
+    <strong>{{ trigger.trigger }}</strong><br>
+    Reason: {{ trigger.response.reason }}<br>
+    Action: {{ trigger.response.recommendation }}<br>
+    Policy: {{ trigger.response.source_policy }}
+  </li>
+  {% endif %}
+{% endfor %}
+</ul>
+
+<h3>📋 Scope of Work Summary:</h3>
+<ul>
+{% for trigger in result.matched_triggers %}
+  <li>{{ trigger.trigger }}</li>
+{% endfor %}
+</ul>
+
+<p class="footer-note">
+✔️ All corrections must follow IHWAP 2026 standards and be photo-documented before project approval.
+</p>
+
+<a href="{{ url_for('scope') }}" class="btn">➡️ See Scope Summary</a>
+<a href="{{ url_for('landing') }}" class="btn">⬅️ Back to Home</a>
+
+</body>
+</html>
