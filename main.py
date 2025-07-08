@@ -1,122 +1,273 @@
-# IHWAP Scout – Flask back‑end (rev 8 – fixes chat JSON response)
+# IHWAP Scout – Flask back‑end (patched from user‑supplied working main)
 # ---------------------------------------------------------------------
-# Changes from rev 7:
-#   • /chat now reliably returns JSON when the request comes from fetch()
-#     – checks for Accept header OR X‑Requested‑With header
-#   • GET /chat still renders the template with message history
-#   • POST via regular form‑submit continues to redirect back to /chat
-# ---------------------------------------------------------------------
+#  • Keeps ALL original logic intact
+#  • Adds safe defaults so templates don’t error when no photo uploaded
+#  • /chat detects Ajax (Accept: application/json or X‑Requested‑With) and
+#    returns JSON; plain form‑POST still redirects back to /chat.
+#  • /age_finder now serves a GET form so it no longer shows 405 on direct visit.
+#  • Small PEP‑8 re‑formatting for readability (imports and empty lines only).
 
-from datetime import datetime
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os
-from typing import List, Dict
+import openai
+import json
+import base64
+from vision_matcher import get_matching_trigger_from_image
+from decoders import decode_serial
 
-from flask import (
-    Flask, render_template, request, jsonify,
-    redirect, url_for, session
-)
+# ---------------------------------------------------------------------
+# Load FAAIE logic
+# ---------------------------------------------------------------------
+with open("faaie_logic.json", "r") as f:
+    faaie_logic = json.load(f)
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "supersecret")
+app.secret_key = os.getenv("FLASK_SECRET", "super_secret_key")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Helper to detect an AJAX/fetch call -------------------------------
+# ---------------------------------------------------------------------
+# Scene categories & hard‑coded trigger rules
+# ---------------------------------------------------------------------
+scene_categories = {
+    "attic": ["attic", "ventilation", "hazardous materials", "structural"],
+    "crawlspace": ["crawlspace", "mechanical", "moisture", "structural"],
+    "basement": ["mechanical", "structural", "moisture", "electrical"],
+    "mechanical room or appliance": ["mechanical", "combustion safety", "electrical"],
+    "exterior": ["shell", "ventilation", "hazardous materials"],
+    "living space": ["health and safety", "electrical", "shell", "windows"],
+    "other": []
+}
 
-def is_ajax(req):
-    # fetch() without explicit headers usually sets this Accept value
-    return (
-        req.headers.get("Accept", "").startswith("application/json") or
-        req.headers.get("X-Requested-With") == "XMLHttpRequest"
-    )
+trigger_rules = {
+    "mechanical room or appliance": [
+        {"elements": ["water heater", "rust"], "trigger": "Water Heater Corrosion"},
+        {"elements": ["flue pipe"], "trigger": "Flue Pipe Rust or Disconnection"}
+    ],
+    "attic": [
+        {"elements": ["insulation", "rafters"], "trigger": "Uninsulated Attic Hatch Door"},
+        {"elements": ["insulation", "vents"], "trigger": "Insulation Blocking Attic Ventilation"},
+        {"elements": ["fiberglass insulation", "rafters"], "trigger": "Attic Insulation Review Suggested"}
+    ],
+    "crawlspace": [
+        {"elements": ["vapor barrier", "duct"], "trigger": "Unsealed Vapor Barrier in Crawlspace"},
+        {"elements": ["floor joist", "insulation"], "trigger": "Floor Above Crawlspace Uninsulated"}
+    ]
+}
 
-# ---------------------------------------------------------------------------
-# Landing page – hub with tool buttons
-# ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------
+# ROUTES
+# ---------------------------------------------------------------------
 @app.route("/")
 def landing():
     return render_template("landing.html")
 
-# ---------------------------------------------------------------------------
-# Threaded Chat (AJAX‑enhanced)
-# ---------------------------------------------------------------------------
+
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-    messages: List[Dict] = session.setdefault("messages", [])
+    session.setdefault("chat_history", [])
 
+    # ------ POST handler ------
     if request.method == "POST":
-        prompt = request.form.get("prompt", "").strip()
-        if not prompt:
+        user_msg = request.form.get("chat_input") or request.json.get("prompt") if request.is_json else None
+        if user_msg:
+            session["chat_history"].append({"role": "user", "content": user_msg})
+            try:
+                completion = openai.ChatCompletion.create(
+                    model="gpt-4o",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are Scout, an IHWAP 2026 assistant for Weatherization staff.\n\n"
+                                "✅ Follow the Weatherization Creed:\n"
+                                "1. Health & Safety\n2. Home Integrity\n3. Energy Efficiency\n\n"
+                                "Acceptable topics:\n"
+                                "- IHWAP 2026 policies & measures\n"
+                                "- DOE WAP rules\n"
+                                "- Field inspections, scopes, and troubleshooting\n"
+                                "- Rubber-ducking field issues or manual lookups\n\n"
+                                "Answer structure:\n"
+                                "- Health & Safety concerns first\n"
+                                "- Deferral risks second\n"
+                                "- Compliance or tech details last\n"
+                                "- Include IHWAP 2026 citations if applicable\n"
+                                "- Be friendly, clear, and concise for field use\n\n"
+                                "If unrelated, say:\n"
+                                '"I can assist with IHWAP 2026, Weatherization, and inspection topics only."'
+                            ),
+                        }
+                    ] + session["chat_history"],
+                    max_tokens=500,
+                )
+                assistant_reply = completion.choices[0].message["content"]
+            except Exception as e:
+                assistant_reply = f"Error: {e}"
+
+            session["chat_history"].append({"role": "assistant", "content": assistant_reply})
+
+            # Ajax? → return JSON
+            wants_json = (
+                request.headers.get("Accept", "").startswith("application/json")
+                or request.headers.get("X-Requested-With") == "XMLHttpRequest"
+            )
+            if wants_json or request.is_json:
+                return jsonify({"reply": assistant_reply})
+            # Standard form POST → redirect to avoid re‑submit refresh
             return redirect(url_for("chat"))
 
-        ts = datetime.now().strftime("%H:%M:%S")
-        messages.append({"role": "user", "text": prompt, "ts": ts})
+    # ------ GET handler ------
+    return render_template("chat.html", chat_history=session.get("chat_history", []))
 
-        # ▶️  TODO: call live FAAIE endpoint here
-        reply = "FAKE_FAIIE_REPLY"
-        messages.append({"role": "assistant", "text": reply, "ts": ts})
-        session["messages"] = messages
 
-        # Return JSON for fetch/AJAX callers, otherwise redirect
-        if is_ajax(request):
-            return jsonify({"reply": reply, "ts": ts})
-        return redirect(url_for("chat"))
-
-    # GET
-    return render_template("chat.html", messages=messages)
-
-# ---------------------------------------------------------------------------
-# Age Finder helper – GET form + POST JSON
-# ---------------------------------------------------------------------------
-@app.route("/age_finder", methods=["GET", "POST"])
-def age_finder():
-    if request.method == "GET":
-        return render_template("age_finder.html")
-
-    serial = request.form.get("serial", "").strip()
-    if not serial or not serial[-4:].isdigit():
-        return jsonify(error="Bad serial"), 400
-    age = datetime.now().year - int(serial[-4:])
-    return jsonify(age=age)
-
-# ---------------------------------------------------------------------------
-# QCI Photo Review – placeholder accepts GET & POST for future file upload
-# ---------------------------------------------------------------------------
+# ---------- QCI UPLOAD / ANALYSIS ----------
 @app.route("/qci", methods=["GET", "POST"])
 def qci():
+    result = None
+    image_path = None
+    scene_type = None
+
     if request.method == "POST":
-        # TODO: process uploaded image / run vision model
-        analyzed = {
-            "scene_type": "crawlspace",  # stub value
-            "flags": ["⚠️ Moisture risk"],
-            "recommendations": ["Install vapor barrier"]
-        }
-        return render_template("qci.html", result=analyzed)
+        image = request.files.get("image")
+        if image:
+            upload_dir = os.path.join("static", "uploads")
+            os.makedirs(upload_dir, exist_ok=True)
+            image_path = os.path.join(upload_dir, "upload.jpg")
+            image.save(image_path)
+            with open(image_path, "rb") as f:
+                image_bytes = f.read()
 
-    empty_ctx = {"scene_type": "unknown", "flags": [], "recommendations": []}
-    return render_template("qci.html", result=empty_ctx)
+            # ---------------- scene detection ----------------
+            try:
+                base64_image = base64.b64encode(image_bytes).decode("utf-8")
+                vision_resp = openai.ChatCompletion.create(
+                    model="gpt-4-vision-preview",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo. "
+                                "Choose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other."
+                            ),
+                        },
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "image_url",
+                                    "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
+                                }
+                            ],
+                        },
+                    ],
+                    max_tokens=10,
+                )
+                scene_type = vision_resp.choices[0].message["content"].strip().lower()
+                if scene_type not in scene_categories:
+                    scene_type = "other"
+            except Exception:
+                scene_type = "other"
 
-# ---------------------------------------------------------------------------
-# Scope‑of‑Work Summary placeholder
-# ---------------------------------------------------------------------------
+            # ------------- match FAAIE triggers -------------
+            result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+            visible_elements = result.get("visible_elements", [])
+
+            # heuristic upgrade if GPT said "other"
+            if scene_type == "other":
+                if any(kw in visible_elements for kw in {"rafters", "fiberglass insulation", "attic floor"}):
+                    scene_type = "attic"
+                elif any(kw in visible_elements for kw in {"vapor barrier", "floor joist", "duct"}):
+                    scene_type = "crawlspace"
+                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe"}):
+                    scene_type = "mechanical room or appliance"
+
+            allowed = scene_categories.get(scene_type, [])
+            result["matched_triggers"] = [
+                trig
+                for trig in result.get("matched_triggers", [])
+                if trig.get("response", {}).get("category") in allowed
+            ]
+
+            # auto‑trigger via hard‑coded rules
+            auto_triggered = []
+            for rule in trigger_rules.get(scene_type, []):
+                if all(elem in visible_elements for elem in rule["elements"]):
+                    auto_triggered.append(rule["trigger"])
+            result.update({
+                "auto_triggered": auto_triggered,
+                "scene_type": scene_type,
+            })
+
+            # cache for later scope page
+            session["last_result"] = result
+            session["last_scene"] = scene_type
+
+    # ---------- safe default so template never errors ----------
+    return render_template(
+        "qci.html",
+        result=session.get("last_result", {
+            "scene_type": "unset",
+            "matched_triggers": [],
+            "auto_triggered": [],
+        }),
+    )
+
+
 @app.route("/scope")
 def scope():
-    return render_template("scope.html")
+    result = session.get("last_result", {
+        "scene_type": "unset",
+        "matched_triggers": [],
+        "auto_triggered": [],
+    })
+    return render_template("scope.html", result=result)
 
-# ---------------------------------------------------------------------------
-# Preventive Measures placeholder
-# ---------------------------------------------------------------------------
+
 @app.route("/prevent")
 def prevent():
     return render_template("prevent.html")
 
-# ---------------------------------------------------------------------------
-# Optional simple index page
-# ---------------------------------------------------------------------------
-@app.route("/index")
-def index_page():
-    return render_template("index.html")
 
-# ---------------------------------------------------------------------------
-# MAIN ENTRY
-# ---------------------------------------------------------------------------
+# ---------- AGE FINDER ----------
+@app.route("/age_finder", methods=["GET", "POST"])
+def age_finder():
+    result = None
+    if request.method == "POST":
+        serial = request.form.get("serial")
+        brand = request.form.get("brand")
+        if serial and brand:
+            result = decode_serial(serial, brand)
+    return render_template("age_finder.html", result=result)
+
+
+# ---------- QCI REVIEW (AJAX) ----------
+@app.route("/qci_review", methods=["POST"])
+def qci_review():
+    data = request.json or {}
+    scene_type = data.get("scene_type", "unknown")
+    matched_triggers = data.get("matched_triggers", [])
+    auto_triggers = data.get("auto_triggered", [])
+
+    qci_prompt = (
+        f"You are a certified IHWAP Quality Control Inspector (QCI). Review this photo for scene type '{scene_type}'.\n"
+        f"Issues detected: {', '.join([t['trigger'] for t in matched_triggers] + auto_triggers)}.\n\n"
+        "Write a field-ready inspection note listing corrections, documentation, or reinspection needs before approval."
+    )
+
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[{"role": "system", "content": qci_prompt}],
+            max_tokens=300,
+        )
+        review = response.choices[0].message["content"]
+    except Exception as e:
+        review = f"Error generating QCI review: {str(e)}"
+
+    session.setdefault("chat_history", []).append({"role": "assistant", "content": review})
+    return jsonify({"qci_review": review})
+
+
+# ---------------------------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
