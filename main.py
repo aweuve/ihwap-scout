@@ -64,11 +64,23 @@ def landing():
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
+    """Threaded chat route – supports:
+    • Standard form POST with field name either 'chat_input' **or** 'prompt'.
+    • JS fetch() JSON POST  → {"prompt": "..."}
+    Returns JSON if the client asks for it (Accept header or X‑Requested‑With),
+    otherwise redirects back to the chat page to avoid resubmit‑on‑refresh.
+    """
+
     session.setdefault("chat_history", [])
 
     # ------ POST handler ------
     if request.method == "POST":
-        user_msg = request.form.get("chat_input") or request.json.get("prompt") if request.is_json else None
+        user_msg = (
+            request.form.get("chat_input")
+            or request.form.get("prompt")
+            or (request.json.get("prompt") if request.is_json else None)
+        )
+
         if user_msg:
             session["chat_history"].append({"role": "user", "content": user_msg})
             try:
@@ -78,25 +90,47 @@ def chat():
                         {
                             "role": "system",
                             "content": (
-                                "You are Scout, an IHWAP 2026 assistant for Weatherization staff.\n\n"
-                                "✅ Follow the Weatherization Creed:\n"
-                                "1. Health & Safety\n2. Home Integrity\n3. Energy Efficiency\n\n"
-                                "Acceptable topics:\n"
-                                "- IHWAP 2026 policies & measures\n"
-                                "- DOE WAP rules\n"
-                                "- Field inspections, scopes, and troubleshooting\n"
-                                "- Rubber-ducking field issues or manual lookups\n\n"
-                                "Answer structure:\n"
-                                "- Health & Safety concerns first\n"
-                                "- Deferral risks second\n"
-                                "- Compliance or tech details last\n"
-                                "- Include IHWAP 2026 citations if applicable\n"
-                                "- Be friendly, clear, and concise for field use\n\n"
-                                "If unrelated, say:\n"
-                                '"I can assist with IHWAP 2026, Weatherization, and inspection topics only."'
+                                "You are Scout, an IHWAP 2026 assistant for Weatherization staff.
+
+"
+                                "✅ Follow the Weatherization Creed:
+"
+                                "1. Health & Safety
+2. Home Integrity
+3. Energy Efficiency
+
+"
+                                "Acceptable topics:
+"
+                                "- IHWAP 2026 policies & measures
+"
+                                "- DOE WAP rules
+"
+                                "- Field inspections, scopes, and troubleshooting
+"
+                                "- Rubber-ducking field issues or manual lookups
+
+"
+                                "Answer structure:
+"
+                                "- Health & Safety concerns first
+"
+                                "- Deferral risks second
+"
+                                "- Compliance or tech details last
+"
+                                "- Include IHWAP 2026 citations if applicable
+"
+                                "- Be friendly, clear, and concise for field use
+
+"
+                                "If unrelated, say:
+"
+                                "\"I can assist with IHWAP 2026, Weatherization, and inspection topics only.\""
                             ),
                         }
-                    ] + session["chat_history"],
+                    ]
+                    + session["chat_history"],
                     max_tokens=500,
                 )
                 assistant_reply = completion.choices[0].message["content"]
@@ -105,14 +139,14 @@ def chat():
 
             session["chat_history"].append({"role": "assistant", "content": assistant_reply})
 
-            # Ajax? → return JSON
+            # Determine if caller expects JSON (fetch) or HTML redirect (form)
             wants_json = (
-                request.headers.get("Accept", "").startswith("application/json")
+                request.is_json
                 or request.headers.get("X-Requested-With") == "XMLHttpRequest"
+                or request.headers.get("Accept", "").startswith("application/json")
             )
-            if wants_json or request.is_json:
+            if wants_json:
                 return jsonify({"reply": assistant_reply})
-            # Standard form POST → redirect to avoid re‑submit refresh
             return redirect(url_for("chat"))
 
     # ------ GET handler ------
@@ -271,3 +305,4 @@ def qci_review():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
