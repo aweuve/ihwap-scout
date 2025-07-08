@@ -1,6 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <!DOCTYPE html>
+<html>
+<head>
+    <title>QCI Review</title>
+</head>
+<body>
+    <h1>Quality Control Inspection</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <label>Upload Inspection Photo:</label>
+        <input type="file" name="image" required>
+        <button type="submit">Submit</button>
+    </form>
+    <hr>
+    {% if result %}
+        <p><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</p>
+        <p><strong>Auto Triggers:</strong> {{ result.auto_triggered }}</p>
+        <p><strong>Matched Triggers:</strong></p>
+        <ul>
+        {% for trig in result.matched_triggers %}
+            <li>{{ trig.trigger }} — Category: {{ trig.response.category }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No inspection data available yet. Please upload a photo to start.</p>
+    {% endif %}
+</body>
+</html>
     <meta charset="UTF-8">
     <title>📸 QCI Photo Review</title>
     <style>
