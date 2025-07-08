@@ -1,1 +1,33 @@
+<form method="POST">
+    <label for="brand">Select Brand:</label>
+    <select name="brand" id="brand" required>
+        <option value="Rheem / Ruud">Rheem / Ruud</option>
+        <option value="AO Smith / State">AO Smith / State</option>
+        <option value="Bradford White">Bradford White</option>
+        <option value="Goodman / Amana">Goodman / Amana</option>
+        <option value="Lennox">Lennox</option>
+        <option value="York / Luxaire / Coleman">York / Luxaire / Coleman</option>
+        <option value="Carrier / Bryant / Payne">Carrier / Bryant / Payne</option>
+        <option value="American Standard / Trane">American Standard / Trane</option>
+        <option value="GE Water Heater">GE Water Heater</option>
+    </select>
 
+    <label for="serial">Enter Serial Number:</label>
+    <input type="text" name="serial" id="serial" required>
+
+    <button type="submit">Find Age</button>
+</form>
+
+{% if result %}
+    <h2>Results:</h2>
+    {% if result.get('brand') %}
+        <p><strong>Brand:</strong> {{ result['brand'] }}</p>
+        <p><strong>Manufacture Date:</strong> {{ result['manufacture_date'] }}</p>
+        <p><strong>Age:</strong> {{ result['age'] }} years</p>
+        {% if result['action_flag'] %}
+            <p><strong>{{ result['action_flag'] }}</strong></p>
+        {% endif %}
+    {% else %}
+        <p>{{ result }}</p>
+    {% endif %}
+{% endif %}
