@@ -61,16 +61,8 @@ def landing():
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-    """Threaded chat route – supports:
-    • Standard form POST with field name either 'chat_input' **or** 'prompt'.
-    • JS fetch() JSON POST  → {"prompt": "..."}
-    Returns JSON if the client asks for it (Accept header or X‑Requested‑With),
-    otherwise redirects back to the chat page to avoid resubmit‑on‑refresh.
-    """
-
     session.setdefault("chat_history", [])
 
-    # ------ POST handler ------
     if request.method == "POST":
         user_msg = (
             request.form.get("chat_input")
@@ -108,7 +100,7 @@ Answer structure:
 - Be friendly, clear, and concise for field use
 
 If unrelated, say:
-"I can assist with IHWAP 2026, Weatherization, and inspection topics only."""  # noqa: E501
+"I can assist with IHWAP 2026, Weatherization, and inspection topics only."""
                             ),
                         }
                     ]
@@ -130,7 +122,6 @@ If unrelated, say:
                 return jsonify({"reply": assistant_reply})
             return redirect(url_for("chat"))
 
-    # ------ GET handler ------
     return render_template("chat.html", chat_history=session.get("chat_history", []))
 
 
@@ -222,4 +213,13 @@ def qci():
 
 @app.route("/scope")
 def scope():
-    result = session.get("last_result", {"scene_type": "unset", "matched_triggers": [], "auto_trigger
+    result = session.get("last_result", {"scene_type": "unset", "matched_triggers": [], "auto_triggered": []})
+    return render_template("scope.html", result=result)
+
+# ----------- Optionally add more routes here ------------
+
+# MAIN GUARD – run locally or on Render
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    app.run(host="0.0.0.0", port=port, debug=False)
+
