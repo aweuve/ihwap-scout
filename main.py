@@ -4,6 +4,7 @@ import openai
 import json
 import base64
 from vision_matcher import get_matching_trigger_from_image
+from decoders import decode_serial
 
 # Load FAAIE logic
 with open("faaie_logic.json", "r") as f:
@@ -75,7 +76,7 @@ def chat():
                                 "- Include IHWAP 2026 citations if applicable\n"
                                 "- Be friendly, clear, and concise for field use\n\n"
                                 "If unrelated, say:\n"
-                                '\"I can assist with IHWAP 2026, Weatherization, and inspection topics only.\"'
+                                '"I can assist with IHWAP 2026, Weatherization, and inspection topics only."'
                             )
                         }
                     ] + session["chat_history"],
@@ -162,9 +163,14 @@ def scope():
 def prevent():
     return render_template("prevent.html")
 
-@app.route("/age")
-def age():
-    return render_template("age.html")
+@app.route("/age_finder", methods=["GET", "POST"])
+def age_finder():
+    result = None
+    if request.method == "POST":
+        serial = request.form['serial']
+        brand = request.form['brand']
+        result = decode_serial(serial, brand)
+    return render_template("age_finder.html", result=result)
 
 @app.route("/qci_review", methods=["POST"])
 def qci_review():
@@ -195,3 +201,4 @@ def qci_review():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
