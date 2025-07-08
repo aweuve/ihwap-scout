@@ -1,39 +1,32 @@
-# IHWAP Scout – Flask back‑end (rev 2 – adds /qci placeholder)
+# IHWAP Scout – Flask back‑end (rev 4 – adds /scope placeholder)
 # -------------------------------------------------------------
-# Routes:
-#   • /               → landing page (tool hub)
-#   • /chat           → threaded chat (AJAX + full‑page POST fallback)
-#   • /age_finder     → demo serial‑decode helper
-#   • /qci            → NEW: placeholder for QCI Photo Review (fixes BuildError)
+# • Landing page (/)
+# • Threaded chat (/chat)
+# • Age‑finder demo (/age_finder)
+# • QCI Photo Review placeholder (/qci)
+# • Scope‑of‑Work Summary placeholder (/scope)
 #
-# NOTE: swap FAKE_FAIIE_REPLY for a live call when ready.
+# Replace FAKE_FAIIE_REPLY with real inference.
 
 from datetime import datetime
-from pathlib import Path
-from typing import List, Dict
 import os
+from typing import List, Dict
 
-from flask import (
-    Flask,
-    render_template,
-    request,
-    redirect,
-    url_for,
-    jsonify,
-    session,
-    make_response,
-)
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET", "scout‑dev‑key")
+app.secret_key = os.environ.get("SECRET_KEY", "supersecret")
 
-# ----------------------------- Landing -----------------------------
+# ---------------------------------------------------------------------------
+# Landing page – lists tool buttons
+# ---------------------------------------------------------------------------
 @app.route("/")
 def landing():
-    """Tool hub with links to Chat, Age‑Finder, QCI, etc."""
     return render_template("landing.html")
 
-# ------------------------------ Chat -------------------------------
+# ---------------------------------------------------------------------------
+# Chat – AJAX + full‑page fallback
+# ---------------------------------------------------------------------------
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
     if request.method == "POST":
@@ -41,64 +34,48 @@ def chat():
         if not prompt:
             return redirect(url_for("chat"))
 
-        history: List[Dict] = session.get("history", [])
-        history.append({"role": "user", "text": prompt, "ts": datetime.now().strftime("%H:%M")})
+        # Persist thread in session for demo purposes
+        messages: List[Dict] = session.setdefault("messages", [])
+        ts = datetime.now().strftime("%H:%M:%S")
+        messages.append({"role": "user", "text": prompt, "ts": ts})
 
-        # TODO: replace with real FAAIE logic call
-        assistant_reply = FAKE_FAIIE_REPLY(prompt)
-        history.append({"role": "assistant", "text": assistant_reply, "ts": datetime.now().strftime("%H:%M")})
+        # ✂️ stub FAAIE call
+        reply = "FAKE_FAIIE_REPLY"
+        messages.append({"role": "assistant", "text": reply, "ts": ts})
+        session["messages"] = messages
 
-        session["history"] = history
-
-        # AJAX? → return JSON
-        if request.headers.get("HX-Request") or request.accept_mimetypes.best == "application/json":
-            return jsonify({"reply": assistant_reply, "ts": history[-1]["ts"]})
-
+        # AJAX response
+        if request.accept_mimetypes.accept_json:
+            return jsonify({"reply": reply, "ts": ts})
         return redirect(url_for("chat"))
 
-    # GET
-    history = session.get("history", [])
-    return render_template("chat.html", messages=history)
+    return render_template("chat.html", messages=session.get("messages", []))
 
-
-def FAKE_FAIIE_REPLY(prompt: str) -> str:
-    """Temporary stub until FAAIE inference is wired in."""
-    return f"(stub) You said: {prompt[:60]}…"
-
-# --------------------------- Age Finder ----------------------------
+# ---------------------------------------------------------------------------
+# Age‑finder helper demo
+# ---------------------------------------------------------------------------
 @app.route("/age_finder", methods=["POST"])
 def age_finder():
     serial = request.form.get("serial", "").strip()
-    if not serial:
-        return jsonify(error="Missing serial number"), 400
+    if not serial or not serial[-4:].isdigit():
+        return jsonify(error="Bad serial"), 400
+    age = datetime.now().year - int(serial[-4:])
+    return jsonify(age=age)
 
-    # very rudimentary example – real logic will map serial → manufacture date
-    try:
-        year = int(serial[-2:]) + 2000  # e.g., "AB1234 24" ⇒ 2024
-        return jsonify({"estimated_year": year})
-    except ValueError:
-        return jsonify(error="Could not parse year from serial"), 422
-
-# ----------------------------- QCI ---------------------------------
-@app.route("/qci", methods=["GET", "POST"])
+# ---------------------------------------------------------------------------
+# QCI Photo Review placeholder – prevents url_for BuildError
+# ---------------------------------------------------------------------------
+@app.route("/qci")
 def qci():
-    """Minimal placeholder so landing.html’s link resolves.
-    Expand later to accept image uploads & call FAAIE."""
+    return render_template("qci.html")  # create this template or swap to string
 
-    if request.method == "POST":
-        # In future: handle file upload & return JSON verdict
-        return jsonify({"status": "upload received – processing TBD"})
+# ---------------------------------------------------------------------------
+# Scope‑of‑Work Summary placeholder – prevents url_for BuildError
+# ---------------------------------------------------------------------------
+@app.route("/scope")
+def scope():
+    return render_template("scope.html")  # placeholder template
 
-    # Simple inline HTML avoids template‑not‑found error
-    html = """
-    <h1>QCI Photo Review (Placeholder)</h1>
-    <p>The endpoint is wired; UI coming soon.</p>
-    <p><a href='/'>Back to tool hub</a></p>
-    """
-    return make_response(html)
-
-# ---------------------------- Run dev ------------------------------
+# ---------------------------------------------------------------------------
 if __name__ == "__main__":
-    debug_host = os.getenv("HOST", "127.0.0.1")
-    debug_port = int(os.getenv("PORT", 5000))
-    app.run(debug=True, host=debug_host, port=debug_port)
+    app.run(debug=True)
