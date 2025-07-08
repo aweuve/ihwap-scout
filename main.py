@@ -218,6 +218,12 @@ def scope():
 
 # ----------- Optionally add more routes here ------------
 
+@app.route("/prevent")
+def prevent():
+    # You can add logic here later—right now it just loads your template.
+    return render_template("prevent.html")
+
+
 # MAIN GUARD – run locally or on Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
