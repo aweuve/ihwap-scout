@@ -218,6 +218,11 @@ def scope():
 
 # ----------- Optionally add more routes here ------------
 
+@app.route("/age_finder", methods=["GET", "POST"])
+def age_finder():
+    # You can expand this logic later. For now, just renders the page.
+    return render_template("age_finder.html")
+
 @app.route("/prevent")
 def prevent():
     # You can add logic here later—right now it just loads your template.
