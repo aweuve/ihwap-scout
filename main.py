@@ -204,11 +204,11 @@ def age_finder():
             photo = request.files.get("photo")
             if photo and photo.filename:
                 img_bytes = photo.read()
-                # Use GPT-4 Vision to extract serial/model from the image
+                # Use GPT-4o (vision) to extract serial/model from the image
                 try:
                     base64_img = base64.b64encode(img_bytes).decode("utf-8")
                     vision_resp = openai.ChatCompletion.create(
-                        model="gpt-4-vision-preview",
+                        model="gpt-4o",
                         messages=[
                             {
                                 "role": "system",
@@ -275,3 +275,4 @@ def prevent():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
