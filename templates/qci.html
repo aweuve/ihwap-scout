@@ -82,10 +82,15 @@
             color: #444;
             margin-top: 22px;
         }
+        .form-upload {
+            text-align: center;
+            margin-top: 36px;
+            margin-bottom: 48px;
+        }
         /* Print-friendly */
         @media print {
             body { background: #fff; }
-            .btn-bar, .btn { display: none !important; }
+            .btn-bar, .btn, .form-upload { display: none !important; }
             .qci-container {
                 border: none;
                 box-shadow: none;
@@ -97,73 +102,90 @@
 </head>
 <body>
     <div class="qci-container">
+
         <h1>QCI Photo Review Report</h1>
-        {% if image_path %}
-        <div class="photo-box">
-            <img src="{{ '/' + image_path.replace('\\', '/') }}" alt="Inspection Photo Thumbnail">
-            <div style="font-size:0.95em;color:#666; margin-top:7px;">Inspection Photo</div>
-        </div>
+
+        {% if not result or not result.matched_triggers %}
+            <div class="form-upload">
+                <form method="POST" enctype="multipart/form-data">
+                    <label for="img"><strong>Upload Inspection Photo:</strong></label>
+                    <input type="file" name="image" id="img" required>
+                    <button type="submit" class="btn">Upload</button>
+                </form>
+            </div>
+            <p style="color:#666; text-align:center;">No inspection data available yet. Please upload a photo to start your QCI review.</p>
+        {% else %}
+
+            {% if image_path %}
+            <div class="photo-box">
+                <img src="{{ '/' + image_path.replace('\\', '/') }}" alt="Inspection Photo Thumbnail">
+                <div style="font-size:0.95em;color:#666; margin-top:7px;">Inspection Photo</div>
+            </div>
+            {% endif %}
+            <ul class="meta-list">
+                <li><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</li>
+                <li><strong>Photo Analysis Date:</strong> {{ analysis_date }}</li>
+            </ul>
+            <hr>
+            <h2>⚠️ Health & Safety & Combustion Risks (Priority 1)</h2>
+            <ul>
+            {% for trigger in result.matched_triggers %}
+              {% if trigger.response.priority == 1 %}
+              <li>
+                <strong>{{ trigger.trigger }}</strong><br>
+                <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
+                <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
+                <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
+              </li>
+              {% endif %}
+            {% endfor %}
+            </ul>
+            <h2>🚫 Deferral Risks Identified</h2>
+            <ul>
+            {% for trigger in result.matched_triggers %}
+              {% if 'deferral' in trigger.response.tags %}
+              <li>
+                <strong>{{ trigger.trigger }}</strong><br>
+                <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
+                <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
+                <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
+              </li>
+              {% endif %}
+            {% endfor %}
+            </ul>
+            <h2>🔧 Technical & Compliance Issues (Field Fixes)</h2>
+            <ul>
+            {% for trigger in result.matched_triggers %}
+              {% if trigger.response.priority == 2 and 'deferral' not in trigger.response.tags %}
+              <li>
+                <strong>{{ trigger.trigger }}</strong><br>
+                <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
+                <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
+                <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
+              </li>
+              {% endif %}
+            {% endfor %}
+            </ul>
+            <h2>📋 Scope of Work Summary:</h2>
+            <ul>
+            {% for trigger in result.matched_triggers %}
+              <li>{{ trigger.trigger }}</li>
+            {% endfor %}
+            </ul>
+            <div class="footer-note">
+                ✔️ All corrections must follow IHWAP 2026 standards and be photo-documented before project approval.
+            </div>
+            <div class="btn-bar">
+                <a href="{{ url_for('scope') }}" class="btn">➡️ See Scope Summary</a>
+                <a href="{{ url_for('landing') }}" class="btn">⬅️ Back to Home</a>
+                <a href="{{ url_for('qci') }}?new=1" class="btn" style="background:#eaeaea;">+ New QCI Review</a>
+                <button onclick="window.print()" class="btn" style="background:#e7e6e6;">🖨️ Print Report</button>
+            </div>
         {% endif %}
-        <ul class="meta-list">
-            <li><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</li>
-            <li><strong>Photo Analysis Date:</strong> {{ analysis_date }}</li>
-        </ul>
-        <hr>
-        <h2>⚠️ Health & Safety & Combustion Risks (Priority 1)</h2>
-        <ul>
-        {% for trigger in result.matched_triggers %}
-          {% if trigger.response.priority == 1 %}
-          <li>
-            <strong>{{ trigger.trigger }}</strong><br>
-            <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
-            <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
-            <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
-          </li>
-          {% endif %}
-        {% endfor %}
-        </ul>
-        <h2>🚫 Deferral Risks Identified</h2>
-        <ul>
-        {% for trigger in result.matched_triggers %}
-          {% if 'deferral' in trigger.response.tags %}
-          <li>
-            <strong>{{ trigger.trigger }}</strong><br>
-            <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
-            <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
-            <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
-          </li>
-          {% endif %}
-        {% endfor %}
-        </ul>
-        <h2>🔧 Technical & Compliance Issues (Field Fixes)</h2>
-        <ul>
-        {% for trigger in result.matched_triggers %}
-          {% if trigger.response.priority == 2 and 'deferral' not in trigger.response.tags %}
-          <li>
-            <strong>{{ trigger.trigger }}</strong><br>
-            <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
-            <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
-            <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
-          </li>
-          {% endif %}
-        {% endfor %}
-        </ul>
-        <h2>📋 Scope of Work Summary:</h2>
-        <ul>
-        {% for trigger in result.matched_triggers %}
-          <li>{{ trigger.trigger }}</li>
-        {% endfor %}
-        </ul>
-        <div class="footer-note">
-            ✔️ All corrections must follow IHWAP 2026 standards and be photo-documented before project approval.
-        </div>
-        <div class="btn-bar">
-            <a href="{{ url_for('scope') }}" class="btn">➡️ See Scope Summary</a>
-            <a href="{{ url_for('landing') }}" class="btn">⬅️ Back to Home</a>
-            <button onclick="window.print()" class="btn" style="background:#e7e6e6;">🖨️ Print Report</button>
-        </div>
+
     </div>
 </body>
 </html>
+
 
 
