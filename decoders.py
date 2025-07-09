@@ -1,93 +1,237 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>HVAC/Appliance Age Finder</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f9f9f9; }
-        .container { max-width: 500px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 16px #eee; }
-        h1 { text-align: center; font-size: 2em; }
-        .form-section { margin-bottom: 30px; }
-        .manual-toggle { margin: 12px 0 8px 0; text-align: center; }
-        .btn { padding: 8px 20px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;}
-        .btn:hover { background: #0056b3; }
-        .result-card { background: #f6f9fb; border: 1.5px solid #bcd4e3; border-radius: 7px; padding: 18px 20px; margin-top: 18px; }
-        .fail { color: #b11; margin: 10px 0 0 0; }
-        .img-preview { max-width: 98%; border: 1.2px solid #ccc; border-radius: 4px; margin: 7px 0 18px 0; }
-        .or-sep { text-align: center; color: #888; font-size: 1em; margin: 16px 0 2px 0; }
-        label { font-weight: bold; }
-        input[type="text"], select { width: 100%; padding: 8px; margin-top: 4px; border: 1.1px solid #ccc; border-radius: 4px; }
-    </style>
-    <script>
-        function showManual() {
-            document.getElementById('manual-form').style.display = 'block';
-            document.getElementById('photo-form').style.display = 'none';
+# decoders.py
+# Appliance Serial Number Decoders – IHWAP Scout
+
+# Major & Legacy Brands Covered:
+# - Rheem / Ruud
+# - AO Smith / State
+# - Bradford White
+# - Goodman / Amana
+# - Lennox
+# - York / Luxaire / Coleman
+# - Carrier / Bryant / Payne
+# - American Standard / Trane
+# - GE Water Heaters
+
+
+def decode_rheem(serial):
+    try:
+        month = int(serial[0:2])
+        year = int(serial[2:4])
+        if not 1 <= month <= 12:
+            return "Invalid month in serial number."
+        full_year = 2000 + year if year < 50 else 1900 + year
+        age = 2025 - full_year
+        manufacture_date = f"{month:02d}/{full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "Rheem / Ruud",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
         }
-        function showPhoto() {
-            document.getElementById('manual-form').style.display = 'none';
-            document.getElementById('photo-form').style.display = 'block';
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_ao_smith(serial):
+    try:
+        year = int(serial[0:2])
+        week = int(serial[2:4])
+        full_year = 2000 + year if year < 50 else 1900 + year
+        age = 2025 - full_year
+        manufacture_date = f"Week {week}, {full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "AO Smith / State",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
         }
-        // Show preview of uploaded image
-        function previewImg(event) {
-            const out = document.getElementById('img-prev');
-            if(event.target.files && event.target.files[0]) {
-                out.src = URL.createObjectURL(event.target.files[0]);
-                out.style.display = "block";
-            } else {
-                out.style.display = "none";
-            }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_bradford_white(serial):
+    try:
+        year_letters = {
+            "A": 1984, "B": 1985, "C": 1986, "D": 1987, "E": 1988, "F": 1989,
+            "G": 1990, "H": 1991, "J": 1992, "K": 1993, "L": 1994, "M": 1995,
+            "N": 1996, "P": 1997, "S": 1998, "T": 1999, "W": 2000, "X": 2001,
+            "Y": 2002, "A": 2004, "B": 2005, "C": 2006, "D": 2007, "E": 2008,
+            "F": 2009, "G": 2010, "H": 2011, "J": 2012, "K": 2013, "L": 2014,
+            "M": 2015, "N": 2016, "P": 2017, "S": 2018, "T": 2019, "W": 2020,
+            "X": 2021, "Y": 2022
         }
-    </script>
-</head>
-<body>
-    <div class="container">
-        <h1>🔍 HVAC/Appliance Age Finder</h1>
-        <div id="photo-form" class="form-section" style="display: {{ 'block' if not use_manual else 'none' }};">
-            <form method="POST" enctype="multipart/form-data">
-                <label>Upload Photo of Nameplate or Label:</label>
-                <input type="file" name="photo" accept="image/*" onchange="previewImg(event)" required>
-                <img id="img-prev" class="img-preview" style="display:none;">
-                <button class="btn" type="submit">Analyze Photo</button>
-            </form>
-            <div class="manual-toggle">
-                <span>or&nbsp;</span>
-                <a href="#" onclick="showManual();return false;">Enter Serial/Brand Manually</a>
-            </div>
-        </div>
-        <div id="manual-form" class="form-section" style="display: {{ 'block' if use_manual else 'none' }};">
-            <form method="POST">
-                <label for="brand">Brand:</label>
-                <select name="brand" id="brand" required>
-                    <option value="">-- Select Brand --</option>
-                    <option>Rheem / Ruud</option>
-                    <option>AO Smith / State</option>
-                    <option>Bradford White</option>
-                    <option>Goodman / Amana</option>
-                    <option>Lennox</option>
-                    <option>York / Luxaire / Coleman</option>
-                    <option>Carrier / Bryant / Payne</option>
-                    <option>American Standard / Trane</option>
-                    <option>GE Water Heater</option>
-                </select>
-                <label for="serial">Serial Number:</label>
-                <input type="text" name="serial" id="serial" required>
-                <button class="btn" type="submit" name="manual" value="1">Decode Serial</button>
-            </form>
-            <div class="manual-toggle">
-                <a href="#" onclick="showPhoto();return false;">⬅️ Back to Photo Upload</a>
-            </div>
-        </div>
-        {% if result %}
-            <div class="result-card">
-                {% if result.brand %}<b>Brand:</b> {{ result.brand }}<br>{% endif %}
-                {% if result.manufacture_date %}<b>Manufacture Date:</b> {{ result.manufacture_date }}<br>{% endif %}
-                {% if result.age is not none %}<b>Age:</b> {{ result.age }} years<br>{% endif %}
-                {% if result.action_flag %}<b>{{ result.action_flag }}</b>{% endif %}
-                {% if result.note %}<div style="color:#d00">{{ result.note }}</div>{% endif %}
-            </div>
-        {% elif fail_msg %}
-            <div class="fail">{{ fail_msg }}</div>
-        {% endif %}
-    </div>
-</body>
-</html>
+        month_letters = {
+            "A": "January", "B": "February", "C": "March", "D": "April",
+            "E": "May", "F": "June", "G": "July", "H": "August",
+            "J": "September", "K": "October", "L": "November", "M": "December"
+        }
+        year_code = serial[0].upper()
+        month_code = serial[1].upper()
+        full_year = year_letters.get(year_code, None)
+        month = month_letters.get(month_code, None)
+        if full_year is None or month is None:
+            return "Invalid Bradford White serial number."
+        age = 2025 - full_year
+        manufacture_date = f"{month}, {full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "Bradford White",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
+        }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_goodman(serial):
+    try:
+        year = int(serial[0:2])
+        month = int(serial[2:4])
+        if not 1 <= month <= 12:
+            return "Invalid month in serial number."
+        full_year = 2000 + year if year < 50 else 1900 + year
+        age = 2025 - full_year
+        manufacture_date = f"{month:02d}/{full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "Goodman / Amana",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
+        }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_lennox(serial):
+    try:
+        year = int(serial[0:2])
+        month = int(serial[2:4])
+        if 1 <= month <= 12:
+            full_year = 2000 + year if year < 50 else 1900 + year
+            age = 2025 - full_year
+            manufacture_date = f"{month:02d}/{full_year}"
+        else:
+            full_year = int(serial[0:4])
+            age = 2025 - full_year
+            manufacture_date = f"{full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "Lennox",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
+        }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_york(serial):
+    try:
+        year = int(serial[2:4])
+        week = int(serial[4:6])
+        full_year = 2000 + year if year < 50 else 1900 + year
+        age = 2025 - full_year
+        manufacture_date = f"Week {week}, {full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "York / Luxaire / Coleman",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
+        }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_carrier(serial):
+    try:
+        year = int(serial[0:2])
+        week = int(serial[2:4])
+        if week > 52:
+            year = int(serial[2:4])
+            week = int(serial[0:2])
+        full_year = 2000 + year if year < 50 else 1900 + year
+        age = 2025 - full_year
+        manufacture_date = f"Week {week}, {full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "Carrier / Bryant / Payne",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
+        }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_trane(serial):
+    try:
+        year = int(serial[0:2])
+        week = int(serial[2:4])
+        full_year = 2000 + year if year < 50 else 1900 + year
+        age = 2025 - full_year
+        manufacture_date = f"Week {week}, {full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "American Standard / Trane",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
+        }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_ge(serial):
+    try:
+        month = int(serial[0:2])
+        year = int(serial[2:4])
+        if not 1 <= month <= 12:
+            return "Invalid month in serial number."
+        full_year = 2000 + year if year < 50 else 1900 + year
+        age = 2025 - full_year
+        manufacture_date = f"{month:02d}/{full_year}"
+        action_flag = ""
+        if age >= 15:
+            action_flag = "⚠️🛑 Action Item: Recommend replacement consideration per IHWAP 2026 §5.3.4"
+        return {
+            "brand": "GE Water Heater",
+            "manufacture_date": manufacture_date,
+            "age": age,
+            "action_flag": action_flag
+        }
+    except Exception as e:
+        return f"Error decoding serial number: {e}"
+
+
+def decode_serial(serial, brand):
+    brand_map = {
+        'Rheem / Ruud': decode_rheem,
+        'AO Smith / State': decode_ao_smith,
+        'Bradford White': decode_bradford_white,
+        'Goodman / Amana': decode_goodman,
+        'Lennox': decode_lennox,
+        'York / Luxaire / Coleman': decode_york,
+        'Carrier / Bryant / Payne': decode_carrier,
+        'American Standard / Trane': decode_trane,
+        'GE Water Heater': decode_ge
