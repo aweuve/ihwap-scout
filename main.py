@@ -1,11 +1,10 @@
-# IHWAP Scout – Flask back‑end (with Markdown support for Scout replies)
-
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os
 import openai
 import json
 import base64
-import markdown  # NEW: For Markdown to HTML conversion
+import uuid
+import markdown
 from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
 
@@ -103,11 +102,10 @@ If unrelated, say:
                     + session["chat_history"],
                     max_tokens=500,
                 )
-                # Convert Markdown reply to HTML
                 assistant_reply_raw = completion.choices[0].message["content"]
                 assistant_reply = markdown.markdown(
                     assistant_reply_raw,
-                    extensions=['extra'],  # Supports lists, tables, etc.
+                    extensions=['extra'],
                     output_format='html5'
                 )
             except Exception as e:
@@ -127,7 +125,7 @@ If unrelated, say:
 
     return render_template("chat.html", chat_history=session.get("chat_history", []))
 
-# ---------- QCI UPLOAD / ANALYSIS ----------
+
 @app.route("/qci", methods=["GET", "POST"])
 def qci():
     result = None
@@ -139,78 +137,41 @@ def qci():
         if image:
             upload_dir = os.path.join("static", "uploads")
             os.makedirs(upload_dir, exist_ok=True)
-            image_path = os.path.join(upload_dir, "upload.jpg")
+            unique_filename = f"upload_{uuid.uuid4().hex[:8]}.jpg"
+            image_path = os.path.join(upload_dir, unique_filename)
             image.save(image_path)
+            session["last_image_filename"] = unique_filename
+
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-
-            try:
-                base64_image = base64.b64encode(image_bytes).decode("utf-8")
-                vision_resp = openai.ChatCompletion.create(
-                    model="gpt-4-vision-preview",
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": (
-                                "You are a home inspection assistant. Identify the primary location or part of the home shown in this photo. "
-                                "Choose ONLY from: attic, crawlspace, basement, mechanical room or appliance, exterior, living space, other."
-                            ),
-                        },
-                        {
-                            "role": "user",
-                            "content": [
-                                {
-                                    "type": "image_url",
-                                    "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"},
-                                }
-                            ],
-                        },
-                    ],
-                    max_tokens=10,
-                )
-                scene_type = vision_resp.choices[0].message["content"].strip().lower()
-                if scene_type not in scene_categories:
-                    scene_type = "other"
-            except Exception:
-                scene_type = "other"
-
+            # Call your visual recognition logic
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
             visible_elements = result.get("visible_elements", [])
 
-            if scene_type == "other":
-                if any(kw in visible_elements for kw in {"rafters", "fiberglass insulation", "attic floor"}):
-                    scene_type = "attic"
-                elif any(kw in visible_elements for kw in {"vapor barrier", "floor joist", "duct"}):
-                    scene_type = "crawlspace"
-                elif any(kw in visible_elements for kw in {"water heater", "furnace", "flue pipe"}):
-                    scene_type = "mechanical room or appliance"
+            # Scene type logic
+            if result.get("scene_type"):
+                scene_type = result["scene_type"]
+            else:
+                scene_type = None
 
-            allowed = scene_categories.get(scene_type, [])
-            result["matched_triggers"] = [
-                trig
-                for trig in result.get("matched_triggers", [])
-                if trig.get("response", {}).get("category") in allowed
-            ]
-
-            auto_triggered = []
-            for rule in trigger_rules.get(scene_type, []):
-                if all(elem in visible_elements for elem in rule["elements"]):
-                    auto_triggered.append(rule["trigger"])
-            result.update({
-                "auto_triggered": auto_triggered,
-                "scene_type": scene_type,
-            })
-
+            # Save in session
             session["last_result"] = result
             session["last_scene"] = scene_type
+            from datetime import datetime
+            session["last_analysis_date"] = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+    # On GET, load info from session
+    unique_filename = session.get("last_image_filename")
+    if unique_filename:
+        image_path = os.path.join("static", "uploads", unique_filename)
 
     return render_template(
         "qci.html",
-        result=session.get(
-            "last_result",
-            {"scene_type": "unset", "matched_triggers": [], "auto_triggered": []},
-        ),
+        result=session.get("last_result", {}),
+        analysis_date=session.get("last_analysis_date", ""),
+        image_path=image_path
     )
+
 
 @app.route("/scope")
 def scope():
@@ -229,3 +190,4 @@ def prevent():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
