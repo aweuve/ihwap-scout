@@ -7,6 +7,7 @@ import uuid
 import markdown
 from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
+from datetime import datetime
 
 # ---------------------------------------------------------------------
 # Load FAAIE logic
@@ -128,7 +129,15 @@ If unrelated, say:
 
 @app.route("/qci", methods=["GET", "POST"])
 def qci():
-    result = None
+    # --- Session reset for "New QCI Review" ---
+    if request.method == "GET" and request.args.get("new"):
+        session.pop("last_image_filename", None)
+        session.pop("last_result", None)
+        session.pop("last_scene", None)
+        session.pop("last_analysis_date", None)
+        return redirect(url_for("qci"))
+
+    result = session.get("last_result")
     image_path = None
     scene_type = None
 
@@ -144,30 +153,27 @@ def qci():
 
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-            # Call your visual recognition logic
+            # Model/logic analysis
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
             visible_elements = result.get("visible_elements", [])
 
-            # Scene type logic
             if result.get("scene_type"):
                 scene_type = result["scene_type"]
             else:
                 scene_type = None
 
-            # Save in session
             session["last_result"] = result
             session["last_scene"] = scene_type
-            from datetime import datetime
             session["last_analysis_date"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # On GET, load info from session
+    # On GET (or after POST), load info from session
     unique_filename = session.get("last_image_filename")
     if unique_filename:
         image_path = os.path.join("static", "uploads", unique_filename)
 
     return render_template(
         "qci.html",
-        result=session.get("last_result", {}),
+        result=session.get("last_result"),
         analysis_date=session.get("last_analysis_date", ""),
         image_path=image_path
     )
@@ -190,4 +196,5 @@ def prevent():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
