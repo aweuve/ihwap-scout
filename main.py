@@ -1,11 +1,11 @@
-# IHWAP Scout – Flask back‑end (syntax‑safe patch)
-# ---------------------------------------------------------------------
+# IHWAP Scout – Flask back‑end (with Markdown support for Scout replies)
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import os
 import openai
 import json
 import base64
+import markdown  # NEW: For Markdown to HTML conversion
 from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
 
@@ -55,7 +55,6 @@ trigger_rules = {
 def landing():
     return render_template("landing.html")
 
-
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
     session.setdefault("chat_history", [])
@@ -104,12 +103,18 @@ If unrelated, say:
                     + session["chat_history"],
                     max_tokens=500,
                 )
-                assistant_reply = completion.choices[0].message["content"]
+                # Convert Markdown reply to HTML
+                assistant_reply_raw = completion.choices[0].message["content"]
+                assistant_reply = markdown.markdown(
+                    assistant_reply_raw,
+                    extensions=['extra'],  # Supports lists, tables, etc.
+                    output_format='html5'
+                )
             except Exception as e:
-                assistant_reply = f"Error: {e}"
+                assistant_reply = f"<pre>Error: {e}</pre>"
 
             session["chat_history"].append({"role": "assistant", "content": assistant_reply})
-            session.modified = True    # Ensures chat persists across redirect.
+            session.modified = True
 
             wants_json = (
                 request.is_json
@@ -121,7 +126,6 @@ If unrelated, say:
             return redirect(url_for("chat"))
 
     return render_template("chat.html", chat_history=session.get("chat_history", []))
-
 
 # ---------- QCI UPLOAD / ANALYSIS ----------
 @app.route("/qci", methods=["GET", "POST"])
@@ -208,7 +212,6 @@ def qci():
         ),
     )
 
-
 @app.route("/scope")
 def scope():
     result = session.get("last_result", {"scene_type": "unset", "matched_triggers": [], "auto_triggered": []})
@@ -216,12 +219,10 @@ def scope():
 
 @app.route("/age_finder", methods=["GET", "POST"])
 def age_finder():
-    # You can expand this logic later. For now, just renders the page.
     return render_template("age_finder.html")
 
 @app.route("/prevent")
 def prevent():
-    # You can add logic here later—right now it just loads your template.
     return render_template("prevent.html")
 
 # MAIN GUARD – run locally or on Render
