@@ -12,7 +12,6 @@
 # - American Standard / Trane
 # - GE Water Heaters
 
-
 def decode_rheem(serial):
     try:
         month = int(serial[0:2])
@@ -34,7 +33,6 @@ def decode_rheem(serial):
     except Exception as e:
         return f"Error decoding serial number: {e}"
 
-
 def decode_ao_smith(serial):
     try:
         year = int(serial[0:2])
@@ -53,7 +51,6 @@ def decode_ao_smith(serial):
         }
     except Exception as e:
         return f"Error decoding serial number: {e}"
-
 
 def decode_bradford_white(serial):
     try:
@@ -91,7 +88,6 @@ def decode_bradford_white(serial):
     except Exception as e:
         return f"Error decoding serial number: {e}"
 
-
 def decode_goodman(serial):
     try:
         year = int(serial[0:2])
@@ -112,7 +108,6 @@ def decode_goodman(serial):
         }
     except Exception as e:
         return f"Error decoding serial number: {e}"
-
 
 def decode_lennox(serial):
     try:
@@ -138,7 +133,6 @@ def decode_lennox(serial):
     except Exception as e:
         return f"Error decoding serial number: {e}"
 
-
 def decode_york(serial):
     try:
         year = int(serial[2:4])
@@ -157,7 +151,6 @@ def decode_york(serial):
         }
     except Exception as e:
         return f"Error decoding serial number: {e}"
-
 
 def decode_carrier(serial):
     try:
@@ -181,7 +174,6 @@ def decode_carrier(serial):
     except Exception as e:
         return f"Error decoding serial number: {e}"
 
-
 def decode_trane(serial):
     try:
         year = int(serial[0:2])
@@ -200,7 +192,6 @@ def decode_trane(serial):
         }
     except Exception as e:
         return f"Error decoding serial number: {e}"
-
 
 def decode_ge(serial):
     try:
@@ -223,7 +214,6 @@ def decode_ge(serial):
     except Exception as e:
         return f"Error decoding serial number: {e}"
 
-
 def decode_serial(serial, brand):
     brand_map = {
         'Rheem / Ruud': decode_rheem,
@@ -235,3 +225,9 @@ def decode_serial(serial, brand):
         'Carrier / Bryant / Payne': decode_carrier,
         'American Standard / Trane': decode_trane,
         'GE Water Heater': decode_ge
+    }
+    decoder = brand_map.get(brand)
+    if decoder:
+        return decoder(serial)
+    else:
+        return f"Brand '{brand}' not recognized. Please verify the brand selection."
