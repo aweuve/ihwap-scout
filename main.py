@@ -5,9 +5,9 @@ import json
 import base64
 import uuid
 import markdown
+from datetime import datetime
 from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
-from datetime import datetime
 
 # ---------------------------------------------------------------------
 # Load FAAIE logic
@@ -178,15 +178,94 @@ def qci():
         image_path=image_path
     )
 
+@app.route("/age_finder", methods=["GET", "POST"])
+def age_finder():
+    result = None
+    fail_msg = None
+    use_manual = False
+
+    if request.method == "POST":
+        # Manual fallback
+        if request.form.get("manual"):
+            use_manual = True
+            brand = request.form.get("brand", "")
+            serial = request.form.get("serial", "").strip()
+            if not serial or not brand:
+                fail_msg = "Please provide both brand and serial number."
+            else:
+                res = decode_serial(serial, brand)
+                if isinstance(res, dict):
+                    result = res
+                else:
+                    fail_msg = res
+
+        # Photo upload
+        elif "photo" in request.files:
+            photo = request.files.get("photo")
+            if photo and photo.filename:
+                img_bytes = photo.read()
+                # Use GPT-4 Vision to extract serial/model from the image
+                try:
+                    base64_img = base64.b64encode(img_bytes).decode("utf-8")
+                    vision_resp = openai.ChatCompletion.create(
+                        model="gpt-4-vision-preview",
+                        messages=[
+                            {
+                                "role": "system",
+                                "content": (
+                                    "You are an expert at reading appliance nameplate/label images. "
+                                    "Return the brand and serial number in this photo. "
+                                    "Only respond in this JSON format: "
+                                    '{"brand": "...", "serial": "..."} '
+                                ),
+                            },
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "image_url",
+                                        "image_url": {"url": f"data:image/jpeg;base64,{base64_img}"},
+                                    }
+                                ],
+                            },
+                        ],
+                        max_tokens=200,
+                    )
+                    import json as pyjson
+                    txt = vision_resp.choices[0].message["content"]
+                    try:
+                        data = pyjson.loads(txt)
+                        brand = data.get("brand", "").strip()
+                        serial = data.get("serial", "").strip()
+                        if not brand or not serial:
+                            raise ValueError
+                        res = decode_serial(serial, brand)
+                        if isinstance(res, dict):
+                            result = res
+                        else:
+                            fail_msg = res
+                    except Exception:
+                        fail_msg = (
+                            "Could not automatically extract brand/serial from the image. "
+                            "Please enter them manually below."
+                        )
+                        use_manual = True
+                except Exception as e:
+                    fail_msg = f"Vision model error: {e}"
+                    use_manual = True
+            else:
+                fail_msg = "No image uploaded."
+    return render_template(
+        "age_finder.html",
+        result=result,
+        fail_msg=fail_msg,
+        use_manual=use_manual,
+    )
 
 @app.route("/scope")
 def scope():
     result = session.get("last_result", {"scene_type": "unset", "matched_triggers": [], "auto_triggered": []})
     return render_template("scope.html", result=result)
-
-@app.route("/age_finder", methods=["GET", "POST"])
-def age_finder():
-    return render_template("age_finder.html")
 
 @app.route("/prevent")
 def prevent():
@@ -196,5 +275,3 @@ def prevent():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
-
-
