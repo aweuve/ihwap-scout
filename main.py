@@ -153,7 +153,7 @@ def qci():
 
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-            # Model/logic analysis
+            # Model/logic analysis (no vision prompt needed here, but you can add for model/serial extraction)
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
             visible_elements = result.get("visible_elements", [])
 
@@ -204,20 +204,26 @@ def age_finder():
             photo = request.files.get("photo")
             if photo and photo.filename:
                 img_bytes = photo.read()
-                # Use GPT-4o (vision) to extract serial/model from the image
+                # --- ENHANCED VISION PROMPT START ---
                 try:
                     base64_img = base64.b64encode(img_bytes).decode("utf-8")
+                    vision_prompt = (
+                        "You are a field HVAC and appliance data expert. "
+                        "Your task is to extract the manufacturer (brand), model number, and serial number from this appliance nameplate or data label photo. "
+                        "Look for and read any text marked as 'Serial', 'S/N', or similar for the serial number, and 'Model' for the model number. "
+                        "Return ONLY a valid JSON object like this: "
+                        '{"brand": "...", "model": "...", "serial": "..."} .'
+                        "If you cannot find one of the fields, leave it blank but still reply in valid JSON."
+                        "EXAMPLES: "
+                        '{"brand": "Goodman", "model": "GMEC960803BN", "serial": "2403040354"} '
+                        '{"brand": "", "model": "", "serial": ""}'
+                    )
                     vision_resp = openai.ChatCompletion.create(
                         model="gpt-4o",
                         messages=[
                             {
                                 "role": "system",
-                                "content": (
-                                    "You are an expert at reading appliance nameplate/label images. "
-                                    "Return the brand and serial number in this photo. "
-                                    "Only respond in this JSON format: "
-                                    '{"brand": "...", "serial": "..."} '
-                                ),
+                                "content": vision_prompt,
                             },
                             {
                                 "role": "user",
@@ -275,4 +281,3 @@ def prevent():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
-
