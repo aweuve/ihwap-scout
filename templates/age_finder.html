@@ -2,21 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HVAC/Appliance Age Finder</title>
+    <title>🔍 HVAC/Appliance Age Finder</title>
     <style>
         body { font-family: Arial, sans-serif; background: #f9f9f9; }
-        .container { max-width: 500px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 2px 16px #eee; }
+        .container { max-width: 550px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 12px; box-shadow: 0 2px 16px #eee;}
         h1 { text-align: center; font-size: 2em; }
         .form-section { margin-bottom: 30px; }
         .manual-toggle { margin: 12px 0 8px 0; text-align: center; }
-        .btn { padding: 8px 20px; background: #007bff; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;}
+        .btn { padding: 10px 24px; background: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; }
         .btn:hover { background: #0056b3; }
         .result-card { background: #f6f9fb; border: 1.5px solid #bcd4e3; border-radius: 7px; padding: 18px 20px; margin-top: 18px; }
-        .fail { color: #b11; margin: 10px 0 0 0; }
-        .img-preview { max-width: 98%; border: 1.2px solid #ccc; border-radius: 4px; margin: 7px 0 18px 0; }
-        .or-sep { text-align: center; color: #888; font-size: 1em; margin: 16px 0 2px 0; }
-        label { font-weight: bold; }
-        input[type="text"], select { width: 100%; padding: 8px; margin-top: 4px; border: 1.1px solid #ccc; border-radius: 4px; }
+        .fail { color: #b11; margin: 12px 0 0 0; font-weight: 500;}
+        .img-preview { max-width: 99%; border: 1.2px solid #ccc; border-radius: 5px; margin: 7px 0 18px 0; }
+        label { font-weight: bold; margin-top: 6px; display: block;}
+        input[type="text"], select { width: 100%; padding: 9px; margin: 4px 0 14px 0; border: 1.1px solid #ccc; border-radius: 4px; font-size:1.1em;}
+        .ocr-fallback { background: #f9e5e5; border:1px solid #d99; border-radius:6px; padding:13px 12px; margin:16px 0 10px 0;}
+        .ocr-fallback pre { white-space:pre-wrap; font-size:1.06em; color:#444;}
+        .ocr-fallback div { font-size:0.97em; color:#b00;}
+        @media (max-width:600px) {
+            .container { padding: 8px; }
+        }
     </style>
     <script>
         function showManual() {
@@ -88,6 +93,15 @@
         {% elif fail_msg %}
             <div class="fail">{{ fail_msg }}</div>
         {% endif %}
+
+        {% if ocr_text %}
+            <div class="ocr-fallback">
+                <b>Detected Label Text:</b>
+                <pre>{{ ocr_text }}</pre>
+                <div>(Copy/paste the model or serial if you see it here!)</div>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>
+
