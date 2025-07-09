@@ -97,23 +97,18 @@
 </head>
 <body>
     <div class="qci-container">
-
         <h1>QCI Photo Review Report</h1>
-
         {% if image_path %}
         <div class="photo-box">
-            <img src="{{ url_for('static', filename='uploads/upload.jpg') }}" alt="Inspection Photo Thumbnail">
+            <img src="{{ '/' + image_path.replace('\\', '/') }}" alt="Inspection Photo Thumbnail">
             <div style="font-size:0.95em;color:#666; margin-top:7px;">Inspection Photo</div>
         </div>
         {% endif %}
-
         <ul class="meta-list">
             <li><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</li>
             <li><strong>Photo Analysis Date:</strong> {{ analysis_date }}</li>
         </ul>
-
         <hr>
-
         <h2>⚠️ Health & Safety & Combustion Risks (Priority 1)</h2>
         <ul>
         {% for trigger in result.matched_triggers %}
@@ -127,7 +122,6 @@
           {% endif %}
         {% endfor %}
         </ul>
-
         <h2>🚫 Deferral Risks Identified</h2>
         <ul>
         {% for trigger in result.matched_triggers %}
@@ -141,7 +135,6 @@
           {% endif %}
         {% endfor %}
         </ul>
-
         <h2>🔧 Technical & Compliance Issues (Field Fixes)</h2>
         <ul>
         {% for trigger in result.matched_triggers %}
@@ -155,25 +148,22 @@
           {% endif %}
         {% endfor %}
         </ul>
-
         <h2>📋 Scope of Work Summary:</h2>
         <ul>
         {% for trigger in result.matched_triggers %}
           <li>{{ trigger.trigger }}</li>
         {% endfor %}
         </ul>
-
         <div class="footer-note">
             ✔️ All corrections must follow IHWAP 2026 standards and be photo-documented before project approval.
         </div>
-
         <div class="btn-bar">
             <a href="{{ url_for('scope') }}" class="btn">➡️ See Scope Summary</a>
             <a href="{{ url_for('landing') }}" class="btn">⬅️ Back to Home</a>
             <button onclick="window.print()" class="btn" style="background:#e7e6e6;">🖨️ Print Report</button>
         </div>
-
     </div>
 </body>
 </html>
+
 
