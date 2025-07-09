@@ -10,7 +10,7 @@
             margin: 0; padding: 0;
         }
         .container {
-            max-width: 520px;
+            max-width: 800px; /* widened */
             margin: 48px auto 0 auto;
             background: #fff;
             padding: 0 0 16px 0;
@@ -52,10 +52,13 @@
             align-items: center;
             justify-content: center;
             margin: 0 8px;
-            font-size: 1.4rem;
+            font-size: 1.08rem;
+            font-weight: 600;
+            color: #285b6b;
             box-shadow: 0 2px 8px rgba(140,160,200,0.14);
+            letter-spacing: 0.5px;
         }
-        .assistant-avatar { background: #f8d7da; }
+        .assistant-avatar { background: #f8d7da; color: #b21828; font-size: 1.4rem; }
         .bubble {
             padding: 13px 16px;
             border-radius: 16px;
@@ -63,6 +66,17 @@
             word-break: break-word;
             box-shadow: 0 2px 6px rgba(130,130,160,0.11);
             font-size: 1rem;
+            /* HTML formatting support */
+        }
+        .bubble b, .bubble strong { font-weight: bold; }
+        .bubble em, .bubble i { font-style: italic; }
+        .bubble ul, .bubble ol { margin: 10px 0 10px 24px; padding: 0; }
+        .bubble li { margin-bottom: 4px; }
+        .bubble code, .bubble pre {
+            background: #f4f4f4;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.97em;
         }
         .user-bubble {
             background: linear-gradient(120deg, #d1ecf1 80%, #bee5eb 100%);
@@ -113,7 +127,7 @@
                         <span class="bubble assistant-bubble">{{ message['content'] | safe }}</span>
                     {% else %}
                         <span class="bubble user-bubble">{{ message['content'] | safe }}</span>
-                        <span class="avatar">🧑</span>
+                        <span class="avatar">You</span>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -130,6 +144,3 @@
     </script>
 </body>
 </html>
-
-
-
