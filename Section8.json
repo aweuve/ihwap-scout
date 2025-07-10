@@ -1,0 +1,57 @@
+{
+  "section": 8,
+  "title": "Electrical & Mechanical Systems, QA, and Field Logic",
+  "last_updated": "2025-07-09",
+  "electrical_policy": {
+    "summary": "All electrical systems must be assessed for safety, code compliance, and compatibility with planned weatherization work. Deferral is required for hazardous, illegal, or unrepairable systems.",
+    "assessment_requirements": [
+      "Visual inspection of electrical panel(s), wiring, grounding, outlets, and all accessible circuits.",
+      "Identify hazards: exposed or uninsulated wiring, open panels, missing covers, improper splicing, overloaded circuits, outdated service, or visible corrosion.",
+      "Check for code violations or unpermitted work.",
+      "Verify presence and operation of required GFCIs near water sources.",
+      "Assess electrical system’s capacity to support planned HVAC, ventilation, and weatherization measures."
+    ],
+    "deferral_triggers": [
+      "Exposed, damaged, or uninsulated wiring.",
+      "Open or missing electrical panels/covers.",
+      "Non-code, unpermitted, or unsafe wiring or electrical work.",
+      "System unable to safely support required measures.",
+      "Severe corrosion, fire risk, or signs of overheating.",
+      "Active arcing, burn marks, or rodent/animal damage.",
+      "Any electrical hazard that cannot be corrected within allowable program scope or budget."
+    ],
+    "correction_path": [
+      "Minor repairs may be completed with program funds if cost-effective and compliant with code.",
+      "Major repairs or full system upgrades require licensed electrician and/or WX+ approval.",
+      "Document all deficiencies, corrections, and re-inspections with photos and contractor sign-off."
+    ]
+  },
+  "mechanical_policy": {
+    "summary": "Mechanical systems (HVAC, water heater, appliances) must be assessed for safety, operability, and code compliance. Unsafe, inoperative, or non-compliant systems must be flagged for repair, replacement, or deferral.",
+    "assessment_requirements": [
+      "Visual inspection and test of all mechanical systems: furnace, boiler, heat pump, AC, water heater, ventilation fans.",
+      "Check for: corrosion, leaks, improper venting, disconnected ductwork, blocked flues, missing T&P valves, non-code installations, lack of combustion air, missing/expired CO/smoke detectors.",
+      "Check labels, nameplate data, and manufacturer safety information.",
+      "Verify appliances are correctly sized, installed, and vented for the home.",
+      "Conduct diagnostic and safety tests as required by program."
+    ],
+    "deferral_triggers": [
+      "Active fuel leaks, venting failure, or dangerous CO/combustion readings.",
+      "Severe corrosion, missing critical safety devices (e.g., T&P valve, CO detector).",
+      "Mechanical systems that cannot be repaired/replaced within allowable program funds.",
+      "Non-code installations or manufacturer safety violations."
+    ],
+    "correction_path": [
+      "Repair or replace unsafe or non-operable systems if within program budget and SIR allows.",
+      "Major system replacements may require WX+ or OCA/state approval.",
+      "Document all diagnostics, corrections, and compliance tests with photos and test data.",
+      "Contractor or staff must sign off on all completed repairs/upgrades."
+    ]
+  },
+  "field_documentation_and_reporting": [
+    "All electrical and mechanical hazards, corrections, and system upgrades must be fully documented with photos in IWx.",
+    "Test results (e.g., flue gas, pressure, CO) must be attached to the job file.",
+    "Scope of Work and Job Summary updated to reflect all electrical/mechanical work performed."
+  ],
+  "reference_policy": "IHWAP Operations Manual (PY2026), Field Standards, NFPA 70, local electrical/mechanical code."
+}
