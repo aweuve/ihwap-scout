@@ -1,0 +1,32 @@
+{
+  "section": 15,
+  "title": "Agency Customization, Local Policy Overrides, and Workflow Variance",
+  "last_updated": "2025-07-09",
+  "customization_policy": {
+    "summary": "Every agency may define local logic, additional triggers, or workflow steps to reflect local code, priorities, funding constraints, or staffing. All customizations must be documented and tagged in system exports, and may not override state or federal minimum requirements unless approved in writing.",
+    "agency_custom_triggers": [
+      "Additional deferral or callback triggers unique to local code (e.g., city-specific venting, historic preservation rules, utility protocols).",
+      "Workflow routing for local QA steps or custom reporting requirements.",
+      "Expanded callback/correction timeframes if stricter than state minimums.",
+      "Extra client education materials or consent forms per local partnership."
+    ],
+    "override_and_approval_process": [
+      "All proposed overrides or logic changes must be reviewed and approved by the agency lead or QCI.",
+      "Overrides may not conflict with DOE, IHWAP, or state safety minimums.",
+      "Where a true policy conflict exists, agency must document: reason for override, responsible party, date, and impact analysis.",
+      "If state or federal minimums are to be waived, agency must obtain written approval from OCA/state before implementation.",
+      "All overrides are tagged in logic exports and audit trails (who, what, when, why)."
+    ],
+    "local_workflow_variance": [
+      "Agencies may set custom workflow steps for: intake, assessment, SOW, QA, callback/correction, training, or reporting.",
+      "All non-standard workflows must be documented, justified, and shared with all relevant staff.",
+      "Training and onboarding must reflect local workflow and logic."
+    ],
+    "agency_customization_log": [
+      "Maintain a digital log of all customizations, overrides, and workflow variances for a minimum of 3 years.",
+      "Make all logs available for audit/review upon request.",
+      "Each job report/export must reference the local logic and customization version in effect at the time of action."
+    ]
+  },
+  "reference_policy": "IHWAP Operations Manual (PY2026), Agency-Specific Logic, OCA/State Guidance"
+}
