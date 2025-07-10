@@ -1,0 +1,32 @@
+{
+  "section": 9,
+  "title": "Photo Documentation and Field Evidence Standards",
+  "last_updated": "2025-07-09",
+  "documentation_policy": {
+    "summary": "Color digital photo documentation is required for all major field events—assessment, installation, callbacks, corrections, deferrals, and final inspections. Photos must be attached to IWx for audit, QA, and compliance.",
+    "required_photos": [
+      "Pre-work/assessment: key building conditions, hazardous areas, mechanical/electrical/plumbing systems, all sides of home, attic/crawlspace, moisture/mold, site hazards, client education materials delivered.",
+      "During work: air sealing, insulation, mechanical/HVAC, electrical corrections, moisture remediation, safety measures.",
+      "Post-work/final: all completed measures, corrections/callbacks, combustion/CO test results, venting, alarms, final job walkthrough.",
+      "Deferrals: photo documentation of all flagged hazards/issues.",
+      "Callbacks/corrections: before and after correction photos.",
+      "Scope of Work: all completed and installed measures."
+    ],
+    "photo_quality_standards": [
+      "All photos must be color, high-resolution, and clearly show the subject area.",
+      "Label photos in IWx with description, date, and staff name.",
+      "Photos must be clear, focused, and show identifying features (e.g., nameplates, labels, safety devices, test results).",
+      "Blurry, unclear, or missing photos may result in QA correction or audit flag."
+    ],
+    "client_education_evidence": [
+      "Take a photo of delivered education materials at the client’s home (required at assessment).",
+      "Maintain signed Client Education Materials Checklist and Hazardous Condition Notification form (where applicable)."
+    ],
+    "documentation_audit_trail": [
+      "All photos, forms, and checklists must be attached to IWx job file.",
+      "Staff must sign and date all field documentation.",
+      "Maintain backup copies in agency QA archive for 3 years (minimum) for audit defense."
+    ]
+  },
+  "reference_policy": "IHWAP Operations Manual (PY2026), Field Documentation Standards, Audit Guidance."
+}
