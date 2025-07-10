@@ -1,0 +1,58 @@
+[
+  {
+    "trigger": "Ambient indoor CO measured at 0–9 ppm",
+    "action_item": "Pass. No action required. Continue with weatherization activities and document reading in job file.",
+    "documentation": "Digital photo or record of CO reading, test location, and time. Upload to IWx.",
+    "policy_text": "Ambient carbon monoxide levels below 10 ppm are considered safe in living areas per IHWAP and DOE WAP.",
+    "reference_policy": "IHWAP 2026 §5.4.4; DOE WPN 11-6",
+    "tags": ["CO", "health_safety", "pass", "monitor"]
+  },
+  {
+    "trigger": "Ambient indoor CO measured at 10–35 ppm",
+    "action_item": "Open windows/doors for 15 minutes and retest. If CO remains >9 ppm, identify source. If unresolved, defer project until correction.",
+    "documentation": "CO monitor reading (before and after ventilation), photos of mitigation steps, and source investigation notes in job file.",
+    "policy_text": "CO 10–35 ppm triggers immediate ventilation, source investigation, and possible deferral if levels persist.",
+    "reference_policy": "IHWAP 2026 §5.4.4; DOE WPN 11-6",
+    "tags": ["CO", "health_safety", "potential_deferral", "retest"]
+  },
+  {
+    "trigger": "Ambient indoor CO measured above 35 ppm",
+    "action_item": "Evacuate occupants immediately. Call emergency services. Auto-deferral for all weatherization until CO is corrected and retest passes (≤9 ppm).",
+    "documentation": "Photo of reading, incident log, documentation of emergency contact, clearance from professional.",
+    "policy_text": "CO >35 ppm is an emergency; evacuation and full deferral are required.",
+    "reference_policy": "IHWAP 2026 §5.4.4; DOE WPN 11-6",
+    "tags": ["CO", "health_safety", "deferral", "emergency"]
+  },
+  {
+    "trigger": "CO detected with appliances OFF",
+    "action_item": "Indicates possible non-appliance source (e.g., attached garage, vehicle exhaust, ambient air issue). Investigate and correct source. Defer project until levels return to ≤9 ppm.",
+    "documentation": "Test protocol record, photos, and notes on all investigation and corrective steps.",
+    "policy_text": "If CO persists when all appliances are off, defer until non-appliance source is corrected.",
+    "reference_policy": "IHWAP 2026 §5.4.4; SWS 7.6003.1c",
+    "tags": ["CO", "deferral", "ambient", "source_investigation"]
+  },
+  {
+    "trigger": "CO detected with appliances ON (WCD)",
+    "action_item": "Identify which appliance is causing elevated CO. Service, repair, or replace as needed. Defer work if CO remains >9 ppm after appliance correction.",
+    "documentation": "Appliance operation log, CO readings by appliance, service records.",
+    "policy_text": "WCD (worst case depressurization) testing determines appliance contribution to indoor CO.",
+    "reference_policy": "IHWAP 2026 §5.4.4; BPI 1200-S-2017",
+    "tags": ["CO", "health_safety", "appliance", "QA"]
+  },
+  {
+    "trigger": "CO detected in attached garage",
+    "action_item": "Educate client on garage ventilation; recommend not idling vehicles in garage. If persistent CO migrates into home, recommend air sealing and ventilation corrections.",
+    "documentation": "CO readings, garage inspection photos, client education form.",
+    "policy_text": "Attached garages are a common source of ambient CO; mitigation steps required if migration detected.",
+    "reference_policy": "IHWAP 2026 §5.4.4; SWS 7.6010.1",
+    "tags": ["CO", "garage", "health_safety", "mitigation"]
+  },
+  {
+    "trigger": "CO alarm present but not functioning/tested",
+    "action_item": "Replace or test CO alarm before proceeding with work. Document installation or test. Required by IHWAP/DOE for all weatherized homes.",
+    "documentation": "Photo of alarm, installation/test record.",
+    "policy_text": "Operational CO alarms are required in all homes receiving weatherization.",
+    "reference_policy": "IHWAP 2026 §5.4.5; SWS 7.6002.1",
+    "tags": ["CO", "health_safety", "compliance", "alarm"]
+  }
+]
