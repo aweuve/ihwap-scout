@@ -1,0 +1,56 @@
+{
+  "section": 4,
+  "title": "Combustion Safety, CO, Gas Leak, Venting, and Health & Safety Protocols",
+  "last_updated": "2025-07-09",
+  "combustion_appliance_testing": [
+    "Inspect and test all combustion appliances, including heating appliance, water heater, gas stove, and gas dryer.",
+    "Conduct flue gas analysis on each combustion appliance; record CO (carbon monoxide) ppm and ensure adequate draft.",
+    "If CO levels exceed program limits (see IHWAP Field Standards), the home must be deferred until the appliance is repaired/replaced and retested.",
+    "Document all results in the assessment and notify client of failures. Health & Safety funds may be used to correct high CO issues."
+  ],
+  "gas_leak_and_fuel_line_policy": [
+    "Test all accessible gas lines for leaks and document in assessment.",
+    "If a leak is detected, provide Hazardous Condition Form to client, tag the leak, and disable gas flow if possible.",
+    "Notify utility company and contractor for immediate repair. No weatherization may proceed until the leak is remedied and retested."
+  ],
+  "combustion_venting_and_spillage": [
+    "Inspect venting of all combustion appliances; confirm clearances and adequate venting.",
+    "Test naturally drafting appliances for spillage under worst case depressurization before and after air sealing.",
+    "Cooking burners may be checked for operability and flame quality.",
+    "Correction of venting is allowed when testing indicates a problem; modifications unrelated to health/safety are not IHWAP-allowable."
+  ],
+  "co_detectors_and_alarms": [
+    "Install CO detectors per manufacturer's recommendations and IHWAP Field Standards.",
+    "CO alarms must meet UL2034-98/IAS696 standards, have a non-replaceable battery, manual test/reset button, 10-year warranty, and expiration date on unit.",
+    "Install CO alarms on each living level where household members spend time.",
+    "Test alarms upon installation and educate clients on operation and battery replacement.",
+    "Install at least one smoke detector on each level of the home if not present or non-compliant."
+  ],
+  "fire_extinguishers": [
+    "Install fire extinguishers only if home is heated with solid fuel source (e.g., wood stove). Place extinguisher near the appliance."
+  ],
+  "space_heaters_and_secondary_units": [
+    "Removal of unvented combustion space heaters is required and allowable under IHWAP.",
+    "Remove stand-alone electric space heaters if new heating system now serves the area.",
+    "Repair/replacement of electric space heaters is not allowed with IHWAP funds."
+  ],
+  "solid_fuel_and_chimney": [
+    "Inspect chimney and flue of all wood stoves.",
+    "Conduct combustion appliance zone depressurization testing.",
+    "Counsel clients on wood stove safety and proper use."
+  ],
+  "expenditure_limits_and_scope": [
+    "Average health and safety expenditure limit: $1,902 per weatherized unit (DOE funding); max $2,000 per unit without State Tech written approval.",
+    "Covered costs: CO/smoke detectors, fire extinguishers (if solid fuel), exhaust fans (ASHRAE 62.2), dryer venting, leaking fuel lines, HVAC/water heater repair (OCA approval), moisture remediation, gutters/downspouts, sump pumps, pest removal, lead/asbestos testing, code compliance related to WX measures."
+  ],
+  "client_education": [
+    "Inform clients of hazards (CO, gas leak, venting, unvented heaters) and provide written materials per IHWAP/EPA standards.",
+    "Review alarm and fire extinguisher operation with clients post-install."
+  ],
+  "documentation_and_notification": [
+    "Hazardous Condition Form for any immediate/potential hazard.",
+    "Photo documentation required for failures and corrections.",
+    "Scope of Work in IWx must reflect all combustion/gas/venting actions."
+  ],
+  "reference_policy": "IHWAP Operations Manual (PY2026), Field Standards Manual, EPA, DOE WPN, ASHRAE 62.2."
+}
