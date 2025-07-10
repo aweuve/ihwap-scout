@@ -1,0 +1,37 @@
+{
+  "section": 11,
+  "title": "Funding, Cost Controls, and Job Justification Standards",
+  "last_updated": "2025-07-09",
+  "funding_policy": {
+    "summary": "Agencies must ensure that all weatherization measures, health & safety items, and WX+ expenditures are allowable, properly justified, and tracked by funding source. All projects must comply with SIR, cost ceiling, and cost-sharing policies.",
+    "funding_sources_and_allocation": [
+      "DOE WAP—primary source for weatherization and allowable H&S/WX+ repairs (SIR ≥ 1.0 required).",
+      "HHS/LIHEAP—may fund additional health & safety or WX+ measures.",
+      "State funds—used for WX+, pilot projects, and cost-sharing where allowable.",
+      "BIL (Infrastructure), HOMES/HEAR—emerging federal sources for WX+, solar, or resilience work."
+    ],
+    "cost_controls_and_limits": [
+      "All DOE-funded projects must have SIR (Savings to Investment Ratio) ≥ 1.0 at time of SOW and after any change order.",
+      "H&S cost ceiling is $1,902 per unit (max $2,000 without state tech written approval).",
+      "WX+ measures exceeding cost ceiling require detailed justification and state approval.",
+      "No “buy down” allowed for single-family homes; client or other funds required if costs exceed allowable limits."
+    ],
+    "justification_and_documentation": [
+      "All jobs must have clear written justification for each WX+, H&S, or above-ceiling measure.",
+      "Justification must include: issue, proposed solution, cost estimate, and policy reference.",
+      "Attach SOW, SIR screenshots, invoices, and all supporting documents in IWx Job Summary.",
+      "Photos and forms required for all cost-exceeding or special-approval measures."
+    ],
+    "cost_sharing_and_braided_funding": [
+      "Use federal funds (DOE, HHS, State) in combination where allowed (braided funding).",
+      "Document all sources and allocations for each measure in SOW and Job Summary.",
+      "Maintain supporting documentation for all cost sharing for 3 years for audit."
+    ],
+    "change_order_controls": [
+      "Any change in price, SOW, or funding must be entered as a change order in IWx.",
+      "If new SIR < 1.0, revise measures or seek OCA override before proceeding.",
+      "Change orders exceeding cost ceiling require approval and additional documentation."
+    ]
+  },
+  "reference_policy": "IHWAP Operations Manual (PY2026), DOE WPN, State WX+ Guidance, BIL/HOMES/HEAR Cost Controls."
+}
