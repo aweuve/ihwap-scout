@@ -7,22 +7,64 @@ import uuid
 import markdown
 import re
 from datetime import datetime
+import glob
 from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
 
-# ---------------------------------------------------------------------
+# ------------------------------
 # Load FAAIE logic
-# ---------------------------------------------------------------------
+# ------------------------------
 with open("faaie_logic.json", "r") as f:
     faaie_logic = json.load(f)
 
+# ------------------------------
+# Load ALL Section JSONs at startup
+# ------------------------------
+def load_all_sections():
+    sections = []
+    for fname in glob.glob("Section*.json"):
+        with open(fname, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            # Batch (sections) or single-section (section)
+            if "sections" in data:
+                for sec in data["sections"].values():
+                    sections.append(sec)
+            elif "section" in data:
+                sections.append(data)
+    return sections
+
+ALL_SECTIONS = load_all_sections()
+
+# Helper: search for content matching a keyword (policy or logic)
+def search_policy(keyword):
+    keyword_lower = keyword.lower()
+    results = []
+    for section in ALL_SECTIONS:
+        data_flat = json.dumps(section).lower()
+        if keyword_lower in data_flat:
+            # Only surface user-facing logic and reference_policy, never section number
+            policy = section.get("reference_policy", "") or section.get("reference", "")
+            logic_summary = ""
+            # Try to grab some meaningful content (not just the whole section)
+            for k, v in section.items():
+                if k not in ["section", "title", "last_updated", "reference_policy", "reference"]:
+                    if isinstance(v, list):
+                        # Only add first few for brevity
+                        logic_summary += "\n".join(str(i) for i in v[:4]) + "\n"
+                    elif isinstance(v, str):
+                        logic_summary += v + "\n"
+            results.append({"answer": logic_summary.strip(), "policy": policy})
+    return results
+
+# ------------------------------
+# Flask App
+# ------------------------------
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET", "super_secret_key")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# ---------------------------------------------------------------------
-# Scene categories & hard‑coded trigger rules
-# ---------------------------------------------------------------------
+# (All your scene_categories and trigger_rules here - unchanged)
+
 scene_categories = {
     "attic": ["attic", "ventilation", "hazardous materials", "structural"],
     "crawlspace": ["crawlspace", "mechanical", "moisture", "structural"],
@@ -49,32 +91,26 @@ trigger_rules = {
     ],
 }
 
-# ---------------------------------------------------------------------
-# Label Clue Estimator
-# ---------------------------------------------------------------------
+# --------------------------------------
+# Label Clue Estimator for Age Finder
+# --------------------------------------
 def estimate_year_from_label(text):
-    # Try to find explicit dates like "MFG DATE: 2016", "Manufactured: 2014", etc.
     mfg_match = re.search(r'(MFG\s*DATE|Manufactured|Date of Manufacture)[:\s\-]*([0-9]{4})', text, re.IGNORECASE)
     if mfg_match:
         return int(mfg_match.group(2)), "Found explicit manufacture date on label."
-
-    # Look for ANSI/CSA standards year (minimum year)
     ansi_match = re.search(r'ANSI[^\d]*(\d{4})', text, re.IGNORECASE)
     if ansi_match:
         return int(ansi_match.group(1)), "Estimated from ANSI/CSA certification year on label."
-
-    # Try to find any 4-digit year in the label text (last resort)
     year_matches = re.findall(r'([1-3][0-9]{3})', text)
     plausible_years = [int(y) for y in year_matches if 1980 <= int(y) <= datetime.now().year]
     if plausible_years:
         best_guess = max(plausible_years)
         return best_guess, "Possible year(s) found on label."
-
     return None, "No label clues for year found."
 
-# ---------------------------------------------------------------------
+# ------------------------------
 # ROUTES
-# ---------------------------------------------------------------------
+# ------------------------------
 @app.route("/")
 def landing():
     return render_template("landing.html")
@@ -92,6 +128,14 @@ def chat():
 
         if user_msg:
             session["chat_history"].append({"role": "user", "content": user_msg})
+            # Try to match a policy or logic snippet for the chat input (field-aware)
+            search_results = search_policy(user_msg)
+            context_snippet = ""
+            if search_results:
+                for result in search_results[:1]:  # just use first for brevity
+                    context_snippet += result["answer"]
+                    if result["policy"]:
+                        context_snippet += f"\n\n[Citation: {result['policy']}]"
             try:
                 completion = openai.ChatCompletion.create(
                     model="gpt-4o",
@@ -99,28 +143,12 @@ def chat():
                         {
                             "role": "system",
                             "content": (
-                                """You are Scout, an IHWAP 2026 assistant for Weatherization staff.
-
-✅ Follow the Weatherization Creed:
-1. Health & Safety
-2. Home Integrity
-3. Energy Efficiency
-
-Acceptable topics:
-- IHWAP 2026 policies & measures
-- DOE WAP rules
-- Field inspections, scopes, and troubleshooting
-- Rubber-ducking field issues or manual lookups
-
-Answer structure:
-- Health & Safety concerns first
-- Deferral risks second
-- Compliance or tech details last
-- Include IHWAP 2026 citations if applicable
-- Be friendly, clear, and concise for field use
-
-If unrelated, say:
-"I can assist with IHWAP 2026, Weatherization, and inspection topics only."""
+                                "You are Scout, an IHWAP 2026 assistant for Weatherization staff.\n"
+                                "When possible, cite specific IHWAP, DOE WAP, or Wxbot policy in brackets at the end of your answer.\n"
+                                "If a field rule, action item, callback, QA, or deferral logic exists for the user question in your compliance library, use it directly, and cite only the real-world policy (never section or file info).\n"
+                                "If you can't answer directly, say so and suggest next steps.\n\n"
+                                f"Reference context:\n{context_snippet}\n\n"
+                                "Answer in a friendly, clear, and concise field style."
                             ),
                         }
                     ]
@@ -152,7 +180,6 @@ If unrelated, say:
 
 @app.route("/qci", methods=["GET", "POST"])
 def qci():
-    # --- Session reset for "New QCI Review" ---
     if request.method == "GET" and request.args.get("new"):
         session.pop("last_image_filename", None)
         session.pop("last_result", None)
@@ -176,7 +203,6 @@ def qci():
 
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-            # Model/logic analysis
             result = get_matching_trigger_from_image(image_bytes, faaie_logic)
             visible_elements = result.get("visible_elements", [])
 
@@ -189,7 +215,6 @@ def qci():
             session["last_scene"] = scene_type
             session["last_analysis_date"] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    # On GET (or after POST), load info from session
     unique_filename = session.get("last_image_filename")
     if unique_filename:
         image_path = os.path.join("static", "uploads", unique_filename)
@@ -207,10 +232,9 @@ def age_finder():
     fail_msg = None
     use_manual = False
     ocr_text = None
-    label_estimate = None  # holds (year, clue_source) tuple
+    label_estimate = None
 
     if request.method == "POST":
-        # Manual fallback
         if request.form.get("manual"):
             use_manual = True
             brand = request.form.get("brand", "")
@@ -224,7 +248,6 @@ def age_finder():
                 else:
                     fail_msg = res
 
-        # Photo upload
         elif "photo" in request.files:
             photo = request.files.get("photo")
             if photo and photo.filename:
@@ -273,7 +296,6 @@ def age_finder():
                         else:
                             fail_msg = res
                     except Exception:
-                        # --- FALLBACK: Try to extract all text for manual copy ---
                         ocr_prompt = (
                             "You are an OCR engine. Extract ALL readable text from the uploaded appliance label photo, including numbers and letters. "
                             "Respond ONLY with a plain text list. Do NOT try to interpret it. Do NOT reply in JSON."
@@ -299,7 +321,6 @@ def age_finder():
                             "Could not automatically extract brand/serial from the image. "
                             "See all detected label text below, or enter the info manually."
                         )
-                        # NEW: Try to estimate year from OCR label text!
                         est_year, est_source = estimate_year_from_label(ocr_text)
                         if est_year:
                             label_estimate = (est_year, est_source)
@@ -327,7 +348,23 @@ def scope():
 def prevent():
     return render_template("prevent.html")
 
-# MAIN GUARD – run locally or on Render
+# OPTIONAL: (hidden) /knowledge route for admin/testing (not user-facing)
+@app.route("/knowledge", methods=["GET"])
+def knowledge():
+    q = request.args.get("q")
+    if not q:
+        return "Query ?q= missing", 400
+    results = search_policy(q)
+    if not results:
+        return "No policy or logic found.", 404
+    # Only show answer and policy citation
+    answers = []
+    for res in results:
+        answers.append(f"{res['answer']}<br><em>[{res['policy']}]</em>")
+    return "<hr>".join(answers)
+
+# MAIN GUARD
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
