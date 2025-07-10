@@ -1,0 +1,63 @@
+{
+  "section": 5,
+  "title": "Scope Writing, Work Order, and Job Summary Logic",
+  "last_updated": "2025-07-09",
+  "scope_writing_policy": {
+    "overview": "The Scope of Work (SOW) defines all weatherization, health & safety, and WX+ measures to be completed for each job. It ensures compliance, auditability, and funding alignment.",
+    "core_requirements": [
+      "Every SOW must include all proposed weatherization, air sealing, and incidental costs, with each measure tied to funding source (DOE, HHS, State, WX+).",
+      "A SOW is only valid if the current Work Order SIR (Savings to Investment Ratio) is ≥ 1.0. Agencies are advised to target a minimum SIR of 1.15 to allow buffer for change orders.",
+      "SOW must be documented and tracked in the IWx system, with updates for all change orders, funding adjustments, and job status changes.",
+      "All work orders must reflect actual field conditions, verified quantities, and final installed measures."
+    ],
+    "work_order_management": [
+      "Contractor receives the SOW and work order via IWx. Measures, estimated costs, and funding must be clearly itemized.",
+      "Contractor updates measure status as completed; all changes are documented in IWx and require agency review.",
+      "At job completion, contractor certifies all measures are installed and meet IHWAP standards."
+    ],
+    "change_order_protocol": [
+      "Any change in quantity, price, or SOW must be entered in IWx as a change order.",
+      "If a cost change exceeds 20% of original SOW, SIR recalculation is required. If new SIR < 1.0, agency may seek OCA override or must revise measures.",
+      "Change orders must be justified and documented with photos, supporting forms, and agency approval."
+    ],
+    "final_verification": [
+      "Final Inspector reviews SOW, work order, and all documentation before final inspection can begin.",
+      "Inspector verifies all measures are installed, correct quantities, and meet IHWAP standards.",
+      "Call-backs must be ordered for any measures not meeting standards; documentation must be uploaded in IWx.",
+      "Assurance & Guarantee of Work form (1-year warranty) must be completed and given to agency and owner."
+    ],
+    "SIR_and_cost_controls": [
+      "Current Work Order SIR must always be ≥ 1.0 for project to proceed.",
+      "If SIR is below 1.0 after change order, measures must be removed or funding sources adjusted.",
+      "“Buy downs” are not allowed for single-family homes.",
+      "Non-program contributions are required if costs exceed allowable ceilings."
+    ],
+    "documentation_and_export": [
+      "Scope, SIR screenshots (for fuel switching or unusual measures), and all supporting forms must be attached in IWx Job Summary.",
+      "Lien Waiver (one master copy per award file) is required; no longer needed per-job.",
+      "Mechanical Contractor Checklist and Contractor Diagnostic Tests must be completed and uploaded.",
+      "Final Inspector enters all test results (blower door, flue gas, meter clocking) in Final Inspection and attaches required photos."
+    ],
+    "QA_and_audit_trail": [
+      "Each SOW and job summary must be clean, traceable, and ready for audit.",
+      "All documentation, approvals, and SOW changes are archived for future review.",
+      "Job Summary Dashboard should track: job number, location, measures, fuel type, SIR outcome, H&S triggers, scope source, approval status."
+    ]
+  },
+  "job_summary_fields": [
+    "Job # and Location",
+    "Measures Scoped",
+    "Fuel Type (before/after)",
+    "SIR Outcome",
+    "Health & Safety Triggers",
+    "Scope Source (SIR, H&S, WX+)",
+    "Approval Date and Status"
+  ],
+  "export_templates_available": [
+    "Contractor Scope Notes",
+    "QCI Signoff Checklist",
+    "Homeowner Letters (deferral, completion, H&S delay)",
+    "Scope Justification Sheet"
+  ],
+  "reference_policy": "IHWAP Operations Manual (PY2026), Field Standards, Wxbot Toolkit, DOE Guidance"
+}
