@@ -1,0 +1,42 @@
+[
+  {
+    "trigger": "Ambient indoor CO measured above 9 ppm",
+    "action_item": "Ventilate, identify source, and retest. Defer all work until CO ≤9 ppm.",
+    "documentation": "CO reading (before/after ventilation), mitigation steps, job log.",
+    "policy_text": "CO above 9 ppm is unsafe; source must be corrected before work continues.",
+    "reference_policy": "IHWAP 2026 §5.4.4; DOE WPN 11-6",
+    "tags": ["CO", "combustion", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Backdraft detected at draft diverter or appliance",
+    "action_item": "Halt work. Refer to HVAC contractor for venting correction. Defer until backdrafting is resolved.",
+    "documentation": "Photo or reading, contractor report, clearance retest.",
+    "policy_text": "Backdrafting can introduce CO and combustion gases indoors; correction is required before WX.",
+    "reference_policy": "IHWAP 2026 §7.3.5; SWS 7.601.3c",
+    "tags": ["backdraft", "combustion", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Combustion appliance spillage at draft diverter",
+    "action_item": "Stop work. Document spillage and refer for evaluation. Do not proceed until safe operation is confirmed.",
+    "documentation": "Photo/video of spillage, appliance service report.",
+    "policy_text": "Spillage indicates venting problem and risk of CO.",
+    "reference_policy": "SWS 7.601.4b; IHWAP 2026 §7.3.5",
+    "tags": ["combustion", "spillage", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Improper appliance venting (horizontal run too long, negative slope, single-wall connector in attic)",
+    "action_item": "Correct venting per code. Defer all WX until venting is brought to standard.",
+    "documentation": "Photo of venting, corrected installation, code reference.",
+    "policy_text": "Improper venting can cause backdraft or fire; must meet code and program standards.",
+    "reference_policy": "SWS 7.601.3c; IHWAP 2026 §5.3.4",
+    "tags": ["venting", "combustion", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Missing, non-functional, or untested CO alarm in home with combustion appliances",
+    "action_item": "Install, test, or replace CO alarm before proceeding with work. Document installation or test in job file.",
+    "documentation": "Photo of alarm, installation/test record.",
+    "policy_text": "Operational CO alarms are required in all homes with combustion appliances.",
+    "reference_policy": "IHWAP 2026 §5.4.5; SWS 7.6002.1",
+    "tags": ["CO", "combustion", "alarm", "health_safety", "field"]
+  }
+]
