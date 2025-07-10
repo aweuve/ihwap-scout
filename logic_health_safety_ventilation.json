@@ -1,0 +1,34 @@
+[
+  {
+    "trigger": "Bathroom fan not vented to exterior",
+    "action_item": "Reroute fan duct to terminate outside (gable, roof, or wall cap). Document correction before insulating or air sealing.",
+    "documentation": "Photo of fan ducting to exterior, post-install note.",
+    "policy_text": "Bathroom exhaust fans must vent outdoors to prevent moisture and mold buildup.",
+    "reference_policy": "IHWAP 2026 §4.2.3; SWS 4.0201.1c",
+    "tags": ["bath_fan", "ventilation", "moisture", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Disconnected or non-terminating fan duct",
+    "action_item": "Reattach or extend duct to proper termination at exterior wall, roof, or soffit. Document before further weatherization.",
+    "documentation": "Photo of corrected fan duct, inspection note.",
+    "policy_text": "Fan ducts must not discharge into attic, crawlspace, or other cavities; exterior termination is required.",
+    "reference_policy": "SWS 4.0201.1c; IHWAP 2026 §4.2.3",
+    "tags": ["ventilation", "fan", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Combustion appliance room lacks required ventilation",
+    "action_item": "Install louvered door or passive vent for combustion air as required by code and manufacturer. Defer if not corrected.",
+    "documentation": "Photo of installed vent, manufacturer's guidance, job note.",
+    "policy_text": "Mechanical rooms must provide sufficient combustion air to prevent backdraft and unsafe operation.",
+    "reference_policy": "SWS 7.601.3b; IHWAP 2026 §7.3.5",
+    "tags": ["combustion", "ventilation", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Dryer, kitchen, or bath vent missing backdraft damper",
+    "action_item": "Install exterior vent hood with functioning backdraft damper to prevent air and pest intrusion.",
+    "documentation": "Photo of vent hood/damper, test record.",
+    "policy_text": "Exterior vents must include a backdraft damper.",
+    "reference_policy": "SWS 4.2002.1",
+    "tags": ["ventilation", "dryer", "kitchen_fan", "bath_fan", "callback", "health_safety"]
+  }
+]
