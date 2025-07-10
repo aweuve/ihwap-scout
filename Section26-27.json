@@ -1,0 +1,48 @@
+{
+  "last_updated": "2025-07-09",
+  "sections": {
+    "26": {
+      "title": "Mobile-Ready Quick Reference Index",
+      "description": "A condensed, hyperlinked directory of all core field triggers, action items, policy summaries, and field FAQs for use on mobile or tablet in the field.",
+      "features": [
+        "Searchable list of all major triggers (deferral, callback, SOW, QA, safety, etc.)",
+        "One-tap access to action items, required documentation, and compliance steps",
+        "Hyperlinked policy citations for each trigger or field question",
+        "Printable/mobile PDF and web app versions for offline use",
+        "‘Egg of the Day’ and field wisdom snippets for staff engagement"
+      ],
+      "update_protocol": [
+        "Quick Reference updated with each major logic or policy change",
+        "Field staff may request new triggers or FAQ entries as needed"
+      ]
+    },
+    "27": {
+      "title": "Bonus Tools – Export Templates, Job Dashboard & Travel Packet",
+      "tools": [
+        {
+          "name": "Export Templates Library",
+          "description": "Downloadable forms: QCI checklist, callback log, deferral notice, scope justification, and client communication templates.",
+          "formats": ["PDF", "Excel", "Web"]
+        },
+        {
+          "name": "Job Dashboard",
+          "description": "Visual tracker for all jobs by status (open, callback, deferral, complete), field staff assignments, and scope QA status.",
+          "features": [
+            "Color-coded job cards",
+            "QCI/QA triggers highlighted",
+            "One-click export for audit or manager review"
+          ]
+        },
+        {
+          "name": "Travel Packet",
+          "description": "Printable ‘field packet’ for each job—client info, SOW summary, required checklists, maps, and emergency contacts for staff working offline.",
+          "formats": ["PDF", "Print"]
+        }
+      ],
+      "update_and_feedback_protocol": [
+        "Bonus tools reviewed and updated annually",
+        "Field staff and managers may submit suggestions for new templates or dashboard features"
+      ]
+    }
+  }
+}
