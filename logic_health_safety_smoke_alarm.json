@@ -1,0 +1,34 @@
+[
+  {
+    "trigger": "No smoke alarm present in home",
+    "action_item": "Install a qualifying smoke alarm on each level of the home, including the basement and outside sleeping areas, per IHWAP and DOE WAP requirements.",
+    "documentation": "Photo of installed alarms, location notes, and client sign-off in job file.",
+    "policy_text": "All weatherized homes must have working smoke alarms on every level and outside sleeping areas.",
+    "reference_policy": "IHWAP 2026 §5.4.5; SWS 7.6002.1a",
+    "tags": ["smoke_alarm", "health_safety", "field", "install"]
+  },
+  {
+    "trigger": "Existing smoke alarm not functional or not tested",
+    "action_item": "Replace battery and test alarm. If still not working, replace the alarm. Document the test or replacement before weatherization proceeds.",
+    "documentation": "Photo of alarm, battery/test documentation, replacement record if needed.",
+    "policy_text": "All alarms must be tested and confirmed working before and after WX activities.",
+    "reference_policy": "IHWAP 2026 §5.4.5; SWS 7.6002.1b",
+    "tags": ["smoke_alarm", "health_safety", "field", "test", "replace"]
+  },
+  {
+    "trigger": "Smoke alarm location non-compliant (missing in required areas)",
+    "action_item": "Install additional alarms in required areas—each level, outside sleeping areas, and as required by local code.",
+    "documentation": "Photos and home diagram showing alarm locations.",
+    "policy_text": "Placement of alarms must meet IHWAP/DOE/local code; additional units required if missing.",
+    "reference_policy": "IHWAP 2026 §5.4.5; SWS 7.6002.1c",
+    "tags": ["smoke_alarm", "health_safety", "placement", "field"]
+  },
+  {
+    "trigger": "Client refuses smoke alarm installation",
+    "action_item": "Document client refusal with a signed waiver. Notify supervisor and retain documentation in job file. Do not proceed with weatherization until risk is addressed.",
+    "documentation": "Signed client refusal/waiver form, supervisor notification.",
+    "policy_text": "Refusal of required H&S measures must be documented and escalated before WX proceeds.",
+    "reference_policy": "IHWAP 2026 §5.4.5; DOE WPN 11-6",
+    "tags": ["smoke_alarm", "health_safety", "deferral", "client_refusal"]
+  }
+]
