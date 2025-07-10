@@ -1,0 +1,34 @@
+[
+  {
+    "trigger": "Dryer vented with plastic or foil flex duct",
+    "action_item": "Replace with smooth metal duct per code. Secure all joints and ensure vent terminates outside with a backdraft damper.",
+    "documentation": "Photo of corrected venting, materials used, and job file update.",
+    "policy_text": "Plastic or foil dryer ducts are a known fire hazard and must be replaced with code-compliant metal duct.",
+    "reference_policy": "IMC 504.6.1; IHWAP 2026 §4.2.5",
+    "tags": ["dryer", "venting", "health_safety", "fire_hazard", "callback"]
+  },
+  {
+    "trigger": "Dryer vent terminates in attic or crawlspace",
+    "action_item": "Extend dryer vent to terminate at exterior wall or soffit with backdraft damper. Do not leave vent open in building cavities.",
+    "documentation": "Photo of vent termination at exterior, inspection record.",
+    "policy_text": "Dryer vents must discharge to the outside; interior termination is prohibited due to moisture and fire risk.",
+    "reference_policy": "IMC 504.4; SWS 4.2002.1",
+    "tags": ["dryer", "venting", "moisture", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Exterior dryer vent hood missing or backdraft damper missing/broken",
+    "action_item": "Install code-compliant vent hood with working backdraft damper. Document before further weatherization work.",
+    "documentation": "Photo of vent hood installation, damper test/inspection.",
+    "policy_text": "Dryer vents must include a functioning backdraft damper to prevent air and pest intrusion.",
+    "reference_policy": "SWS 4.2002.1",
+    "tags": ["dryer", "venting", "backdraft", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Dryer vent obstructed or full of debris/lint",
+    "action_item": "Clean vent and verify airflow before completing project. Replace if duct cannot be cleaned.",
+    "documentation": "Photo before/after cleaning, client education on maintenance.",
+    "policy_text": "Blocked dryer vents are a fire and health hazard; must be clear for safe operation.",
+    "reference_policy": "SWS 4.2003.1",
+    "tags": ["dryer", "venting", "fire_hazard", "maintenance", "health_safety"]
+  }
+]
