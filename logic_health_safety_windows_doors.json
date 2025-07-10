@@ -1,0 +1,34 @@
+[
+  {
+    "trigger": "Broken, cracked, or missing window glass",
+    "action_item": "Repair or replace glass before proceeding with air sealing or insulation. Document completion.",
+    "documentation": "Photo of broken and repaired window, repair invoice or work note.",
+    "policy_text": "Broken windows compromise safety, security, and energy efficiency; must be repaired before further WX.",
+    "reference_policy": "IHWAP 2026 §5.1.3; SWS 3.1201.2",
+    "tags": ["window", "glazing", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Exterior door frame unsealed, rotted, or deteriorated",
+    "action_item": "Repair or replace exterior door frame. Ensure weather-tight seal before air sealing or insulation.",
+    "documentation": "Photo of damaged and repaired frame, sealant or repair material note.",
+    "policy_text": "Exterior door framing must be sound and sealed to prevent air, moisture, and pest intrusion.",
+    "reference_policy": "SWS 3.2001.2a; IHWAP 2026 §5.1.3",
+    "tags": ["door", "frame", "health_safety", "air_leakage", "callback"]
+  },
+  {
+    "trigger": "Window or door missing required egress (bedroom or habitable space)",
+    "action_item": "Notify client/owner; refer to code official if non-compliance affects life safety. Weatherization measures may be deferred.",
+    "documentation": "Photo of window/door, code reference, communication with client/owner.",
+    "policy_text": "Egress requirements are critical for fire and life safety. Program may not proceed with non-compliant openings.",
+    "reference_policy": "IRC R310; IHWAP 2026 §5.1.4",
+    "tags": ["window", "door", "egress", "life_safety", "deferral"]
+  },
+  {
+    "trigger": "Missing or nonfunctional door locks on exterior doors",
+    "action_item": "Install or repair locks to secure home before or during weatherization. Document completion.",
+    "documentation": "Photo of locks, job file note.",
+    "policy_text": "Exterior doors must be lockable to ensure security during and after project.",
+    "reference_policy": "IHWAP 2026 §7.5.6",
+    "tags": ["door", "lock", "security", "health_safety", "callback"]
+  }
+]
