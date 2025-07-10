@@ -1,1 +1,34 @@
 
+{
+  "section": 10,
+  "title": "Client Communication, Notification, and Consent Protocols",
+  "last_updated": "2025-07-09",
+  "communication_policy": {
+    "summary": "Agencies must provide clear, timely, and documented communication to clients about eligibility, hazards, project scope, deferral, callback, and close-out. All required forms and notifications must be delivered and retained per IHWAP standards.",
+    "required_client_notifications": [
+      "Eligibility determination (approved, waitlisted, or denied)—written notification by mail or in-person.",
+      "Scope of Work summary—provide clear explanation of planned weatherization, H&S, and WX+ measures.",
+      "Hazardous Condition Notification Form—delivered at assessment if any immediate or potential hazards are identified (asbestos, vermiculite, structural, biological, lead, mold, electrical, gas, etc).",
+      "Deferral Notice—delivered by certified mail, with reason(s) and steps for possible future eligibility.",
+      "Callback/Correction Notification—inform client of work needed to address inspection failure or QA callback.",
+      "Final Inspection Close-Out Letter—certify job completion and provide client satisfaction questionnaire."
+    ],
+    "client_consent_and_signoff": [
+      "Applicant must sign Health and Safety Intake Questionnaire at application.",
+      "Client must sign for receipt of all education materials and hazardous condition forms.",
+      "Client signature required on Final Inspection, Scope of Work, and Client Satisfaction Questionnaire.",
+      "If client refuses to sign any required forms, document refusal and retain in job file; notify OCA if compliance is at risk."
+    ],
+    "special_circumstances": [
+      "If client is unable to understand forms (due to disability, literacy, or language), provide assistance or interpreter; document accommodation.",
+      "For rental units, landlord notification and consent are required for all scope, deferral, and callback/correction notices.",
+      "For legal guardians or representatives, obtain and retain proof of authority for signing on client’s behalf."
+    ],
+    "recordkeeping": [
+      "Retain copies of all client notifications, forms, and sign-offs in the job file.",
+      "Scan/upload all documentation to IWx as required.",
+      "Maintain records for 3 years for audit and compliance."
+    ]
+  },
+  "reference_policy": "IHWAP Operations Manual (PY2026), Client Communication and Consent Requirements."
+}
