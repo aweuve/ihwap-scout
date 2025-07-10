@@ -1,0 +1,31 @@
+{
+  "section": 12,
+  "title": "Reporting, Audit Trail, and Documentation Export Standards",
+  "last_updated": "2025-07-09",
+  "reporting_policy": {
+    "summary": "Agencies must maintain clear, complete, and audit-ready documentation for all weatherization jobs, including all required forms, photos, signatures, and exportable reports. All field documentation must be attached in IWx and available for audit upon request.",
+    "required_reports_and_exports": [
+      "Job Summary (IWx)—captures all SOW, measures, change orders, costs, funding, client signatures, and field photos.",
+      "QCI Inspection Report—documenting all final inspection findings, call-backs, test results, photos, and inspector signature/date.",
+      "Scope of Work Export—itemized by measure, funding source, SIR, and approval status.",
+      "Deferral/Callback Report—detailing flagged conditions, notification, resolution, and supporting photos.",
+      "Audit Trail Log—chronological list of all major actions, decisions, and documentation updates for each job."
+    ],
+    "documentation_audit_trail": [
+      "Every required form (scope, callback, deferral, hazard notification, education checklist) must be attached to IWx job file.",
+      "Staff must sign and date all field and final reports.",
+      "Maintain a digital backup/archive of all reports and field documentation for a minimum of 3 years (or longer, per state policy)."
+    ],
+    "export_formats_and_fields": [
+      "PDF, CSV, and/or digital report exports must include all required data fields for audit (job #, dates, staff, SOW, SIR, photos, signatures).",
+      "All exports must be date/time stamped and include versioning where applicable.",
+      "Export templates must be updated with every standards/policy change and reflect current IHWAP and DOE guidance."
+    ],
+    "staff_roles_and_responsibilities": [
+      "Field staff: Responsible for uploading all required documentation and reports to IWx.",
+      "QCI: Signs off on final inspection, ensures all required documentation and photos are present before job closeout.",
+      "Agency QA/Admin: Maintains audit trail, archives digital and physical files, and produces reports upon request."
+    ]
+  },
+  "reference_policy": "IHWAP Operations Manual (PY2026), Reporting and Documentation Standards, DOE WPN, Audit Requirements."
+}
