@@ -1,0 +1,60 @@
+{
+  "section": 6,
+  "title": "Outreach, Client Education, and Coordination",
+  "last_updated": "2025-07-09",
+  "outreach_plan": {
+    "requirement": "Each LAA must have a documented Outreach Plan to ensure enough eligible applications to meet production goals. Outreach must prioritize the elderly, disabled, households with young children, and LIHEAP households.",
+    "core_activities": [
+      "Coordinate with community organizations to identify eligible households.",
+      "Promote IHWAP benefits via flyers, community events, senior services, disability support groups, nutrition programs, and local agencies.",
+      "Update and distribute a directory of services including energy, social, and health programs."
+    ],
+    "referral_system": [
+      "Maintain an updated system to refer clients to all available energy assistance and social service programs.",
+      "Make referrals for services such as LIHEAP, SNAP, Circuit Breaker tax relief, senior services, SSI, Head Start, nutrition, child abuse hotline, and more.",
+      "Document referrals and coordinate follow-up as needed."
+    ]
+  },
+  "client_health_and_safety_education": {
+    "timing": "Provide at both application and assessment/energy audit.",
+    "core_requirements": [
+      "Discuss any identified or suspected health & safety hazards with the client during assessment (lead, mold, moisture, asbestos, etc.).",
+      "Deliver required EPA publications: Lead Booklet (Renovate Right), A Brief Guide to Mold, Moisture, and Your Home, and A Citizen’s Guide to Radon.",
+      "If continuous ventilation is likely to be installed, also provide 'Ventilation for You & Your Home' brochure.",
+      "Ensure Applicant Health and Safety Intake Questionnaire is completed at application in IWx.",
+      "At assessment, confirm delivery of education materials and attach photo evidence in IWx.",
+      "If publications are not on hand, print from OCA extranet or federal sources."
+    ],
+    "hazard_notification": [
+      "If any immediate or potential risk is found, provide a Hazardous Conditions Notification Form listing the hazards and deliver a copy to the client and/or landlord.",
+      "Conditions triggering notification include (but are not limited to): asbestos, vermiculite, biological hazards, raw sewage, structural collapse, severe moisture/mold, lead, unsafe wiring, and more.",
+      "Discuss risks and precautions for identified hazards (asbestos siding, vermiculite, etc.)."
+    ],
+    "additional_materials": [
+      "IHWAP client brochure",
+      "LIHEAP client brochure",
+      "IHWAP/LIHEAP Energy Savings Tips",
+      "Safe Pest Control, Seven Tips to Keeping a Healthy Home, and other HUD/EPA guides as appropriate"
+    ],
+    "resources": [
+      {"title": "A Brief Guide to Mold, Moisture, and Your Home", "url": "https://www.epa.gov/sites/default/files/2016-10/documents/moldguide12.pdf"},
+      {"title": "Lead Safe Certified Guide to Renovate Right", "url": "https://www.epa.gov/sites/default/files/documents/renovaterightbrochure.pdf"},
+      {"title": "Seven Tips to Keeping a Healthy Home", "url": "https://www.hud.gov/sites/documents/DOC_11882.PDF"},
+      {"title": "Safe Pest Control", "url": "https://www.hud.gov/sites/documents/DOC_25454.PDF"},
+      {"title": "A Citizen's Guide to Radon", "url": "https://www.epa.gov/sites/default/files/2016-12/documents/2016_a_citizens_guide_to_radon.pdf"}
+    ]
+  },
+  "documentation_and_photos": [
+    "At assessment, take a color photo of delivered education materials at the client’s home and attach in IWx.",
+    "Maintain a signed Client Education Materials Checklist in the file.",
+    "For all hazardous conditions, retain a copy of the signed Hazardous Conditions Notification."
+  ],
+  "directory_of_services": [
+    "Program title",
+    "Program components",
+    "Eligibility criteria",
+    "Limitations on availability",
+    "Contact agency/person and phone number"
+  ],
+  "reference_policy": "IHWAP Operations Manual (PY2026) – Section III Outreach and Client Education"
+}
