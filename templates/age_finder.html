@@ -19,6 +19,8 @@
         .ocr-fallback { background: #f9e5e5; border:1px solid #d99; border-radius:6px; padding:13px 12px; margin:16px 0 10px 0;}
         .ocr-fallback pre { white-space:pre-wrap; font-size:1.06em; color:#444;}
         .ocr-fallback div { font-size:0.97em; color:#b00;}
+        .label-estimate { background:#fffbe5; border:1.5px solid #e9ce58; border-radius:7px; padding:14px; margin:12px 0;}
+        .label-estimate span { color:#b48a00; font-size:1.1em; }
         @media (max-width:600px) {
             .container { padding: 8px; }
         }
@@ -101,7 +103,15 @@
                 <div>(Copy/paste the model or serial if you see it here!)</div>
             </div>
         {% endif %}
+
+        {% if label_estimate %}
+            <div class="label-estimate">
+                <b>Estimated Manufacture Year:</b>
+                <span>{{ label_estimate[0] }}</span>
+                <br>
+                <span style="font-size:0.98em;">({{ label_estimate[1] }})</span>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>
-
