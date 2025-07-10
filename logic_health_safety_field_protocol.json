@@ -1,0 +1,42 @@
+[
+  {
+    "trigger": "Inaccessible attic, crawlspace, or work area",
+    "action_item": "Notify client and request access be cleared before assessment or work. Defer all field activities until access is confirmed safe.",
+    "documentation": "Photo of access barrier, client notification, post-clearance photo.",
+    "policy_text": "All work areas must be accessible for inspection and installation before WX activities.",
+    "reference_policy": "IHWAP 2026 §3.0.2; SWS 2.0201.2",
+    "tags": ["access", "inspection", "deferral", "health_safety", "field_protocol"]
+  },
+  {
+    "trigger": "Unsafe entry or worksite conditions (loose floorboards, structural hazard, animal presence)",
+    "action_item": "Defer work and notify supervisor. Do not enter unsafe areas until corrected and cleared.",
+    "documentation": "Photo of unsafe condition, supervisor notification, correction record.",
+    "policy_text": "Field staff must not enter unsafe work areas; all hazards must be corrected first.",
+    "reference_policy": "IHWAP 2026 §3.0.4; OSHA 1926.20(b)",
+    "tags": ["site_safety", "hazard", "deferral", "health_safety", "field_protocol"]
+  },
+  {
+    "trigger": "Client communication or notification not completed",
+    "action_item": "Contact client prior to arrival and document communication in job file. Defer field visit if unable to notify.",
+    "documentation": "Call/email log, client contact note.",
+    "policy_text": "Clients must be notified in advance of site visits or work activities.",
+    "reference_policy": "IHWAP 2026 §2.2.2",
+    "tags": ["client_communication", "policy", "health_safety", "field_protocol"]
+  },
+  {
+    "trigger": "Inspector unable to verify conditions due to clutter or storage",
+    "action_item": "Request that area be cleared for reinspection. Document request and reinspection results.",
+    "documentation": "Photo of clutter, client request log, post-clearance photo.",
+    "policy_text": "Work areas must be visually inspectable; defer if conditions cannot be confirmed.",
+    "reference_policy": "IHWAP 2026 §3.0.3",
+    "tags": ["inspection", "access", "callback", "health_safety", "field_protocol"]
+  },
+  {
+    "trigger": "Weather or site emergency prevents safe inspection/work",
+    "action_item": "Defer visit and reschedule. Document reason for delay and notify program supervisor.",
+    "documentation": "Incident/weather log, supervisor notification, reschedule date.",
+    "policy_text": "Site safety is paramount. Inclement weather or emergencies require postponement of work.",
+    "reference_policy": "IHWAP 2026 §3.0.5; OSHA 1926.35(b)",
+    "tags": ["weather", "emergency", "deferral", "health_safety", "field_protocol"]
+  }
+]
