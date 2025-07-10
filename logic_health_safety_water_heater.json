@@ -1,0 +1,50 @@
+[
+  {
+    "trigger": "Water heater lacks temperature and pressure (T&P) relief valve",
+    "action_item": "Install a T&P relief valve per code and program requirements before any weatherization work proceeds.",
+    "documentation": "Photo of installed T&P valve; documentation in job file.",
+    "policy_text": "All water heaters must have an operational T&P relief valve for safety compliance.",
+    "reference_policy": "IHWAP 2026 §5.3.4; SWS 8.6102.1",
+    "tags": ["water_heater", "health_safety", "field", "deferral"]
+  },
+  {
+    "trigger": "T&P discharge pipe missing or non-compliant",
+    "action_item": "Install a code-compliant discharge pipe to the T&P relief valve. Ensure proper termination and no threading at the end.",
+    "documentation": "Photo of pipe installation, inspection note in job file.",
+    "policy_text": "T&P valves must be piped with a discharge line per code, terminating within 6 inches of the floor.",
+    "reference_policy": "IHWAP 2026 §5.3.4; SWS 8.6102.2",
+    "tags": ["water_heater", "health_safety", "field"]
+  },
+  {
+    "trigger": "Water heater vent pipe disconnected, rusted, or improperly sloped",
+    "action_item": "Repair or replace vent piping as needed. Confirm proper slope (minimum 1/4” per foot upward from draft hood) and secure all joints.",
+    "documentation": "Photo of corrected vent, compliance sign-off in job file.",
+    "policy_text": "Proper venting is required for safe operation of gas water heaters.",
+    "reference_policy": "IHWAP 2026 §5.3.4; SWS 8.6202.2",
+    "tags": ["water_heater", "health_safety", "field", "venting"]
+  },
+  {
+    "trigger": "Water heater installed in prohibited location (e.g., sleeping room, bathroom, confined closet with no venting)",
+    "action_item": "Defer weatherization until water heater is relocated or proper combustion air/venting is installed by a licensed professional.",
+    "documentation": "Photo of location, code reference, and job file note.",
+    "policy_text": "Water heaters must not be located in sleeping rooms or bathrooms unless properly enclosed/ventilated per code.",
+    "reference_policy": "IHWAP 2026 §5.3.4; IRC G2406.2",
+    "tags": ["water_heater", "health_safety", "deferral", "location"]
+  },
+  {
+    "trigger": "Visible corrosion or leaks at water heater",
+    "action_item": "Assess for replacement. If leaking or unsafe, defer until unit is replaced and passes inspection.",
+    "documentation": "Photo of corrosion/leak, replacement documentation.",
+    "policy_text": "Leaking or corroded water heaters are a health & safety deferral.",
+    "reference_policy": "IHWAP 2026 §5.3.4",
+    "tags": ["water_heater", "health_safety", "deferral"]
+  },
+  {
+    "trigger": "Foam pipe insulation within 6 inches of vent or flue",
+    "action_item": "Remove foam insulation and replace with fire-rated fiberglass wrap. Document correction before WX work proceeds.",
+    "documentation": "Photo of corrected insulation, material spec in job file.",
+    "policy_text": "Combustible pipe insulation must not be within 6 inches of a combustion vent or flue.",
+    "reference_policy": "IHWAP 2026 §5.3.4; SWS 7.6012.2b",
+    "tags": ["water_heater", "health_safety", "combustion", "field"]
+  }
+]
