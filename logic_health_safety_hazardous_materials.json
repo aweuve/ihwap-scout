@@ -1,0 +1,34 @@
+[
+  {
+    "trigger": "Vermiculite or suspected asbestos-containing insulation found",
+    "action_item": "Defer all attic or wall work until insulation is tested and cleared by a qualified abatement professional.",
+    "documentation": "Photo of suspect material, lab results or abatement documentation, signed client notification.",
+    "policy_text": "Suspected asbestos-containing materials require deferral and proper abatement before work may proceed.",
+    "reference_policy": "IHWAP 2026 §3.2.5; SWS 2.0401.1",
+    "tags": ["hazardous_material", "asbestos", "vermiculate", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Chipping or deteriorating paint in pre-1978 home (lead risk)",
+    "action_item": "Use EPA RRP lead-safe work practices or defer work if condition is unsafe or cannot be contained.",
+    "documentation": "Photo of area, client notification, lead-safe work certification or deferral documentation.",
+    "policy_text": "Chipping or flaking paint in pre-1978 homes must be treated as potential lead hazard.",
+    "reference_policy": "EPA RRP Rule; IHWAP 2026 §3.2.4",
+    "tags": ["hazardous_material", "lead", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Active rodent or pest droppings in attic or crawlspace",
+    "action_item": "Defer work and refer to pest control for abatement, cleaning, and sealing before weatherization proceeds.",
+    "documentation": "Photo of droppings, pest control report, post-abatement inspection.",
+    "policy_text": "Active biohazards require deferral until cleaned and verified safe for staff.",
+    "reference_policy": "IHWAP 2026 §3.2.8",
+    "tags": ["hazardous_material", "biohazard", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Mold or suspected biological growth in building envelope",
+    "action_item": "Defer work until cause is addressed and area is cleaned or remediated by qualified personnel.",
+    "documentation": "Photo of affected area, source investigation, abatement report.",
+    "policy_text": "Mold growth is a health and safety risk and must be corrected before insulation or air sealing.",
+    "reference_policy": "SWS 2.0402.1; IHWAP 2026 §3.2.7",
+    "tags": ["hazardous_material", "mold", "deferral", "health_safety"]
+  }
+]
