@@ -1,0 +1,38 @@
+{
+  "section": 7,
+  "title": "Callback, Correction, and QA Loop",
+  "last_updated": "2025-07-09",
+  "callback_policy": {
+    "summary": "All callback and correction measures must be documented, tracked, and resolved within set timeframes to ensure program compliance and client safety.",
+    "callback_trigger_examples": [
+      "Work fails QCI or in-progress inspection (e.g., insulation voids, missing CO/smoke detectors, unsealed penetrations, loose wiring, missed air sealing, incomplete scope items).",
+      "State Monitoring identifies a deficiency.",
+      "Client complaint substantiated upon review.",
+      "Unsafe field condition identified post-install (combustion, gas, electrical, moisture, structural, pest, etc)."
+    ],
+    "core_requirements": [
+      "All callback items must be entered in IWx with photographic evidence.",
+      "Contractor must be notified and work must be corrected within 15 days of notification (or documented reason for delay).",
+      "State Monitoring callbacks must be resolved within 30 days (goal: 60 days).",
+      "Post-correction photos are required for every callback.",
+      "Contractor or staff must sign off when correction is complete.",
+      "All callback documentation is retained in the job file and accessible for audit.",
+      "Unresolved or repeat callbacks may result in removal from the program or additional QA measures."
+    ]
+  },
+  "correction_loop_workflow": [
+    "Callback identified by QCI, staff, or State Monitoring.",
+    "Callback documented in IWx; photo evidence uploaded.",
+    "Contractor/crew notified; correction scheduled.",
+    "Correction completed within required timeframe (15–30 days).",
+    "Post-correction photos uploaded; callback status updated.",
+    "QCI or staff verify correction and sign off.",
+    "Callback file closed and archived for future audit."
+  ],
+  "QA_and_training_feedback": [
+    "Use callback cases for staff/contractor training and field improvement.",
+    "Track callback rates and types to identify training needs and prevent repeat issues.",
+    "Analyze callback/correction trends for QA reporting and process improvement."
+  ],
+  "reference_policy": "IHWAP Operations Manual (PY2026), Callback and Correction, Desk and Field Monitoring, State Tech QA."
+}
