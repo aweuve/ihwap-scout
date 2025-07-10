@@ -1,0 +1,34 @@
+[
+  {
+    "trigger": "Furnace filter missing or severely clogged",
+    "action_item": "Install new filter with appropriate MERV rating. Confirm airflow is restored and document in job file.",
+    "documentation": "Photo of new filter, product details, and inspection note.",
+    "policy_text": "Proper air filtration is required for safe and efficient HVAC operation.",
+    "reference_policy": "SWS 5.3001.1; IHWAP 2026 §7.2.7",
+    "tags": ["HVAC", "furnace", "filter", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Disconnected supply or return duct",
+    "action_item": "Seal, reconnect, or cap duct as required. Confirm all ducts deliver/return air to conditioned space.",
+    "documentation": "Photo of corrected duct, airflow test notes.",
+    "policy_text": "Ducts must be continuous and sealed to maintain comfort, efficiency, and safety.",
+    "reference_policy": "SWS 5.3004.1; IHWAP 2026 §7.2.4",
+    "tags": ["HVAC", "duct", "leakage", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Air handler intake open to crawlspace or attic",
+    "action_item": "Seal all return paths and install sealed plenum as needed. Do not allow unfiltered or unconditioned air to enter system.",
+    "documentation": "Photo before/after sealing, plenum spec.",
+    "policy_text": "HVAC intakes must be sealed from crawl/attic to prevent moisture, dust, and contaminants.",
+    "reference_policy": "SWS 5.3002.1a",
+    "tags": ["HVAC", "air_handler", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Mechanical system coated in unknown black mastic/adhesive",
+    "action_item": "Flag for HVAC contractor remediation and evaluation. Do not proceed until verified safe or remediated.",
+    "documentation": "Photo of coating, contractor report, clearance documentation.",
+    "policy_text": "Unapproved materials on HVAC equipment must be reviewed for safety and compliance.",
+    "reference_policy": "IHWAP 2026 §7.1.9",
+    "tags": ["HVAC", "mechanical", "adhesive", "health_safety", "deferral"]
+  }
+]
