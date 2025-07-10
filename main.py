@@ -5,6 +5,7 @@ import json
 import base64
 import uuid
 import markdown
+import re
 from datetime import datetime
 from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
@@ -47,6 +48,29 @@ trigger_rules = {
         {"elements": ["floor joist", "insulation"], "trigger": "Floor Above Crawlspace Uninsulated"},
     ],
 }
+
+# ---------------------------------------------------------------------
+# Label Clue Estimator
+# ---------------------------------------------------------------------
+def estimate_year_from_label(text):
+    # Try to find explicit dates like "MFG DATE: 2016", "Manufactured: 2014", etc.
+    mfg_match = re.search(r'(MFG\s*DATE|Manufactured|Date of Manufacture)[:\s\-]*([0-9]{4})', text, re.IGNORECASE)
+    if mfg_match:
+        return int(mfg_match.group(2)), "Found explicit manufacture date on label."
+
+    # Look for ANSI/CSA standards year (minimum year)
+    ansi_match = re.search(r'ANSI[^\d]*(\d{4})', text, re.IGNORECASE)
+    if ansi_match:
+        return int(ansi_match.group(1)), "Estimated from ANSI/CSA certification year on label."
+
+    # Try to find any 4-digit year in the label text (last resort)
+    year_matches = re.findall(r'([1-3][0-9]{3})', text)
+    plausible_years = [int(y) for y in year_matches if 1980 <= int(y) <= datetime.now().year]
+    if plausible_years:
+        best_guess = max(plausible_years)
+        return best_guess, "Possible year(s) found on label."
+
+    return None, "No label clues for year found."
 
 # ---------------------------------------------------------------------
 # ROUTES
@@ -183,6 +207,7 @@ def age_finder():
     fail_msg = None
     use_manual = False
     ocr_text = None
+    label_estimate = None  # holds (year, clue_source) tuple
 
     if request.method == "POST":
         # Manual fallback
@@ -274,6 +299,10 @@ def age_finder():
                             "Could not automatically extract brand/serial from the image. "
                             "See all detected label text below, or enter the info manually."
                         )
+                        # NEW: Try to estimate year from OCR label text!
+                        est_year, est_source = estimate_year_from_label(ocr_text)
+                        if est_year:
+                            label_estimate = (est_year, est_source)
                         use_manual = True
                 except Exception as e:
                     fail_msg = f"Vision model error: {e}"
@@ -286,6 +315,7 @@ def age_finder():
         fail_msg=fail_msg,
         use_manual=use_manual,
         ocr_text=ocr_text,
+        label_estimate=label_estimate,
     )
 
 @app.route("/scope")
@@ -301,4 +331,3 @@ def prevent():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
-
