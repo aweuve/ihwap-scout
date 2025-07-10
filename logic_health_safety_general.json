@@ -1,0 +1,34 @@
+[
+  {
+    "trigger": "No smoke alarm present in required location",
+    "action_item": "Install a qualifying smoke alarm on each level of the home and outside sleeping areas, per program and code.",
+    "documentation": "Photo of installed alarms, signed client notification, job file update.",
+    "policy_text": "Working smoke alarms are required in all weatherized homes.",
+    "reference_policy": "IHWAP 2026 §5.4.5; SWS 7.6002.1a",
+    "tags": ["smoke_alarm", "health_safety", "install", "field"]
+  },
+  {
+    "trigger": "Missing or broken handrail on stairs",
+    "action_item": "Install or repair handrail to code before proceeding with any interior weatherization or energy measures.",
+    "documentation": "Photo of installed handrail, inspection note.",
+    "policy_text": "Unsecured stairs pose a fall hazard and must be corrected for safety.",
+    "reference_policy": "IHWAP 2026 §7.5.3; SWS 7.6002.3",
+    "tags": ["stairs", "handrail", "fall_hazard", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Client refuses required H&S measure (alarm, vent, safety device)",
+    "action_item": "Document refusal with signed client waiver, notify supervisor, and retain in job file. Defer work if refusal creates unresolved hazard.",
+    "documentation": "Signed waiver, notification log, supervisor note.",
+    "policy_text": "Refusal of required health & safety work must be documented and escalated; deferral may apply.",
+    "reference_policy": "IHWAP 2026 §5.4.5; DOE WPN 11-6",
+    "tags": ["client_refusal", "health_safety", "deferral", "policy"]
+  },
+  {
+    "trigger": "Unprotected or open stairwell",
+    "action_item": "Install guard or barrier per code before weatherization proceeds.",
+    "documentation": "Photo of installed guard, inspection log.",
+    "policy_text": "Open stairwells without guardrails are a fall risk and must be corrected.",
+    "reference_policy": "IRC R312.1; IHWAP 2026 §7.5.3",
+    "tags": ["stairs", "guardrail", "health_safety", "callback"]
+  }
+]
