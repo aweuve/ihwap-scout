@@ -1,0 +1,42 @@
+[
+  {
+    "trigger": "Insulation blocking attic ventilation (soffit or ridge vents)",
+    "action_item": "Install baffles or reposition insulation to restore airflow. Document with photo before and after correction.",
+    "documentation": "Photo of ventilation pathway, job file note.",
+    "policy_text": "Attic insulation must not impede required ventilation; correction is a standard callback.",
+    "reference_policy": "SWS 3.2005.2b",
+    "tags": ["attic", "ventilation", "callback", "health_safety"]
+  },
+  {
+    "trigger": "Lath and plaster air bypass observed behind shell",
+    "action_item": "Dense-pack or block cavity before proceeding with air sealing. Confirm with density test or inspection.",
+    "documentation": "Photo of bypass, post-correction photo.",
+    "policy_text": "Air bypasses must be addressed prior to air sealing; callback until complete.",
+    "reference_policy": "SWS 3.2004.3",
+    "tags": ["shell", "air_sealing", "callback", "health_safety"]
+  },
+  {
+    "trigger": "Ductwork obstructed by debris or trash",
+    "action_item": "Clean and clear duct before air sealing or insulating. Document with before/after photos.",
+    "documentation": "Photo before/after, cleaning record.",
+    "policy_text": "Obstructions in ductwork must be removed for safe, effective operation; callback required.",
+    "reference_policy": "SWS 5.3003.1",
+    "tags": ["HVAC", "duct", "callback", "health_safety"]
+  },
+  {
+    "trigger": "Uninsulated attic hatch or access door",
+    "action_item": "Install rigid board insulation and weatherstripping. Photo document upgrade before final inspection.",
+    "documentation": "Photo of hatch insulation and sealing.",
+    "policy_text": "Attic hatches must be insulated and sealed; callback until upgrade is complete.",
+    "reference_policy": "SWS 3.2010.3",
+    "tags": ["attic", "hatch", "insulation", "callback", "health_safety"]
+  },
+  {
+    "trigger": "Floor register blowing cold air from crawlspace",
+    "action_item": "Inspect duct routing, seal leaks, and confirm airflow balance. Document resolution in job file.",
+    "documentation": "Airflow test, photo of repair.",
+    "policy_text": "Supply/return ducts must deliver conditioned air; callback required if register draws from crawlspace.",
+    "reference_policy": "SWS 5.3004.3",
+    "tags": ["HVAC", "register", "callback", "health_safety"]
+  }
+]
