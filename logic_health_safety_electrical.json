@@ -1,0 +1,42 @@
+[
+  {
+    "trigger": "Exposed or spliced wiring without a junction box",
+    "action_item": "Install proper junction box and secure with listed cover plate before weatherization activities.",
+    "documentation": "Photo of corrected wiring and box; inspection note in job file.",
+    "policy_text": "All electrical splices must be contained within code-compliant junction boxes and covered.",
+    "reference_policy": "NEC 2023 §300.15; IHWAP 2026 §7.5.1",
+    "tags": ["electrical", "health_safety", "deferral", "field"]
+  },
+  {
+    "trigger": "Double-tapped circuit breaker",
+    "action_item": "Refer to a licensed electrician for correction before proceeding. Weatherization work is deferred until correction is verified.",
+    "documentation": "Photo of panel, electrician's report or sign-off.",
+    "policy_text": "Multiple conductors on a single breaker can cause overheating and fire risk.",
+    "reference_policy": "NEC 2023 §110.14(A); IHWAP 2026 §7.5.2",
+    "tags": ["electrical", "panel", "health_safety", "deferral"]
+  },
+  {
+    "trigger": "Knob-and-tube wiring present in work area",
+    "action_item": "Defer insulation and weatherization in affected area until wiring is abated by a licensed electrician.",
+    "documentation": "Photo of K&T wiring, location notes, abatement report.",
+    "policy_text": "Insulating over active knob-and-tube wiring is prohibited due to fire hazard.",
+    "reference_policy": "SWS 3.2004.1b; IHWAP 2026 §7.5.3",
+    "tags": ["electrical", "knob_and_tube", "health_safety", "deferral"]
+  },
+  {
+    "trigger": "Improper use of extension cords (permanent/daisy-chained)",
+    "action_item": "Refer for wiring assessment or additional outlet installation. Document correction before proceeding.",
+    "documentation": "Photo of extension cord setup, electrician's notes.",
+    "policy_text": "Extension cords may not be used as permanent wiring for appliances or outlets.",
+    "reference_policy": "NEC 400.8; IHWAP 2026 §7.5.4",
+    "tags": ["electrical", "extension_cord", "health_safety", "callback"]
+  },
+  {
+    "trigger": "Missing or broken ground fault circuit interrupter (GFCI) in required locations",
+    "action_item": "Install or repair GFCI outlets in kitchens, bathrooms, and exterior locations per code. Test for operation before and after weatherization.",
+    "documentation": "Photo of GFCI installation/test, test report.",
+    "policy_text": "GFCIs required in wet locations for occupant safety.",
+    "reference_policy": "NEC 210.8; IHWAP 2026 §7.5.5",
+    "tags": ["electrical", "GFCI", "health_safety", "field"]
+  }
+]
