@@ -1,0 +1,50 @@
+[
+  {
+    "trigger": "Active attic moisture or mold detected",
+    "action_item": "Investigate and resolve the moisture source (roof leak, ventilation, etc.) before any insulation or air sealing. Defer work if unresolved.",
+    "documentation": "Photo of affected area, moisture meter reading, repair documentation.",
+    "policy_text": "Moisture or mold in attics must be corrected prior to insulation or air sealing.",
+    "reference_policy": "IHWAP 2026 §3.2.1; SWS 3.2002.2",
+    "tags": ["attic", "moisture", "mold", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Floor above crawlspace is uninsulated",
+    "action_item": "Install R-19 or higher cavity insulation with mechanical support (wire, netting). Confirm access is safe before work.",
+    "documentation": "Photo of installed insulation, product specs, and job file note.",
+    "policy_text": "Uninsulated floors above crawlspaces must be brought up to minimum R-value per program standards.",
+    "reference_policy": "IHWAP 2026 §3.1204.2",
+    "tags": ["crawlspace", "floor", "insulation", "field"]
+  },
+  {
+    "trigger": "Vapor barrier in crawlspace missing, unsealed, or damaged",
+    "action_item": "Install or repair 6-mil poly vapor barrier, sealing all seams, piers, and perimeter. Document completion.",
+    "documentation": "Photo of installed/repairs, material spec in job file.",
+    "policy_text": "Crawlspace floors must be covered with intact, sealed vapor barrier to prevent ground moisture.",
+    "reference_policy": "SWS 3.1101.1; IHWAP 2026 §3.1101.1",
+    "tags": ["crawlspace", "vapor_barrier", "moisture", "health_safety"]
+  },
+  {
+    "trigger": "Open sump pit in basement or crawlspace",
+    "action_item": "Install an airtight cover or sealed basin per code before further weatherization work.",
+    "documentation": "Photo of completed cover, inspection note in job file.",
+    "policy_text": "Unsealed sump pits release moisture and create fall hazard.",
+    "reference_policy": "SWS 3.1102.1; IHWAP 2026 §3.1102.1",
+    "tags": ["crawlspace", "sump", "moisture", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Rodent infestation or active droppings in attic or crawlspace",
+    "action_item": "Defer all work until area is cleaned and abated by pest control. Document post-abatement inspection.",
+    "documentation": "Photo evidence, pest control documentation, client notification.",
+    "policy_text": "Active pest presence is a biohazard and must be corrected before work.",
+    "reference_policy": "IHWAP 2026 §3.2.8",
+    "tags": ["attic", "crawlspace", "biohazard", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Inaccessible attic or crawlspace for inspection",
+    "action_item": "Request that client or owner clear access. Defer assessment and work until safe access is established.",
+    "documentation": "Photo of blocked access, communication log, clearance photo.",
+    "policy_text": "All areas must be accessible for visual inspection before work is scoped.",
+    "reference_policy": "IHWAP 2026 §3.0.2; SWS 2.0201.2",
+    "tags": ["attic", "crawlspace", "access", "inspection", "callback"]
+  }
+]
