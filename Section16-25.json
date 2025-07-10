@@ -1,0 +1,221 @@
+{
+  "last_updated": "2025-07-09",
+  "sections": {
+    "16": {
+      "title": "QA/Training Modules",
+      "training_modules": [
+        {
+          "module": "QCI Field Flashcards",
+          "description": "Quick-reference quiz cards on core IHWAP triggers, field corrections, deferral logic, SOW, and client education.",
+          "formats": ["digital", "print", "mobile"]
+        },
+        {
+          "module": "Scenario Walkthroughs",
+          "description": "Step-by-step sample jobs with built-in QA prompts and field decision points.",
+          "formats": ["interactive web", "PDF", "staff demo"]
+        },
+        {
+          "module": "Callback & Deferral Drill",
+          "description": "Training drills using callback/deferral stories from real field cases and ghost scenarios.",
+          "formats": ["quiz", "simulation", "team meeting"]
+        },
+        {
+          "module": "Staff Learning Paths",
+          "description": "Role-based checklists for onboarding, QA completion, and skill-up progression.",
+          "formats": ["web", "Excel", "QA app"]
+        }
+      ],
+      "module_update_protocol": [
+        "All QA/training content must be updated annually or when program logic changes.",
+        "Training completions and scenario reviews logged for each staff member."
+      ],
+      "reference_policy": "IHWAP Operations Manual (PY2026), Wxbot Training & QA Best Practice"
+    },
+    "17": {
+      "title": "Ghost Cases & Simulations",
+      "ghost_case_library": [
+        {
+          "case": "The Disconnected Duct",
+          "summary": "Unseen open duct in crawlspace flagged by Scout; test simulation: does staff catch and correct?",
+          "triggers": ["open duct", "combustion safety", "QA audit"],
+          "lesson": "Every hidden bypass is a callback waiting to happen."
+        },
+        {
+          "case": "Impossible Attic",
+          "summary": "Attic with moisture, knob & tube, and vermiculite. Can you scope it without a deferral?",
+          "triggers": ["multiple hazards", "legacy logic"],
+          "lesson": "Stacked flags require the wisdom of the attic."
+        },
+        {
+          "case": "Eggs in the Crawl",
+          "summary": "Legacy 'egg' field wisdom surfaces to solve a complex deferral—only found by those who dig deep.",
+          "triggers": ["legacy logic", "QA", "staff memory"],
+          "lesson": "Field wisdom is the real compliance currency."
+        }
+      ],
+      "simulation_mode": [
+        "Enable 'Simulate Job' for staff to practice triggers, SOW, callbacks, and QA review in a safe, demo environment.",
+        "All simulation results logged for training/QA audit."
+      ],
+      "reference_policy": "Wxbot Ghost Case Gallery, IHWAP QA Simulation Standards"
+    },
+    "18": {
+      "title": "Photo Documentation Standards (Deep Dive)",
+      "photo_standards": [
+        "All field photos must be high-res, color, and clearly labeled by location, system, and job number.",
+        "No blurry, dark, or cropped photos accepted—QA will request resubmission.",
+        "Required photos: pre, during, and post-work for each major measure (see Section 9 for overview).",
+        "Photos of every test result (CO, blower door, flue gas, pressure, etc.) must show instrument screen and label.",
+        "Education delivery and hazardous condition notification must be documented with an in-home photo.",
+        "Maintain backup/archive of all field photos for a minimum of 3 years."
+      ],
+      "backup_and_labeling_protocol": [
+        "Filename includes job number, date, and location or system (e.g., 24-1065_attic_pre_2025-07-09.jpg).",
+        "All photos uploaded to IWx within 24 hours of field event.",
+        "QA reviews all photo submissions within 5 business days."
+      ],
+      "reference_policy": "IHWAP Operations Manual (PY2026), Wxbot Photo Standards"
+    },
+    "19": {
+      "title": "Reporting Templates",
+      "report_templates": [
+        {
+          "name": "QCI Field Checklist",
+          "description": "Step-by-step field QCI pass/callback/deferral form for each inspection.",
+          "format": "PDF, web, mobile"
+        },
+        {
+          "name": "Callback Log",
+          "description": "Chronological callback/correction tracker with photos, contractor/staff signoff, and closure status.",
+          "format": "Excel, PDF, web"
+        },
+        {
+          "name": "Deferral Notification",
+          "description": "Pre-filled deferral form with client notification and required photo documentation.",
+          "format": "PDF"
+        },
+        {
+          "name": "Scope Justification Sheet",
+          "description": "Itemized SOW measure summary, SIR outcome, cost, and approval documentation for each job.",
+          "format": "Excel, PDF"
+        }
+      ],
+      "export_policy": [
+        "All templates updated annually or upon IHWAP policy change.",
+        "Field staff must use latest template version; archive superseded versions."
+      ],
+      "reference_policy": "Wxbot Toolkit, IHWAP Reporting Guidance"
+    },
+    "20": {
+      "title": "Change Log/Versioning",
+      "change_log_requirements": [
+        "Every logic, template, or training update is entered in the platform change log with date, summary, and staff initials.",
+        "Version number assigned to each major JSON, template, or QA module (e.g., v2.1.0).",
+        "All staff notified of major version changes via internal bulletin or app notice.",
+        "Archive old versions in read-only format for 3 years (minimum).",
+        "Audit reports reference logic/template version in effect at time of job."
+      ],
+      "semantic_versioning": [
+        "Major.Minor.Patch format (e.g., 1.2.3).",
+        "Major = new feature or breaking change; Minor = routine update; Patch = bug fix or wording tweak."
+      ],
+      "reference_policy": "Wxbot Version Control, IHWAP Audit Standards"
+    },
+    "21": {
+      "title": "Staff Onboarding Matrix",
+      "roles": [
+        {"role": "Scout", "permissions": ["route tasks", "check deferrals", "view logic"]},
+        {"role": "Field Staff", "permissions": ["upload images", "request override", "view reports"]},
+        {"role": "Pod Lead", "permissions": ["train interns", "escalate edge cases", "finalize tagging"]},
+        {"role": "QCI", "permissions": ["final field approval", "close SOW", "request change order"]},
+        {"role": "Agency Partner", "permissions": ["fund work", "set constraints", "receive reports"]}
+      ],
+      "onboarding_steps": [
+        "Complete staff intro and field safety training",
+        "Sign code of ethics and compliance acknowledgment",
+        "Assign mentor or pod lead for first 5 jobs",
+        "Complete field documentation trial",
+        "Demonstrate use of Scout/FAAIE tools",
+        "Pass QCI observation or mock field check"
+      ],
+      "training_modules_required": [
+        "QCI Fundamentals",
+        "Scope Writing",
+        "Deferral Matrix Navigation",
+        "Photo Documentation Standards"
+      ],
+      "org_chart": [
+        {"name": "Scout", "reports_to": null},
+        {"name": "Field Staff", "reports_to": "Pod Lead"},
+        {"name": "Pod Lead", "reports_to": "QCI"},
+        {"name": "QCI", "reports_to": "Agency Partner"}
+      ]
+    },
+    "22": {
+      "title": "Code of Operations",
+      "principles": [
+        "Act in good faith for the safety of all occupants.",
+        "Respect the dignity and privacy of every client.",
+        "Prioritize work that achieves maximum impact per dollar.",
+        "Follow all DOE, IHWAP, and local policies—even when inconvenient.",
+        "Report field issues, hazards, and all unsafe conditions immediately.",
+        "Collaborate and train staff continuously; share field wisdom.",
+        "Every override must be documented and justified.",
+        "No retaliation against whistleblowers or QA staff."
+      ],
+      "compliance_commitment": "All staff and contractors must sign and adhere to the Code of Operations before performing or supervising field work."
+    },
+    "23": {
+      "title": "Philosophy & Meta-Logic",
+      "meta_principles": [
+        "The house is a system—every trigger and action affects the whole.",
+        "Health & safety > Home integrity > Energy efficiency.",
+        "Scout/FAAIE is a guide, not a replacement for field judgment.",
+        "Document every field decision, override, and deviation from standard.",
+        "Continuous improvement: learn from callbacks, audits, and legacy eggs.",
+        "Transparency, accountability, and humility win every audit."
+      ],
+      "staff_ethos": [
+        "Every client deserves a safe, warm, healthy home.",
+        "No job is “routine”—every field event is an opportunity to serve."
+      ]
+    },
+    "24": {
+      "title": "Multi-State/Agency Logic",
+      "state_customizations": [
+        "Each state has a dedicated Scout/FAAIE logic file—aligned to DOE and local rules.",
+        "Agency-specific triggers, workflow variances, and override procedures are tracked separately.",
+        "All shared logic updates are tagged and versioned by state/agency for audit trail.",
+        "Platform supports agency opt-in/opt-out for pilot logic, new modules, and legacy egg features."
+      ],
+      "interagency_best_practices": [
+        "Document lessons learned from each pilot, share with national peer group.",
+        "Support logic exchanges for rapid compliance updates between agencies."
+      ]
+    },
+    "25": {
+      "title": "WX+ Case Studies",
+      "case_studies": [
+        {
+          "title": "Severe Roof Damage, WX+ Save",
+          "summary": "Historic deferral resolved with WX+ roof and gutter replacement—job approved after $6,500 WX+ funding.",
+          "lessons": ["Early flagging leads to faster WX+ approval.", "Photos and full documentation are critical for state override."]
+        },
+        {
+          "title": "Structural Floor Collapse",
+          "summary": "WX+ funds used to rebuild floor system and return home to eligibility after initial deferral.",
+          "lessons": ["Coordination with contractor and state expedited repairs.", "Multi-agency funding blended successfully."]
+        },
+        {
+          "title": "Medical Priority HVAC Replacement",
+          "summary": "At-risk client with failing furnace received expedited WX+ HVAC replacement with medical documentation.",
+          "lessons": ["Documentation and swift SOW approval can prevent winter emergencies.", "Scout logic flagged medical priority early."]
+        }
+      ],
+      "case_study_protocol": [
+        "Document each WX+ case in platform, with before/after photos, funding source(s), and staff signoff.",
+        "Review WX+ case studies during annual training and QA sessions."
+      ]
+    }
+  }
+}
