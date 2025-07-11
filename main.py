@@ -25,7 +25,6 @@ def load_all_sections():
     for fname in glob.glob("Section*.json"):
         with open(fname, "r", encoding="utf-8") as f:
             data = json.load(f)
-            # Batch (sections) or single-section (section)
             if "sections" in data:
                 for sec in data["sections"].values():
                     sections.append(sec)
@@ -35,6 +34,26 @@ def load_all_sections():
 
 ALL_SECTIONS = load_all_sections()
 
+# ------------------------------
+# Load all logic_health_safety_*.json at startup
+# ------------------------------
+def load_all_health_safety_logic():
+    logic = []
+    for fname in glob.glob("logic_health_safety_*.json"):
+        try:
+            with open(fname, "r", encoding="utf-8") as f:
+                items = json.load(f)
+                # Support both list-style and dict-style json
+                if isinstance(items, list):
+                    logic.extend(items)
+                elif isinstance(items, dict):
+                    logic.extend(items.values())
+        except Exception as e:
+            print(f"Error loading {fname}: {e}")
+    return logic
+
+ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
+
 # Helper: search for content matching a keyword (policy or logic)
 def search_policy(keyword):
     keyword_lower = keyword.lower()
@@ -42,18 +61,26 @@ def search_policy(keyword):
     for section in ALL_SECTIONS:
         data_flat = json.dumps(section).lower()
         if keyword_lower in data_flat:
-            # Only surface user-facing logic and reference_policy, never section number
             policy = section.get("reference_policy", "") or section.get("reference", "")
             logic_summary = ""
-            # Try to grab some meaningful content (not just the whole section)
             for k, v in section.items():
                 if k not in ["section", "title", "last_updated", "reference_policy", "reference"]:
                     if isinstance(v, list):
-                        # Only add first few for brevity
                         logic_summary += "\n".join(str(i) for i in v[:4]) + "\n"
                     elif isinstance(v, str):
                         logic_summary += v + "\n"
             results.append({"answer": logic_summary.strip(), "policy": policy})
+    # Add health & safety triggers if present
+    for item in ALL_HEALTH_SAFETY_LOGIC:
+        data_flat = json.dumps(item).lower()
+        if keyword_lower in data_flat:
+            policy = item.get("reference_policy", "")
+            answer = ""
+            for k, v in item.items():
+                if k != "reference_policy":
+                    if isinstance(v, str):
+                        answer += v + "\n"
+            results.append({"answer": answer.strip(), "policy": policy})
     return results
 
 # ------------------------------
@@ -62,8 +89,6 @@ def search_policy(keyword):
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET", "super_secret_key")
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# (All your scene_categories and trigger_rules here - unchanged)
 
 scene_categories = {
     "attic": ["attic", "ventilation", "hazardous materials", "structural"],
@@ -91,9 +116,6 @@ trigger_rules = {
     ],
 }
 
-# --------------------------------------
-# Label Clue Estimator for Age Finder
-# --------------------------------------
 def estimate_year_from_label(text):
     mfg_match = re.search(r'(MFG\s*DATE|Manufactured|Date of Manufacture)[:\s\-]*([0-9]{4})', text, re.IGNORECASE)
     if mfg_match:
@@ -128,11 +150,10 @@ def chat():
 
         if user_msg:
             session["chat_history"].append({"role": "user", "content": user_msg})
-            # Try to match a policy or logic snippet for the chat input (field-aware)
             search_results = search_policy(user_msg)
             context_snippet = ""
             if search_results:
-                for result in search_results[:1]:  # just use first for brevity
+                for result in search_results[:1]:
                     context_snippet += result["answer"]
                     if result["policy"]:
                         context_snippet += f"\n\n[Citation: {result['policy']}]"
@@ -348,7 +369,6 @@ def scope():
 def prevent():
     return render_template("prevent.html")
 
-# OPTIONAL: (hidden) /knowledge route for admin/testing (not user-facing)
 @app.route("/knowledge", methods=["GET"])
 def knowledge():
     q = request.args.get("q")
@@ -357,14 +377,25 @@ def knowledge():
     results = search_policy(q)
     if not results:
         return "No policy or logic found.", 404
-    # Only show answer and policy citation
     answers = []
     for res in results:
         answers.append(f"{res['answer']}<br><em>[{res['policy']}]</em>")
     return "<hr>".join(answers)
 
+# --------- NEW: Logic test route for QA ---------
+@app.route("/logic_test")
+def logic_test():
+    # Quick logic summary: trigger, tags, reference_policy
+    lines = []
+    for i, item in enumerate(ALL_HEALTH_SAFETY_LOGIC, 1):
+        trigger = item.get("trigger", "NO_TRIGGER")
+        tags = ", ".join(item.get("tags", []))
+        policy = item.get("reference_policy", "")
+        lines.append(f"<b>{i}.</b> <b>{trigger}</b> <br>Tags: <i>{tags}</i> <br>Policy: {policy}<br><hr>")
+    total = len(ALL_HEALTH_SAFETY_LOGIC)
+    return f"<h2>{total} H&S Triggers Loaded</h2>" + "".join(lines)
+
 # MAIN GUARD
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
-
