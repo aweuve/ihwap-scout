@@ -1,4 +1,3 @@
-# chat_routes.py
 from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template
 import openai
 import markdown
@@ -71,5 +70,11 @@ def init_chat_routes(app, search_policy):
 
         return render_template("chat.html", chat_history=session.get("chat_history", []))
 
+    @chat_bp.route("/reset_chat")
+    def reset_chat():
+        session["chat_history"] = []
+        return redirect(url_for("chat.chat"))
+
     app.register_blueprint(chat_bp)
+
 
