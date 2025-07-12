@@ -43,7 +43,6 @@ def load_all_health_safety_logic():
         try:
             with open(fname, "r", encoding="utf-8") as f:
                 items = json.load(f)
-                # Support both list-style and dict-style json
                 if isinstance(items, list):
                     logic.extend(items)
                 elif isinstance(items, dict):
@@ -70,7 +69,6 @@ def search_policy(keyword):
                     elif isinstance(v, str):
                         logic_summary += v + "\n"
             results.append({"answer": logic_summary.strip(), "policy": policy})
-    # Add health & safety triggers if present
     for item in ALL_HEALTH_SAFETY_LOGIC:
         data_flat = json.dumps(item).lower()
         if keyword_lower in data_flat:
@@ -152,31 +150,37 @@ def chat():
             session["chat_history"].append({"role": "user", "content": user_msg})
             search_results = search_policy(user_msg)
             context_snippet = ""
+            found_citation = None
             if search_results:
                 for result in search_results[:1]:
                     context_snippet += result["answer"]
                     if result["policy"]:
-                        context_snippet += f"\n\n[Citation: {result['policy']}]"
+                        found_citation = f"[Citation: {result['policy']}]"
+                        context_snippet += f"\n\n{found_citation}"
             try:
+                system_prompt = (
+                    "You are Scout, an IHWAP 2026 assistant for Weatherization staff.\n"
+                    "If the reference context includes a '[Citation: ...]' line, you must always include it exactly as written at the end of your answer—no exceptions.\n"
+                    "Use action items and field protocol found in the reference context when possible, and cite the real-world policy from [Citation: ...] only (never reference file or section numbers from JSON structure).\n"
+                    "If you can't answer directly, say so and suggest next steps.\n\n"
+                    f"Reference context:\n{context_snippet}\n\n"
+                    "Answer in a friendly, clear, and concise field style. Always finish with [Citation: ...] if present."
+                )
                 completion = openai.ChatCompletion.create(
                     model="gpt-4o",
                     messages=[
                         {
                             "role": "system",
-                            "content": (
-                                "You are Scout, an IHWAP 2026 assistant for Weatherization staff.\n"
-                                "When possible, cite specific IHWAP, DOE WAP, or Wxbot policy in brackets at the end of your answer.\n"
-                                "If a field rule, action item, callback, QA, or deferral logic exists for the user question in your compliance library, use it directly, and cite only the real-world policy (never section or file info).\n"
-                                "If you can't answer directly, say so and suggest next steps.\n\n"
-                                f"Reference context:\n{context_snippet}\n\n"
-                                "Answer in a friendly, clear, and concise field style."
-                            ),
+                            "content": system_prompt,
                         }
                     ]
                     + session["chat_history"],
                     max_tokens=500,
                 )
                 assistant_reply_raw = completion.choices[0].message["content"]
+                # Guarantee the citation is appended if it was found, even if GPT forgets
+                if found_citation and found_citation not in assistant_reply_raw:
+                    assistant_reply_raw = assistant_reply_raw.rstrip() + "\n\n" + found_citation
                 assistant_reply = markdown.markdown(
                     assistant_reply_raw,
                     extensions=['extra'],
@@ -382,10 +386,8 @@ def knowledge():
         answers.append(f"{res['answer']}<br><em>[{res['policy']}]</em>")
     return "<hr>".join(answers)
 
-# --------- NEW: Logic test route for QA ---------
 @app.route("/logic_test")
 def logic_test():
-    # Quick logic summary: trigger, tags, reference_policy
     lines = []
     for i, item in enumerate(ALL_HEALTH_SAFETY_LOGIC, 1):
         trigger = item.get("trigger", "NO_TRIGGER")
@@ -399,3 +401,4 @@ def logic_test():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
