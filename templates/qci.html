@@ -1,191 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>QCI Photo Review Report</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #fff;
-            color: #222;
-            margin: 0;
-            padding: 0 0 30px 0;
-        }
-        .qci-container {
-            max-width: 720px;
-            margin: 30px auto;
-            padding: 32px 30px 24px 30px;
-            background: #fff;
-            border-radius: 9px;
-            border: 1.2px solid #bbb;
-            box-shadow: 0 2px 16px rgba(110,110,110,0.07);
-        }
-        h1, h2, h3 {
-            font-weight: 700;
-            margin: 0 0 18px 0;
-            color: #222;
-        }
-        h1 { font-size: 2.1em; }
-        h2 { font-size: 1.3em; margin-top: 32px; }
-        h3 { font-size: 1.1em; margin-top: 28px; }
-        .photo-box {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .photo-box img {
-            width: 240px;
-            border-radius: 7px;
-            border: 1.5px solid #999;
-            box-shadow: 0 1px 7px rgba(130,130,130,0.10);
-            object-fit: contain;
-        }
-        .meta-list {
-            margin: 18px 0 24px 0;
-            padding: 0;
-            list-style: none;
-        }
-        .meta-list li { margin-bottom: 7px; }
-        hr {
-            border: none;
-            border-top: 1.5px solid #ccc;
-            margin: 32px 0 22px 0;
-        }
-        ul {
-            padding-left: 22px;
-            margin-bottom: 14px;
-        }
-        li { margin-bottom: 7px; }
-        .section-title {
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-        .btn-bar {
-            margin: 30px 0 0 0;
-            text-align: right;
-        }
-        .btn {
-            display: inline-block;
-            padding: 8px 20px;
-            margin-left: 7px;
-            margin-top: 7px;
-            background: #eee;
-            color: #111;
-            border: 1px solid #bbb;
-            border-radius: 5px;
-            font-size: 1em;
-            text-decoration: none;
-            transition: background 0.16s;
-        }
-        .btn:hover, .btn:focus { background: #ddd; }
-        .footer-note {
-            font-size: 1em;
-            color: #444;
-            margin-top: 22px;
-        }
-        .form-upload {
-            text-align: center;
-            margin-top: 36px;
-            margin-bottom: 48px;
-        }
-        /* Print-friendly */
-        @media print {
-            body { background: #fff; }
-            .btn-bar, .btn, .form-upload { display: none !important; }
-            .qci-container {
-                border: none;
-                box-shadow: none;
-                padding: 0;
-            }
-            .photo-box img { width: 180px; }
-        }
-    </style>
-</head>
-<body>
-    <div class="qci-container">
-
-        <h1>QCI Photo Review Report</h1>
-
-        {% if not result or not result.matched_triggers %}
-            <div class="form-upload">
-                <form method="POST" enctype="multipart/form-data">
-                    <label for="img"><strong>Upload Inspection Photo:</strong></label>
-                    <input type="file" name="image" id="img" required>
-                    <button type="submit" class="btn">Upload</button>
-                </form>
-            </div>
-            <p style="color:#666; text-align:center;">No inspection data available yet. Please upload a photo to start your QCI review.</p>
-        {% else %}
-
-            {% if image_path %}
-            <div class="photo-box">
-                <img src="{{ '/' + image_path.replace('\\', '/') }}" alt="Inspection Photo Thumbnail">
-                <div style="font-size:0.95em;color:#666; margin-top:7px;">Inspection Photo</div>
-            </div>
-            {% endif %}
-            <ul class="meta-list">
-                <li><strong>Scene Type Detected:</strong> {{ result.scene_type|capitalize }}</li>
-                <li><strong>Photo Analysis Date:</strong> {{ analysis_date }}</li>
-            </ul>
-            <hr>
-            <h2>⚠️ Health & Safety & Combustion Risks (Priority 1)</h2>
-            <ul>
-            {% for trigger in result.matched_triggers %}
-              {% if trigger.response.priority == 1 %}
-              <li>
-                <strong>{{ trigger.trigger }}</strong><br>
-                <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
-                <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
-                <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
-              </li>
-              {% endif %}
-            {% endfor %}
-            </ul>
-            <h2>🚫 Deferral Risks Identified</h2>
-            <ul>
-            {% for trigger in result.matched_triggers %}
-              {% if 'deferral' in trigger.response.tags %}
-              <li>
-                <strong>{{ trigger.trigger }}</strong><br>
-                <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
-                <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
-                <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
-              </li>
-              {% endif %}
-            {% endfor %}
-            </ul>
-            <h2>🔧 Technical & Compliance Issues (Field Fixes)</h2>
-            <ul>
-            {% for trigger in result.matched_triggers %}
-              {% if trigger.response.priority == 2 and 'deferral' not in trigger.response.tags %}
-              <li>
-                <strong>{{ trigger.trigger }}</strong><br>
-                <span class="section-title">Reason:</span> {{ trigger.response.reason }}<br>
-                <span class="section-title">Action:</span> {{ trigger.response.recommendation }}<br>
-                <span class="section-title">Policy:</span> {{ trigger.response.source_policy }}
-              </li>
-              {% endif %}
-            {% endfor %}
-            </ul>
-            <h2>📋 Scope of Work Summary:</h2>
-            <ul>
-            {% for trigger in result.matched_triggers %}
-              <li>{{ trigger.trigger }}</li>
-            {% endfor %}
-            </ul>
-            <div class="footer-note">
-                ✔️ All corrections must follow IHWAP 2026 standards and be photo-documented before project approval.
-            </div>
-            <div class="btn-bar">
-                <a href="{{ url_for('scope') }}" class="btn">➡️ See Scope Summary</a>
-                <a href="{{ url_for('landing') }}" class="btn">⬅️ Back to Home</a>
-                <a href="{{ url_for('qci') }}?new=1" class="btn" style="background:#eaeaea;">+ New QCI Review</a>
-                <button onclick="window.print()" class="btn" style="background:#e7e6e6;">🖨️ Print Report</button>
-            </div>
-        {% endif %}
-
+{% if result %}
+  <div class="qci-output" style="background: #eef4fe; border-radius: 14px; padding: 20px 24px; margin: 26px 0;">
+    <div style="font-size: 1.25rem; font-weight: 700; color: #264285; margin-bottom: 12px;">
+      {{ result.trigger }}
     </div>
-</body>
-</html>
+    <div style="margin-bottom: 10px;">
+      <b>Action Item:</b> <span style="color:#aa1818;">{{ result.action_item }}</span>
+    </div>
+    <div style="margin-bottom: 10px;">
+      <b>Policy:</b> {{ result.policy_text }}
+      {% if result.reference_policy %}
+        <br>
+        <b>Citation:</b> <span style="color:#4763f5;">{{ result.reference_policy }}</span>
+      {% endif %}
+    </div>
+    {% if result.documentation %}
+      <div style="margin-bottom: 10px;">
+        <b>Documentation Required:</b> {{ result.documentation }}
+      </div>
+    {% endif %}
+    {% if result.tags %}
+      <div style="margin-bottom: 10px;">
+        <b>Tags:</b> <span style="color:#555;">{{ result.tags|join(', ') }}</span>
+      </div>
+    {% endif %}
+    {% if result.scout_thought %}
+      <div style="margin-top: 12px; font-style: italic; color: #2557c3;">
+        <b>Scout’s Note:</b> {{ result.scout_thought }}
+      </div>
+    {% endif %}
+  </div>
+{% endif %}
+
 
 
 
