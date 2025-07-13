@@ -2,14 +2,8 @@ import os
 import openai
 import json
 import base64
-from io import BytesIO
-from PIL import Image
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
-# Load logic from faaie_logic.json
-with open("faaie_logic.json", "r") as f:
-    faaie_logic = json.load(f)
 
 def get_vision_analysis(image_bytes):
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
@@ -55,7 +49,6 @@ def get_vision_analysis(image_bytes):
 
     try:
         raw = response.choices[0].message["content"].strip()
-
         if "```json" in raw:
             raw = raw.split("```json")[-1].split("```")[0].strip()
         elif "```" in raw:
@@ -71,7 +64,6 @@ def get_vision_analysis(image_bytes):
             "hazards": parsed.get("hazards", []),
             "scout_thought": parsed.get("scout_thought", "")
         }
-
     except Exception as e:
         return {
             "description": "image analysis failed",
@@ -86,6 +78,7 @@ def score_trigger_match(parsed, trigger_key, logic):
     tags = parsed["visible_elements"] + parsed["hazards"]
     score = 0
 
+    # Simple logic for reducing false positives based on condition/context
     if "attic" in description:
         if "water heater" in trigger_key or "confined closet" in trigger_key:
             return 0
@@ -107,8 +100,7 @@ def score_trigger_match(parsed, trigger_key, logic):
 
     parts = [
         trigger_key,
-        logic.get("reason", ""),
-        logic.get("visual_cue", ""),
+        logic.get("policy_text", ""),
         " ".join(logic.get("tags", []))
     ]
     for part in parts:
@@ -125,51 +117,40 @@ def score_trigger_match(parsed, trigger_key, logic):
 
     return score
 
-def get_matching_trigger_from_image(image_bytes, faaie_logic):
+def get_matching_trigger_from_image(image_bytes, logic_list):
     parsed = get_vision_analysis(image_bytes)
-    matches = []
+    best_match = None
+    best_score = 0
 
-    for trigger_key, logic in faaie_logic.items():
+    for logic in logic_list:
+        trigger_key = logic.get("trigger", "")
         score = score_trigger_match(parsed, trigger_key, logic)
-        if score >= 2 or any(h in trigger_key.lower() for h in [t.lower() for t in parsed["hazards"]]):
-            matches.append((trigger_key, logic, score))
+        if score > best_score:
+            best_score = score
+            best_match = logic
 
-    matches.sort(key=lambda x: x[2], reverse=True)
+    if not best_match or best_score == 0:
+        best_match = {
+            "trigger": "Unlisted or ambiguous condition",
+            "action_item": "⚠️🛑 Action Item",
+            "policy_text": "Unknown trigger or unlisted condition. Please review photo manually.",
+            "reference_policy": "N/A",
+            "documentation": "",
+            "tags": ["unsorted"]
+        }
 
     result = {
-        "description": parsed["description"],
-        "visible_elements": parsed["visible_elements"],
-        "hazards": parsed["hazards"],
-        "scout_thought": parsed["scout_thought"],
-        "matched_triggers": []
+        "trigger": best_match.get("trigger", "Unknown trigger"),
+        "action_item": best_match.get("action_item", ""),
+        "policy_text": best_match.get("policy_text", ""),
+        "reference_policy": best_match.get("reference_policy", ""),
+        "documentation": best_match.get("documentation", ""),
+        "tags": best_match.get("tags", []),
+        "scout_thought": parsed.get("scout_thought", ""),
+        "visible_elements": parsed.get("visible_elements", []),
+        "hazards": parsed.get("hazards", []),
+        "description": parsed.get("description", "")
     }
 
-    if matches:
-        for trigger_key, logic, score in matches[:3]:  # Return top 3 matches
-            result["matched_triggers"].append({
-                "trigger": trigger_key,
-                "score": score,
-                "response": {
-                    "action": logic.get("action", "⚠️🛑 Action Item"),
-                    "reason": logic.get("reason", ""),
-                    "recommendation": logic.get("recommendation", ""),
-                    "source_policy": logic.get("source_policy", ""),
-                    "category": logic.get("category", ""),
-                    "visual_cue": logic.get("visual_cue", "")
-                }
-            })
-    else:
-        result["matched_triggers"].append({
-            "trigger": "unlisted condition",
-            "score": 0,
-            "response": {
-                "action": "⚠️🛑 Action Item",
-                "reason": "Unknown trigger or unlisted condition.",
-                "recommendation": "No direct match found. Review photo manually.",
-                "source_policy": "N/A",
-                "category": "unsorted",
-                "visual_cue": ""
-            }
-        })
-
     return result
+
