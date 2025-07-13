@@ -8,14 +8,8 @@ import markdown
 import re
 from datetime import datetime
 import glob
-from vision_matcher import get_matching_trigger_from_image
+from vision_matcher import get_matching_trigger_from_image  # Make sure this uses the list-based logic now!
 from decoders import decode_serial
-
-# ------------------------------
-# Load FAAIE logic
-# ------------------------------
-with open("faaie_logic.json", "r") as f:
-    faaie_logic = json.load(f)
 
 # ------------------------------
 # Load ALL Section JSONs at startup
@@ -35,7 +29,7 @@ def load_all_sections():
 ALL_SECTIONS = load_all_sections()
 
 # ------------------------------
-# Load all logic_health_safety_*.json at startup
+# Load all logic_health_safety_*.json at startup (single-source logic)
 # ------------------------------
 def load_all_health_safety_logic():
     logic = []
@@ -46,14 +40,16 @@ def load_all_health_safety_logic():
                 if isinstance(items, list):
                     logic.extend(items)
                 elif isinstance(items, dict):
-                    logic.extend(items.values())
+                    logic.append(items)
         except Exception as e:
             print(f"Error loading {fname}: {e}")
     return logic
 
 ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
 
+# ------------------------------
 # Helper: search for content matching a keyword (policy or logic)
+# ------------------------------
 def search_policy(keyword):
     keyword_lower = keyword.lower()
     results = []
@@ -138,7 +134,7 @@ def estimate_year_from_label(text):
     return None, "No label clues for year found."
 
 # ------------------------------
-# ROUTES (the rest remain here for now)
+# ROUTES
 # ------------------------------
 @app.route("/")
 def landing():
@@ -169,13 +165,11 @@ def qci():
 
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-            result = get_matching_trigger_from_image(image_bytes, faaie_logic)
+            # >>>> UNIFIED LOGIC: uses ALL_HEALTH_SAFETY_LOGIC for both chat and QCI <<<<
+            result = get_matching_trigger_from_image(image_bytes, ALL_HEALTH_SAFETY_LOGIC)
             visible_elements = result.get("visible_elements", [])
 
-            if result.get("scene_type"):
-                scene_type = result["scene_type"]
-            else:
-                scene_type = None
+            scene_type = result.get("scene_type") if result.get("scene_type") else None
 
             session["last_result"] = result
             session["last_scene"] = scene_type
@@ -342,5 +336,3 @@ def logic_test():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
-
-
