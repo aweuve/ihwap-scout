@@ -2,10 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>QCI Photo Scan</title>
+    <title>QCI Photo Review</title>
 </head>
 <body>
     <h1>QCI Photo Review</h1>
+    <form method="POST" enctype="multipart/form-data" style="margin-bottom: 2em;">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Upload & Scan</button>
+    </form>
     {% if result %}
       <h2>{{ result.trigger or "Condition Detected" }}</h2>
       <p><b>Action Item:</b> {{ result.action_item or "" }}</p>
@@ -18,8 +22,3 @@
     {% endif %}
 </body>
 </html>
-
-
-
-
-
