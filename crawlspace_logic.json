@@ -1,0 +1,66 @@
+[
+  {
+    "trigger": "Standing water or persistent moisture present in crawlspace",
+    "action_item": "Defer weatherization. Notify client and supervisor. Require drainage correction or professional remediation before proceeding.",
+    "documentation": "Photo of water/moisture, field notes, remediation invoice or report.",
+    "policy_text": "Standing water or persistent moisture must be remediated prior to weatherization work.",
+    "reference_policy": "IHWAP 2026 §5.2.1",
+    "tags": ["crawlspace", "moisture", "water", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Visible mold, rot, or fungal growth observed in crawlspace",
+    "action_item": "Defer work. Notify program manager and client. Require remediation or professional mold treatment.",
+    "documentation": "Photo of mold/rot/fungal growth, remediation report, post-remediation photo.",
+    "policy_text": "Crawlspace must be free of visible mold and rot before weatherization can proceed.",
+    "reference_policy": "IHWAP 2026 §5.2.2",
+    "tags": ["crawlspace", "mold", "rot", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Damaged, missing, or unsealed vapor barrier in crawlspace",
+    "action_item": "Scope for vapor barrier repair or replacement per program specs. Install and document coverage.",
+    "documentation": "Pre- and post-repair photos, vapor barrier material spec sheet.",
+    "policy_text": "Crawlspace vapor barriers must be intact and continuous per program standards.",
+    "reference_policy": "IHWAP 2026 §5.2.3",
+    "tags": ["crawlspace", "vapor_barrier", "scope", "compliance"]
+  },
+  {
+    "trigger": "Structural failure or unsafe access (joist rot, missing supports, sagging floor)",
+    "action_item": "Defer weatherization in affected areas. Notify program manager. Require structural repair by qualified contractor.",
+    "documentation": "Photo of failure, contractor report, repair verification photo.",
+    "policy_text": "Structural failures must be corrected before weatherization proceeds.",
+    "reference_policy": "IHWAP 2026 §5.2.4",
+    "tags": ["crawlspace", "structural", "access", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Open or disconnected ductwork in crawlspace",
+    "action_item": "Scope for duct sealing, repair, or proper termination. Verify and document correction before final inspection.",
+    "documentation": "Photo of duct issue, repair log, post-repair photo.",
+    "policy_text": "Ductwork in crawlspaces must be continuous, sealed, and properly terminated.",
+    "reference_policy": "IHWAP 2026 §5.2.5",
+    "tags": ["crawlspace", "duct", "hvac", "scope", "compliance"]
+  },
+  {
+    "trigger": "Evidence of animal infestation or pest presence in crawlspace",
+    "action_item": "Defer work. Notify client. Require pest control and cleaning prior to weatherization.",
+    "documentation": "Photo of infestation evidence, pest control invoice, post-cleanup photo.",
+    "policy_text": "Animal infestation must be remediated before weatherization begins.",
+    "reference_policy": "IHWAP 2026 §5.2.6",
+    "tags": ["crawlspace", "pest", "infestation", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Exposed, unsafe, or unprotected wiring in crawlspace",
+    "action_item": "Defer work in affected area. Require correction by licensed electrician before proceeding.",
+    "documentation": "Photo of wiring, correction invoice, post-correction photo.",
+    "policy_text": "Unsafe or unprotected wiring must be corrected before work resumes.",
+    "reference_policy": "IHWAP 2026 §5.2.7",
+    "tags": ["crawlspace", "electrical", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Uninsulated crawlspace perimeter or floor",
+    "action_item": "Scope for perimeter or floor insulation per program specs. Document pre- and post-installation.",
+    "documentation": "Photo of uninsulated area, insulation spec sheet, post-install photo.",
+    "policy_text": "Crawlspace insulation must meet or exceed program minimums after install.",
+    "reference_policy": "IHWAP 2026 §5.2.8",
+    "tags": ["crawlspace", "insulation", "scope", "compliance"]
+  }
+]
