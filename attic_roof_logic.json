@@ -1,0 +1,66 @@
+[
+  {
+    "trigger": "Vermiculite or suspected asbestos-containing insulation observed in attic",
+    "action_item": "Stop work. Trigger hazardous material protocol. Defer attic work until testing and remediation is completed by certified professionals.",
+    "documentation": "Photo of suspect material, field notes, lab result if tested.",
+    "policy_text": "Suspected asbestos or vermiculite must be tested and/or remediated before any disturbance.",
+    "reference_policy": "IHWAP 2026 §4.2.1",
+    "tags": ["attic", "asbestos", "vermiculite", "deferral", "hazardous_material", "health_safety"]
+  },
+  {
+    "trigger": "Active water leak or roof damage present in attic",
+    "action_item": "Defer attic insulation and air sealing. Notify client and program manager. Recommend roof repair before weatherization can proceed.",
+    "documentation": "Photo of leak/damage, roof condition notes, client notification log.",
+    "policy_text": "Active moisture intrusion or roof leaks must be repaired prior to attic weatherization.",
+    "reference_policy": "IHWAP 2026 §4.2.2",
+    "tags": ["attic", "roof", "leak", "moisture", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Visible mold, rot, or animal infestation in attic space",
+    "action_item": "Defer work. Notify client and supervisor. Require remediation or pest control before proceeding.",
+    "documentation": "Photo of mold/rot/infestation, remediation log, post-remediation verification.",
+    "policy_text": "Weatherization must be deferred until mold, rot, or infestation is remediated.",
+    "reference_policy": "IHWAP 2026 §4.2.3",
+    "tags": ["attic", "mold", "rot", "infestation", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Knob and tube wiring observed in attic",
+    "action_item": "Do not insulate over active knob and tube wiring. Require electrical inspection and correction before proceeding.",
+    "documentation": "Photo of wiring, electrical inspection report, correction invoice.",
+    "policy_text": "Insulation over active knob and tube wiring is prohibited.",
+    "reference_policy": "IHWAP 2026 §4.2.4",
+    "tags": ["attic", "electrical", "knob_and_tube", "deferral", "compliance"]
+  },
+  {
+    "trigger": "Exposed or unsafe electrical wiring observed in attic",
+    "action_item": "Defer insulation or air sealing in affected areas. Require correction by licensed electrician. Document completion before resuming work.",
+    "documentation": "Photo of wiring, correction invoice, post-correction photo.",
+    "policy_text": "Unsafe or exposed wiring must be corrected before attic work resumes.",
+    "reference_policy": "IHWAP 2026 §4.2.5",
+    "tags": ["attic", "electrical", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Insufficient insulation depth (< R-38 or as specified by program)",
+    "action_item": "Scope for additional insulation to program minimum. Verify and document final depth after install.",
+    "documentation": "Pre- and post-insulation photos, depth markers, insulation certificate.",
+    "policy_text": "Attic insulation must meet or exceed program minimum R-value after completion.",
+    "reference_policy": "IHWAP 2026 §4.2.6",
+    "tags": ["attic", "insulation", "scope", "verification", "field_protocol"]
+  },
+  {
+    "trigger": "Structural failure (e.g., damaged truss, missing decking) in attic",
+    "action_item": "Defer attic weatherization. Notify program manager. Require structural repair by qualified contractor.",
+    "documentation": "Photo of structural damage, contractor report, repair verification.",
+    "policy_text": "Attic work must be deferred until structural repairs are completed.",
+    "reference_policy": "IHWAP 2026 §4.2.7",
+    "tags": ["attic", "structural", "deferral", "health_safety"]
+  },
+  {
+    "trigger": "Air bypasses or unsealed penetrations observed in attic",
+    "action_item": "Scope air sealing of all bypasses and penetrations before or with insulation.",
+    "documentation": "Photo documentation of bypasses before and after sealing.",
+    "policy_text": "All attic bypasses and penetrations must be sealed per program requirements.",
+    "reference_policy": "IHWAP 2026 §4.2.8",
+    "tags": ["attic", "air_sealing", "scope", "compliance"]
+  }
+]
