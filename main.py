@@ -90,7 +90,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 # ------------------------------
 # CHAT ROUTES
 # ------------------------------
-from chatroute import init_chat_routes
+from chat_routes import init_chat_routes
 init_chat_routes(app, search_policy)
 
 # ------------------------------
