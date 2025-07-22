@@ -1,0 +1,265 @@
+,
+  {
+    "trigger": "No accessible entry call box or intercom at main entrance in multifamily",
+    "action_item": "Install code-compliant accessible entry communication device.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["entry", "call_box", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Damaged or missing accessible signage at common area restroom in multifamily",
+    "action_item": "Install or repair accessible signage as required.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of signage after install/repair.",
+    "tags": ["signage", "restroom", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, missing, or inoperable window restrictor in multifamily",
+    "action_item": "Install or repair code-compliant window restrictor.",
+    "reference_policy": "IHWAP 2018 §10.4.1",
+    "documentation": "Photo after install/repair.",
+    "tags": ["window", "restrictor", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper insulation or draft stop at roof/wall intersection in multifamily",
+    "action_item": "Install insulation/draft stop to required standard.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after correction.",
+    "tags": ["insulation", "draft_stop", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Accessible route inside building blocked by furnishings or stored items",
+    "action_item": "Remove obstructions to maintain code-compliant accessible path.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after clearing.",
+    "tags": ["accessible_route", "obstruction", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No CO detector in common mechanical room with combustion equipment in multifamily",
+    "action_item": "Install code-compliant CO detector.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["CO_detector", "mechanical_room", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Elevator emergency phone nonfunctional or inaccessible in multifamily",
+    "action_item": "Repair or install accessible emergency communication system.",
+    "reference_policy": "IHWAP 2018 §10.5.1",
+    "documentation": "Photo after repair/install.",
+    "tags": ["elevator", "emergency_phone", "multifamily"],
+    "wx_plus_fixable": false
+  },
+  {
+    "trigger": "Loose, missing, or non-compliant signage at exit stair in multifamily",
+    "action_item": "Install or repair exit signage to code.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of compliant signage.",
+    "tags": ["signage", "exit_stair", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper or missing stair handrail return in multifamily common area",
+    "action_item": "Modify handrail with code-compliant return to wall or post.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after modification.",
+    "tags": ["handrail", "return", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Garage service door threshold not sloped or weatherproof in multifamily",
+    "action_item": "Install code-compliant threshold with proper slope and seal.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["garage", "threshold", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, missing, or damaged stair stringer at common stair in multifamily",
+    "action_item": "Repair or replace stair stringer for code-compliance.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["stairs", "stringer", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper or missing wall base at corridor intersection in multifamily",
+    "action_item": "Install or repair code-compliant wall base.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after correction.",
+    "tags": ["wall_base", "corridor", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Accessible unit lacks compliant turning radius in bathroom/kitchen",
+    "action_item": "Modify space to meet code-compliant turning radius.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo or plan after correction.",
+    "tags": ["accessible_unit", "turning_radius", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "No signage indicating accessible features in multifamily",
+    "action_item": "Post required signage indicating accessible features.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of signage.",
+    "tags": ["signage", "accessible_features", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper door swing at accessible bathroom or bedroom in multifamily",
+    "action_item": "Modify door swing for code-compliant clearance.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after correction.",
+    "tags": ["door", "swing", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No audible/visual fire alarm device in accessible unit in multifamily",
+    "action_item": "Install code-compliant alarm device with required features.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["fire_alarm", "audible_visual", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Accessible ramp handrail does not extend 12 inches past ramp end",
+    "action_item": "Modify or extend handrail for code compliance.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after extension.",
+    "tags": ["ramp", "handrail", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No lever or paddle handle at accessible bathroom door in multifamily",
+    "action_item": "Install code-compliant lever or paddle handle.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["handle", "bathroom", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, missing, or non-compliant stair nosing at accessible route in multifamily",
+    "action_item": "Install or repair stair nosing to meet code and accessibility requirements.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after correction.",
+    "tags": ["stairs", "nosing", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper transition or ramp at floor level change along accessible route in multifamily",
+    "action_item": "Install code-compliant transition or ramp for smooth, accessible passage.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["transition", "ramp", "accessible"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "No accessible signage for elevator in multifamily",
+    "action_item": "Install code-compliant accessible elevator signage.",
+    "reference_policy": "IHWAP 2018 §10.5.1",
+    "documentation": "Photo after install.",
+    "tags": ["elevator", "signage", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No code-compliant accessible parking signage at multifamily",
+    "action_item": "Install required signage for accessible parking.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after sign install.",
+    "tags": ["signage", "parking", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, damaged, or missing tactile signage at accessible room in multifamily",
+    "action_item": "Repair or replace tactile signage per code.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after correction.",
+    "tags": ["signage", "tactile", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No visual contrast at edge of steps or ramps in accessible route in multifamily",
+    "action_item": "Install code-compliant visual contrast marking.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["visual_contrast", "steps", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Elevator control panel lacks braille or raised characters",
+    "action_item": "Install code-compliant braille/raised characters at controls.",
+    "reference_policy": "IHWAP 2018 §10.5.1",
+    "documentation": "Photo after install.",
+    "tags": ["elevator", "braille", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Accessible kitchen lacks required clearance at appliances in multifamily",
+    "action_item": "Modify layout or appliance placement to provide required clearance.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after modification.",
+    "tags": ["kitchen", "clearance", "accessible"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "No code-compliant accessible mail drop or parcel box in multifamily",
+    "action_item": "Install or modify to provide accessible mail/parcel delivery.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after modification.",
+    "tags": ["mailbox", "parcel_box", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, damaged, or missing assistive listening system signage in accessible room",
+    "action_item": "Install or repair required signage.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of signage after install/repair.",
+    "tags": ["assistive_listening", "signage", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No compliant curb ramp at street crossing in multifamily",
+    "action_item": "Install code-compliant curb ramp.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["curb_ramp", "street_crossing", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "No accessible seating area at multifamily playground or picnic area",
+    "action_item": "Install code-compliant accessible seating.",
+    "reference_policy": "IHWAP 2018 §10.4.5",
+    "documentation": "Photo after install.",
+    "tags": ["seating", "playground", "accessible"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "Damaged or missing slip-resistant surface at accessible shower in multifamily",
+    "action_item": "Install or repair code-compliant slip-resistant shower surface.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair.",
+    "tags": ["shower", "slip_resistant", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No accessible drinking fountain in required location in multifamily",
+    "action_item": "Install code-compliant accessible drinking fountain.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["drinking_fountain", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No accessible restroom signage at required location in multifamily",
+    "action_item": "Install code-compliant restroom signage.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["restroom", "signage", "accessible"],
+    "wx_plus_fixable": true
+  }
