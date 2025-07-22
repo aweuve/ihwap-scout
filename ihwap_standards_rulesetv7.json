@@ -1,0 +1,418 @@
+,
+  {
+    "trigger": "Uninsulated hydronic heating pipes in basement or crawlspace",
+    "action_item": "Install code-compliant insulation (≥R-3) on hydronic pipes.",
+    "reference_policy": "IHWAP 2018 §5.3.4",
+    "documentation": "Photo of insulated pipes.",
+    "tags": ["hydronic", "pipe", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No handrail on interior stairs with three or more risers",
+    "action_item": "Install code-compliant handrail.",
+    "reference_policy": "IHWAP 2018 §5.1.8",
+    "documentation": "Photo of installed handrail.",
+    "tags": ["stairs", "handrail", "interior"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Vapor barrier not sealed at pipe/duct/wiring penetrations in crawlspace",
+    "action_item": "Seal all penetrations using approved tape or mastic.",
+    "reference_policy": "IHWAP 2018 §7.2.1",
+    "documentation": "Photo of sealed penetration.",
+    "tags": ["vapor_barrier", "penetration", "crawlspace"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Combustion vent connector not mechanically fastened at all joints",
+    "action_item": "Install approved fasteners (sheet metal screws or clamps) at all joints.",
+    "reference_policy": "IHWAP 2018 §2.4.8",
+    "documentation": "Photo of fastened connector.",
+    "tags": ["combustion", "vent_connector", "fastener"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No backflow preventer on main water supply line in multifamily",
+    "action_item": "Install code-compliant backflow preventer.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of installed backflow preventer.",
+    "tags": ["backflow", "water_supply", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Uninsulated foundation wall below grade in multifamily building",
+    "action_item": "Install foundation insulation per SWS/IHWAP to required R-value.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of insulation installation.",
+    "tags": ["foundation", "insulation", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper insulation install at floor joist ends (gaps, compression, voids)",
+    "action_item": "Correct install to provide continuous contact and full coverage.",
+    "reference_policy": "IHWAP 2018 §7.1.4",
+    "documentation": "Photo before and after correction.",
+    "tags": ["insulation", "floor_joist", "install"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Exterior vent hood for range or dryer lacks insect/pest screen",
+    "action_item": "Install code-compliant screen at vent hood.",
+    "reference_policy": "IHWAP 2018 §4.3.4",
+    "documentation": "Photo of new screen.",
+    "tags": ["vent_hood", "screen", "exterior"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Uninsulated attic floor in multifamily corridor or lobby",
+    "action_item": "Install insulation to required R-value per SWS/IHWAP.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of new insulation.",
+    "tags": ["attic", "insulation", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Damaged or missing expansion joint/seal at slab-on-grade foundation",
+    "action_item": "Install/repair code-compliant expansion joint/seal.",
+    "reference_policy": "IHWAP 2018 §7.2.1",
+    "documentation": "Photo before and after repair.",
+    "tags": ["expansion_joint", "foundation", "seal"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No lighting at common area exit/entry in multifamily building",
+    "action_item": "Install or repair code-compliant lighting.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of lighting.",
+    "tags": ["lighting", "multifamily", "common_area"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Combustion air opening blocked or undersized at utility room",
+    "action_item": "Clear or enlarge opening to code-required size.",
+    "reference_policy": "IHWAP 2018 §2.4.5",
+    "documentation": "Photo of corrected opening.",
+    "tags": ["combustion_air", "utility_room"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, damaged, or missing window glazing putty",
+    "action_item": "Repair or replace glazing putty for air and weather seal.",
+    "reference_policy": "IHWAP 2018 §8.2.2",
+    "documentation": "Photo after repair.",
+    "tags": ["window", "glazing", "repair"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Vapor barrier not extended up pier or post in crawlspace",
+    "action_item": "Extend and seal vapor barrier up all piers/posts per SWS.",
+    "reference_policy": "IHWAP 2018 §7.2.1",
+    "documentation": "Photo after sealing.",
+    "tags": ["vapor_barrier", "pier", "crawlspace"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Hot water pipe insulation missing in multifamily laundry or common area",
+    "action_item": "Install code-compliant pipe insulation (≥R-3).",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after insulation install.",
+    "tags": ["pipe", "hot_water", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or unsealed duct boot at floor/ceiling/wall register",
+    "action_item": "Seal and secure duct boot per SWS/IHWAP.",
+    "reference_policy": "IHWAP 2018 §3.4.3",
+    "documentation": "Photo after sealing.",
+    "tags": ["duct", "boot", "seal"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper or missing air gap at dishwasher drain",
+    "action_item": "Install code-compliant air gap fitting.",
+    "reference_policy": "IHWAP 2018 §5.3.13",
+    "documentation": "Photo after air gap install.",
+    "tags": ["dishwasher", "air_gap", "drain"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Uninsulated crawlspace ceiling in multifamily",
+    "action_item": "Install insulation to code R-value at ceiling.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after insulation.",
+    "tags": ["crawlspace", "ceiling", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Garage door weather seal torn or missing at bottom or sides",
+    "action_item": "Replace weather seal to ensure tight closure.",
+    "reference_policy": "IHWAP 2018 §5.1.16",
+    "documentation": "Photo after replacement.",
+    "tags": ["garage", "door", "weather_seal"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Exposed structural fasteners or nails at stair treads/risers in common area",
+    "action_item": "Countersink and patch or cover exposed fasteners.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after correction.",
+    "tags": ["stairs", "fasteners", "common_area"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper attic insulation at eaves (blocks baffle/ventilation)",
+    "action_item": "Adjust insulation and maintain ventilation clearance at eaves.",
+    "reference_policy": "IHWAP 2018 §6.3.1",
+    "documentation": "Photo of adjusted insulation.",
+    "tags": ["attic", "insulation", "eaves"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Detached or uninsulated mechanical room in multifamily building",
+    "action_item": "Insulate mechanical room per SWS/IHWAP.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after insulation.",
+    "tags": ["mechanical_room", "insulation", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Garage door not equipped with self-closing mechanism",
+    "action_item": "Install or repair self-closing device per code.",
+    "reference_policy": "IHWAP 2018 §5.1.16",
+    "documentation": "Photo after device installation.",
+    "tags": ["garage", "door", "self_closing"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Vapor barrier not overlapped or sealed at wall intersections",
+    "action_item": "Overlap and seal all joints and intersections per SWS.",
+    "reference_policy": "IHWAP 2018 §7.2.1",
+    "documentation": "Photo of sealed overlap.",
+    "tags": ["vapor_barrier", "overlap", "seal"],
+    "wx_plus_fixable": true
+  }
+,
+  {
+    "trigger": "No guardrail at open-sided walkways or platforms in multifamily common areas",
+    "action_item": "Install code-compliant guardrail per IHWAP and local code.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo of guardrail installation.",
+    "tags": ["guardrail", "multifamily", "common_area"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No automatic or emergency lighting at interior stairway in multifamily",
+    "action_item": "Install code-compliant automatic or emergency stair lighting.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["lighting", "stairway", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No handrail on exterior stairs with more than three risers",
+    "action_item": "Install code-compliant exterior handrail.",
+    "reference_policy": "IHWAP 2018 §5.1.8",
+    "documentation": "Photo of installed handrail.",
+    "tags": ["handrail", "stairs", "exterior"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improperly insulated attic knee wall in multifamily unit",
+    "action_item": "Install insulation to code R-value for knee walls.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after insulation.",
+    "tags": ["attic", "knee_wall", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-compliant door swing at unit entry (blocks egress)",
+    "action_item": "Modify door swing or hardware to comply with code.",
+    "reference_policy": "IHWAP 2018 §8.1.2",
+    "documentation": "Photo of corrected door swing.",
+    "tags": ["door", "egress", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing or damaged vapor barrier at ceiling in manufactured home",
+    "action_item": "Install or repair vapor barrier per SWS/IHWAP.",
+    "reference_policy": "IHWAP 2018 §9.2.6",
+    "documentation": "Photo before and after repair.",
+    "tags": ["vapor_barrier", "ceiling", "mobile_home"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper attic ventilation in multifamily corridor or lobby",
+    "action_item": "Install code-compliant attic ventilation.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["attic", "ventilation", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Combustion air opening in mechanical room lacks screen or rodent protection",
+    "action_item": "Install code-compliant screen for combustion air opening.",
+    "reference_policy": "IHWAP 2018 §2.4.5",
+    "documentation": "Photo after screen install.",
+    "tags": ["combustion_air", "mechanical_room", "screen"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Multifamily common area window lacks code-required safety glazing",
+    "action_item": "Replace with code-compliant safety glazing.",
+    "reference_policy": "IHWAP 2018 §10.4.1",
+    "documentation": "Photo of glazing replacement.",
+    "tags": ["window", "safety_glazing", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Multifamily stairwell lacks visual contrast strip at tread edge",
+    "action_item": "Install visual contrast strip per code for safety.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo of contrast strip.",
+    "tags": ["stairs", "contrast_strip", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or missing elevator inspection certificate in multifamily",
+    "action_item": "Post valid inspection certificate in elevator per code.",
+    "reference_policy": "IHWAP 2018 §10.5.1",
+    "documentation": "Photo of certificate.",
+    "tags": ["elevator", "inspection_certificate", "multifamily"],
+    "wx_plus_fixable": false
+  },
+  {
+    "trigger": "Non-compliant or missing stair nosing at common area steps",
+    "action_item": "Install code-compliant stair nosing.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo of new nosing.",
+    "tags": ["stairs", "nosing", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or missing weather seal at corridor door in multifamily",
+    "action_item": "Install or repair weather seal at corridor doors.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair.",
+    "tags": ["door", "weather_seal", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Exterior entrance ramp to multifamily building exceeds 1:12 slope",
+    "action_item": "Modify ramp to achieve code-compliant slope.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of ramp after modification.",
+    "tags": ["ramp", "exterior", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "No exit sign or egress lighting at required exit in multifamily",
+    "action_item": "Install code-compliant exit sign and egress lighting.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["exit_sign", "egress_lighting", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Garage not separated from unit above by code-required thermal barrier",
+    "action_item": "Install code-compliant insulation or upgrade existing barrier.",
+    "reference_policy": "IHWAP 2018 §5.2.5",
+    "documentation": "Photo after installation.",
+    "tags": ["garage", "thermal_barrier", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Laundry area in multifamily lacks dedicated exhaust fan or window",
+    "action_item": "Install exhaust fan or code-compliant operable window.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after correction.",
+    "tags": ["laundry_area", "exhaust_fan", "window"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Handrails not continuous at inside stairway corners in multifamily",
+    "action_item": "Install continuous handrail per code.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after correction.",
+    "tags": ["handrail", "stairs", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No peephole or door viewer at unit entry door in multifamily",
+    "action_item": "Install code-compliant peephole/viewer.",
+    "reference_policy": "IHWAP 2018 §8.1.7",
+    "documentation": "Photo after install.",
+    "tags": ["door", "peephole", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper firestopping at penetrations in fire-rated assemblies in multifamily",
+    "action_item": "Install or repair code-approved firestopping material.",
+    "reference_policy": "IHWAP 2018 §10.4.3",
+    "documentation": "Photo after repair.",
+    "tags": ["firestop", "penetration", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Detached/missing address number at main entry to multifamily",
+    "action_item": "Install minimum 4-inch address number visible from street.",
+    "reference_policy": "IHWAP 2018 §8.1.5",
+    "documentation": "Photo of installed number.",
+    "tags": ["address", "main_entry", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-compliant riser/tread dimensions at common stairs in multifamily",
+    "action_item": "Rebuild steps to meet uniform rise/run per code.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after rebuild.",
+    "tags": ["stairs", "riser", "tread", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing or inoperable lock on shared mechanical room door in multifamily",
+    "action_item": "Install or repair code-compliant lock.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair.",
+    "tags": ["mechanical_room", "lock", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Obstructed egress pathway in common area of multifamily",
+    "action_item": "Clear or reroute pathway to provide safe code-compliant egress.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after clearing.",
+    "tags": ["egress", "common_area", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No weather seal or threshold at exterior stairwell door in multifamily",
+    "action_item": "Install or repair weather seal and threshold.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["door", "weather_seal", "threshold"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing or damaged expansion tank on domestic hot water in multifamily",
+    "action_item": "Install code-compliant expansion tank.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["expansion_tank", "hot_water", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No GFCI protection at laundry or kitchen outlets in multifamily common areas",
+    "action_item": "Install code-compliant GFCI devices.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of GFCI installation.",
+    "tags": ["GFCI", "kitchen", "laundry"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper slope on exterior walkway leading to multifamily entry",
+    "action_item": "Regrade or modify walkway to achieve code-compliant slope.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of walkway after correction.",
+    "tags": ["walkway", "slope", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  }
