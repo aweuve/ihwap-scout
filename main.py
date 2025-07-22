@@ -12,7 +12,29 @@ from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
 
 # ------------------------------
-# Load ALL Section JSONs at startup (if you still use them elsewhere)
+# LOAD ALL IHWAP LOGIC JSON FILES (v1-v9)
+# ------------------------------
+def load_all_health_safety_logic():
+    logic = []
+    # Looks for all logic_health_safety_v*.json, up to v9 (expand as needed)
+    for v in range(1, 10):
+        fname = f"logic_health_safety_v{v}.json"
+        if os.path.exists(fname):
+            try:
+                with open(fname, "r", encoding="utf-8") as f:
+                    items = json.load(f)
+                    if isinstance(items, list):
+                        logic.extend(items)
+                    elif isinstance(items, dict):
+                        logic.append(items)
+            except Exception as e:
+                print(f"Error loading {fname}: {e}")
+    return logic
+
+ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
+
+# ------------------------------
+# LOAD ALL POLICY/SECTION JSONs
 # ------------------------------
 def load_all_sections():
     sections = []
@@ -29,81 +51,64 @@ def load_all_sections():
 ALL_SECTIONS = load_all_sections()
 
 # ------------------------------
-# Load ALL v1–v9 logic JSONs at startup
-# ------------------------------
-def load_all_health_safety_logic():
-    logic = []
-    for fname in sorted(glob.glob("logic_health_safety_v*.json")):
-        try:
-            with open(fname, "r", encoding="utf-8") as f:
-                items = json.load(f)
-                if isinstance(items, list):
-                    logic.extend(items)
-                elif isinstance(items, dict):
-                    logic.append(items)
-        except Exception as e:
-            print(f"Error loading {fname}: {e}")
-    return logic
-
-ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
-
-# ------------------------------
-# Modern Search Policy
+# SEARCH POLICY/LOGIC FUNCTION
 # ------------------------------
 def search_policy(keyword):
     keyword_lower = keyword.lower()
     results = []
-
+    for section in ALL_SECTIONS:
+        data_flat = json.dumps(section).lower()
+        if keyword_lower in data_flat:
+            policy = section.get("reference_policy", "") or section.get("reference", "")
+            logic_summary = ""
+            for k, v in section.items():
+                if k not in ["section", "title", "last_updated", "reference_policy", "reference"]:
+                    if isinstance(v, list):
+                        logic_summary += "\n".join(str(i) for i in v[:4]) + "\n"
+                    elif isinstance(v, str):
+                        logic_summary += v + "\n"
+            results.append({"answer": logic_summary.strip(), "policy": policy})
     for item in ALL_HEALTH_SAFETY_LOGIC:
-        trigger = item.get("trigger", "").lower()
-        action_item = item.get("action_item", "").lower()
-        policy_text = item.get("policy_text", "").lower()
-        tags = [t.lower() for t in item.get("tags", [])]
-        doc = item.get("documentation", "")
-        policy = item.get("reference_policy", "")
-
-        # Match in trigger, tags, action_item, or policy_text
-        match_score = 0
-        if keyword_lower in trigger:
-            match_score += 3
-        if any(keyword_lower in tag for tag in tags):
-            match_score += 2
-        if keyword_lower in action_item or keyword_lower in policy_text:
-            match_score += 1
-
-        if match_score > 0:
-            answer_lines = []
-            answer_lines.append(f"<b>Trigger:</b> {item.get('trigger','')}")
-            answer_lines.append(f"<b>Action Item:</b> {item.get('action_item','')}")
-            if "policy_text" in item:
-                answer_lines.append(f"<b>Policy Summary:</b> {item['policy_text']}")
-            if doc:
-                answer_lines.append(f"<b>Required Documentation:</b> {doc}")
-            if tags:
-                answer_lines.append(f"<b>Tags:</b> {', '.join(item.get('tags', []))}")
-            answer_lines.append(f"<b>Citation:</b> {policy}")
-            answer = "<br>".join(answer_lines)
-            results.append({"answer": answer, "policy": policy, "score": match_score})
-
-    # Sort results by match_score (desc), then by trigger alphabetically
-    results = sorted(results, key=lambda r: (-r['score'], r['answer']))
-    # Remove the 'score' field before returning
-    for r in results:
-        r.pop('score', None)
+        data_flat = json.dumps(item).lower()
+        if keyword_lower in data_flat:
+            policy = item.get("reference_policy", "")
+            answer = ""
+            for k, v in item.items():
+                if k != "reference_policy":
+                    if isinstance(v, str):
+                        answer += v + "\n"
+            results.append({"answer": answer.strip(), "policy": policy})
     return results
 
 # ------------------------------
-# Flask App Setup
+# FLASK APP SETUP
 # ------------------------------
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET", "super_secret_key")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # ------------------------------
-# Register Chat Blueprint (modular)
+# CHAT ROUTES
 # ------------------------------
-from chat_routes import init_chat_routes
+from chatroute import init_chat_routes
 init_chat_routes(app, search_policy)
+
+# ------------------------------
+# UTILITY: Estimate Year from Label (for age_finder)
+# ------------------------------
+def estimate_year_from_label(text):
+    mfg_match = re.search(r'(MFG\s*DATE|Manufactured|Date of Manufacture)[:\s\-]*([0-9]{4})', text, re.IGNORECASE)
+    if mfg_match:
+        return int(mfg_match.group(2)), "Found explicit manufacture date on label."
+    ansi_match = re.search(r'ANSI[^\d]*(\d{4})', text, re.IGNORECASE)
+    if ansi_match:
+        return int(ansi_match.group(1)), "Estimated from ANSI/CSA certification year on label."
+    year_matches = re.findall(r'([1-3][0-9]{3})', text)
+    plausible_years = [int(y) for y in year_matches if 1980 <= int(y) <= datetime.now().year]
+    if plausible_years:
+        best_guess = max(plausible_years)
+        return best_guess, "Possible year(s) found on label."
+    return None, "No label clues for year found."
 
 # ------------------------------
 # ROUTES
@@ -137,7 +142,7 @@ def qci():
 
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-            # Use ALL_HEALTH_SAFETY_LOGIC for image logic
+            # Unified logic: uses ALL_HEALTH_SAFETY_LOGIC for both chat and QCI
             result = get_matching_trigger_from_image(image_bytes, ALL_HEALTH_SAFETY_LOGIC)
             visible_elements = result.get("visible_elements", [])
             scene_type = result.get("scene_type") if result.get("scene_type") else None
@@ -157,16 +162,127 @@ def qci():
         image_path=image_path
     )
 
-@app.route("/logic_test")
-def logic_test():
-    lines = []
-    for i, item in enumerate(ALL_HEALTH_SAFETY_LOGIC, 1):
-        trigger = item.get("trigger", "NO_TRIGGER")
-        tags = ", ".join(item.get("tags", []))
-        policy = item.get("reference_policy", "")
-        lines.append(f"<b>{i}.</b> <b>{trigger}</b> <br>Tags: <i>{tags}</i> <br>Policy: {policy}<br><hr>")
-    total = len(ALL_HEALTH_SAFETY_LOGIC)
-    return f"<h2>{total} H&S Triggers Loaded</h2>" + "".join(lines)
+@app.route("/age_finder", methods=["GET", "POST"])
+def age_finder():
+    result = None
+    fail_msg = None
+    use_manual = False
+    ocr_text = None
+    label_estimate = None
+
+    if request.method == "POST":
+        if request.form.get("manual"):
+            use_manual = True
+            brand = request.form.get("brand", "")
+            serial = request.form.get("serial", "").strip()
+            if not serial or not brand:
+                fail_msg = "Please provide both brand and serial number."
+            else:
+                res = decode_serial(serial, brand)
+                if isinstance(res, dict):
+                    result = res
+                else:
+                    fail_msg = res
+
+        elif "photo" in request.files:
+            photo = request.files.get("photo")
+            if photo and photo.filename:
+                img_bytes = photo.read()
+                try:
+                    base64_img = base64.b64encode(img_bytes).decode("utf-8")
+                    vision_prompt = (
+                        "You are an HVAC and appliance label expert. "
+                        "Extract ONLY the following from the nameplate or label in this photo: "
+                        "brand (if shown), model number, and serial number. "
+                        "Look for fields labeled 'Model', 'Model (Modèle)', 'Serial No', 'Serial (Série) No', 'S/N', or similar. "
+                        "Ignore barcodes—use only the printed letters/numbers. "
+                        "Respond ONLY with valid JSON like this: "
+                        '{"brand": "...", "model": "...", "serial": "..."} '
+                        "If any value is not found, return an empty string for that field. "
+                        "EXAMPLE: "
+                        '{"brand": "", "model": "GD080M16B-S", "serial": "GD0000658741"}'
+                    )
+                    vision_resp = openai.ChatCompletion.create(
+                        model="gpt-4o",
+                        messages=[
+                            {"role": "system", "content": vision_prompt},
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "image_url",
+                                        "image_url": {"url": f"data:image/jpeg;base64,{base64_img}"},
+                                    }
+                                ],
+                            },
+                        ],
+                        max_tokens=200,
+                    )
+                    import json as pyjson
+                    txt = vision_resp.choices[0].message["content"]
+                    try:
+                        data = pyjson.loads(txt)
+                        brand = data.get("brand", "").strip()
+                        serial = data.get("serial", "").strip()
+                        if not brand or not serial:
+                            raise ValueError
+                        res = decode_serial(serial, brand)
+                        if isinstance(res, dict):
+                            result = res
+                        else:
+                            fail_msg = res
+                    except Exception:
+                        ocr_prompt = (
+                            "You are an OCR engine. Extract ALL readable text from the uploaded appliance label photo, including numbers and letters. "
+                            "Respond ONLY with a plain text list. Do NOT try to interpret it. Do NOT reply in JSON."
+                        )
+                        ocr_resp = openai.ChatCompletion.create(
+                            model="gpt-4o",
+                            messages=[
+                                {"role": "system", "content": ocr_prompt},
+                                {
+                                    "role": "user",
+                                    "content": [
+                                        {
+                                            "type": "image_url",
+                                            "image_url": {"url": f"data:image/jpeg;base64,{base64_img}"},
+                                        }
+                                    ],
+                                },
+                            ],
+                            max_tokens=600,
+                        )
+                        ocr_text = ocr_resp.choices[0].message["content"]
+                        fail_msg = (
+                            "Could not automatically extract brand/serial from the image. "
+                            "See all detected label text below, or enter the info manually."
+                        )
+                        est_year, est_source = estimate_year_from_label(ocr_text)
+                        if est_year:
+                            label_estimate = (est_year, est_source)
+                        use_manual = True
+                except Exception as e:
+                    fail_msg = f"Vision model error: {e}"
+                    use_manual = True
+            else:
+                fail_msg = "No image uploaded."
+    return render_template(
+        "age_finder.html",
+        result=result,
+        fail_msg=fail_msg,
+        use_manual=use_manual,
+        ocr_text=ocr_text,
+        label_estimate=label_estimate,
+    )
+
+@app.route("/scope")
+def scope():
+    result = session.get("last_result", {"scene_type": "unset", "matched_triggers": [], "auto_triggered": []})
+    return render_template("scope.html", result=result)
+
+@app.route("/prevent")
+def prevent():
+    return render_template("prevent.html")
 
 @app.route("/knowledge", methods=["GET"])
 def knowledge():
@@ -181,8 +297,22 @@ def knowledge():
         answers.append(f"{res['answer']}<br><em>[{res['policy']}]</em>")
     return "<hr>".join(answers)
 
+@app.route("/logic_test")
+def logic_test():
+    lines = []
+    for i, item in enumerate(ALL_HEALTH_SAFETY_LOGIC, 1):
+        trigger = item.get("trigger", "NO_TRIGGER")
+        tags = ", ".join(item.get("tags", []))
+        policy = item.get("reference_policy", "")
+        lines.append(f"<b>{i}.</b> <b>{trigger}</b> <br>Tags: <i>{tags}</i> <br>Policy: {policy}<br><hr>")
+    total = len(ALL_HEALTH_SAFETY_LOGIC)
+    return f"<h2>{total} H&S Triggers Loaded</h2>" + "".join(lines)
+
+# ------------------------------
 # MAIN GUARD
+# ------------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
