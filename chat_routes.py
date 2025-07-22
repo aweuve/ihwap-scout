@@ -18,24 +18,50 @@ def init_chat_routes(app, search_policy):
 
             if user_msg:
                 session["chat_history"].append({"role": "user", "content": user_msg})
+                # --- Get the most relevant rule/action from your logic search ---
                 search_results = search_policy(user_msg)
                 context_snippet = ""
                 found_citation = None
                 if search_results:
-                    for result in search_results[:1]:
-                        context_snippet += result["answer"]
-                        if result["policy"]:
-                            found_citation = f"[Citation: {result['policy']}]"
-                            context_snippet += f"\n\n{found_citation}"
-                try:
-                    system_prompt = (
-                        "You are Scout, an IHWAP 2026 assistant for Weatherization staff.\n"
-                        "If the reference context includes a '[Citation: ...]' line, you must always include it exactly as written at the end of your answer—no exceptions.\n"
-                        "Use action items and field protocol found in the reference context when possible, and cite the real-world policy from [Citation: ...] only (never reference file or section numbers from JSON structure).\n"
-                        "If you can't answer directly, say so and suggest next steps.\n\n"
-                        f"Reference context:\n{context_snippet}\n\n"
-                        "Answer in a friendly, clear, and concise field style. Always finish with [Citation: ...] if present."
+                    # Use only the most relevant result (first)
+                    best = search_results[0]
+                    # Build a bullet-style summary using fields from your JSON logic
+                    field_answer = ""
+                    if "answer" in best and best["answer"]:
+                        field_answer += best["answer"].strip() + "\n"
+                    # Add Action Item as a field bullet (if present)
+                    if "action_item" in best and best["action_item"]:
+                        field_answer += f"- {best['action_item'].strip()}\n"
+                    # Add tags if helpful for field users (optional)
+                    # if "tags" in best and best["tags"]:
+                    #     field_answer += f"Tags: {', '.join(best['tags'])}\n"
+                    context_snippet = field_answer.strip()
+                    # Get the citation, if present
+                    if best.get("policy") or best.get("reference_policy"):
+                        citation_val = best.get("policy") or best.get("reference_policy")
+                        found_citation = f"[Citation: {citation_val}]"
+                        context_snippet += f"\n\n{found_citation}"
+                else:
+                    # No result found; fallback context
+                    context_snippet = (
+                        "No specific IHWAP rule found. Please consult your agency supervisor or the IHWAP Operations Manual."
                     )
+
+                try:
+                    # --- System prompt: always short, field-ready, must cite if present ---
+                    system_prompt = (
+                        "You are Scout, the IHWAP 2026 compliance assistant for Weatherization staff.\n"
+                        "Your job is to provide direct, field-ready answers based on the provided rule context, with exact code or policy citations when available.\n"
+                        "Always prioritize this order: Health & Safety > Structure > Energy Efficiency.\n"
+                        "When you answer, use this format:\n"
+                        "- Brief summary of the IHWAP requirement or rule\n"
+                        "- List exact field actions required, using clear bullet points\n"
+                        "- End with [Citation: ...] if present — always, and only from the reference context\n"
+                        "Keep answers short and to the point — avoid fluff, never speculate.\n"
+                        "If you don’t know, say so and suggest asking a supervisor or consulting the IHWAP manual.\n"
+                        f"\nReference context:\n{context_snippet}\n"
+                    )
+
                     completion = openai.ChatCompletion.create(
                         model="gpt-4o",
                         messages=[
@@ -45,7 +71,7 @@ def init_chat_routes(app, search_policy):
                         max_tokens=500,
                     )
                     assistant_reply_raw = completion.choices[0].message["content"]
-                    # Guarantee the citation is appended if it was found, even if GPT forgets
+                    # Guarantee citation is appended if found (extra-safe)
                     if found_citation and found_citation not in assistant_reply_raw:
                         assistant_reply_raw = assistant_reply_raw.rstrip() + "\n\n" + found_citation
                     assistant_reply = markdown.markdown(
@@ -76,5 +102,6 @@ def init_chat_routes(app, search_policy):
         return redirect(url_for("chat.chat"))
 
     app.register_blueprint(chat_bp)
+
 
 
