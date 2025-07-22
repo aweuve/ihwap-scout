@@ -8,7 +8,7 @@ import markdown
 import re
 from datetime import datetime
 import glob
-from vision_matcher import get_matching_trigger_from_image  # Make sure this uses the list-based logic now!
+from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
 
 # ------------------------------
@@ -29,11 +29,12 @@ def load_all_sections():
 ALL_SECTIONS = load_all_sections()
 
 # ------------------------------
-# Load all logic_health_safety_*.json at startup (single-source logic)
+# Load ALL IHWAP Ruleset JSONs (v1–v9) at startup
 # ------------------------------
-def load_all_health_safety_logic():
+def load_all_rulesets():
     logic = []
-    for fname in glob.glob("logic_health_safety_*.json"):
+    for i in range(1, 10):
+        fname = f"ihwap_standards_ruleset_v{i}.json"
         try:
             with open(fname, "r", encoding="utf-8") as f:
                 items = json.load(f)
@@ -45,7 +46,7 @@ def load_all_health_safety_logic():
             print(f"Error loading {fname}: {e}")
     return logic
 
-ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
+ALL_HEALTH_SAFETY_LOGIC = load_all_rulesets()
 
 # ------------------------------
 # Helper: search for content matching a keyword (policy or logic)
@@ -91,7 +92,7 @@ from chat_routes import init_chat_routes
 init_chat_routes(app, search_policy)
 
 # ------------------------------
-# Other App Logic (scenes, triggers, helpers)
+# Scene Categories/Trigger Rules (for scope, QCI, etc.)
 # ------------------------------
 scene_categories = {
     "attic": ["attic", "ventilation", "hazardous materials", "structural"],
@@ -165,7 +166,7 @@ def qci():
 
             with open(image_path, "rb") as f:
                 image_bytes = f.read()
-            # >>>> UNIFIED LOGIC: uses ALL_HEALTH_SAFETY_LOGIC for both chat and QCI <<<<
+            # Use ALL_HEALTH_SAFETY_LOGIC for QCI/vision
             result = get_matching_trigger_from_image(image_bytes, ALL_HEALTH_SAFETY_LOGIC)
             visible_elements = result.get("visible_elements", [])
 
