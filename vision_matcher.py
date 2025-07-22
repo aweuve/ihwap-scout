@@ -6,6 +6,7 @@ import base64
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def get_vision_analysis(image_bytes):
+    """Send image to GPT-4o Vision for field analysis. Returns a dict summary."""
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
     response = openai.ChatCompletion.create(
         model="gpt-4o",
@@ -19,21 +20,14 @@ def get_vision_analysis(image_bytes):
                     "1. Health & Safety\n"
                     "2. Structural Integrity\n"
                     "3. Energy Efficiency\n\n"
-                    "Return your results in **JSON only**. Use this format:\n"
+                    "Return your results in JSON only. Use this format:\n"
                     "{\n"
                     "  \"description\": \"Brief, plain-language summary of the image\",\n"
-                    "  \"visible_elements\": [\"furnace\", \"flex duct\", \"floor joist\", \"flue collar\"],\n"
-                    "  \"hazards\": [\"corroded flue\", \"missing discharge pipe\"],\n"
-                    "  \"scout_thought\": \"QCI-style insight about what the crew or auditor should do next.\"\n"
-                    "}\n\n"
-                    "Tips:\n"
-                    "- Do not include markdown, headers, or explanations. Return only JSON.\n"
-                    "- Use clear terms from field inspections: 'fiberglass insulation', 'unsealed duct', 'foundation wall', etc.\n"
-                    "- If hazard is visible (e.g. water, rot, flame risk), name it. If unsure, say nothing.\n"
-                    "- The 'scout_thought' should be a calm, actionable comment — like from a seasoned auditor.\n"
-                    "- Never hallucinate tools or measurements — only describe what you **can see**.\n"
-                    "- Do not invent codes. Your job is visual flagging, not quoting standards.\n\n"
-                    "You are helping a real weatherization team. Accuracy matters. Keep it tight. JSON only."
+                    "  \"visible_elements\": [\"furnace\", \"flex duct\", ...],\n"
+                    "  \"hazards\": [\"corroded flue\", ...],\n"
+                    "  \"scout_thought\": \"QCI-style actionable insight for the crew\"\n"
+                    "}\n"
+                    "No markdown, no extra notes. Only valid JSON!"
                 )
             },
             {
@@ -49,14 +43,13 @@ def get_vision_analysis(image_bytes):
 
     try:
         raw = response.choices[0].message["content"].strip()
+        # Clean up output in case model returns markdown formatting
         if "```json" in raw:
             raw = raw.split("```json")[-1].split("```")[0].strip()
         elif "```" in raw:
             raw = raw.split("```")[-1].strip()
-
         if not raw.startswith("{"):
             raise ValueError("Scout returned non-JSON content.")
-
         parsed = json.loads(raw)
         return {
             "description": parsed.get("description", "").lower(),
@@ -73,12 +66,13 @@ def get_vision_analysis(image_bytes):
         }
 
 def score_trigger_match(parsed, trigger_key, logic):
+    """Score match between parsed vision output and a logic trigger."""
     description = parsed["description"]
     words = description.split()
     tags = parsed["visible_elements"] + parsed["hazards"]
     score = 0
 
-    # Simple logic for reducing false positives based on condition/context
+    # Key false positive reducers
     if "attic" in description:
         if "water heater" in trigger_key or "confined closet" in trigger_key:
             return 0
@@ -98,6 +92,7 @@ def score_trigger_match(parsed, trigger_key, logic):
         if not any(kw in description for kw in ["granular", "gray", "gold", "pebble", "vermiculite"]):
             return 0
 
+    # Score by keyword overlap
     parts = [
         trigger_key,
         logic.get("policy_text", ""),
@@ -118,6 +113,10 @@ def score_trigger_match(parsed, trigger_key, logic):
     return score
 
 def get_matching_trigger_from_image(image_bytes, logic_list):
+    """
+    Run GPT-4o vision, then fuzzy match result to the best trigger/action in logic_list.
+    logic_list can be any concatenation of v1-v9 JSON rules.
+    """
     parsed = get_vision_analysis(image_bytes)
     best_match = None
     best_score = 0
@@ -130,6 +129,7 @@ def get_matching_trigger_from_image(image_bytes, logic_list):
             best_match = logic
 
     if not best_match or best_score == 0:
+        # Fallback if nothing scores a match
         best_match = {
             "trigger": "Unlisted or ambiguous condition",
             "action_item": "⚠️🛑 Action Item",
@@ -139,6 +139,7 @@ def get_matching_trigger_from_image(image_bytes, logic_list):
             "tags": ["unsorted"]
         }
 
+    # Compose a summary including vision output and best rule match
     result = {
         "trigger": best_match.get("trigger", "Unknown trigger"),
         "action_item": best_match.get("action_item", ""),
@@ -153,4 +154,3 @@ def get_matching_trigger_from_image(image_bytes, logic_list):
     }
 
     return result
-
