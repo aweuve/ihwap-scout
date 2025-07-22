@@ -1,0 +1,570 @@
+,
+  {
+    "trigger": "Masonry chimney lacks rain cap or spark arrestor",
+    "action_item": "Install code-compliant rain cap and/or spark arrestor.",
+    "reference_policy": "IHWAP 2018 §2.4.8",
+    "documentation": "Photo of installed cap/arrestor.",
+    "tags": ["chimney", "rain_cap", "safety"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper electrical bonding or grounding in mobile/manufactured home",
+    "action_item": "Correct bonding/grounding per code by licensed electrician.",
+    "reference_policy": "IHWAP 2018 §9.2.9",
+    "documentation": "Photo before and after correction.",
+    "tags": ["mobile_home", "electrical", "bonding"],
+    "wx_plus_fixable": false
+  },
+  {
+    "trigger": "Uninsulated exterior wall between garage and living space",
+    "action_item": "Install or upgrade insulation per SWS/IHWAP requirements.",
+    "reference_policy": "IHWAP 2018 §5.2.5",
+    "documentation": "Photo of installed insulation.",
+    "tags": ["garage", "wall", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Mobile/manufactured home skirting does not provide ventilation as required",
+    "action_item": "Install or modify skirting vents to meet code requirements.",
+    "reference_policy": "IHWAP 2018 §9.2.4",
+    "documentation": "Photo before and after install.",
+    "tags": ["mobile_home", "skirting", "ventilation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper fasteners used for mechanical equipment mounting",
+    "action_item": "Replace with code-approved fasteners per manufacturer specs.",
+    "reference_policy": "IHWAP 2018 §5.3.12",
+    "documentation": "Photo of corrected fasteners.",
+    "tags": ["mechanical", "fastener", "code"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Fire extinguisher missing in required locations (kitchen, mechanical room, etc.)",
+    "action_item": "Install code-approved ABC fire extinguisher(s).",
+    "reference_policy": "IHWAP 2018 §5.1.7",
+    "documentation": "Photo of installed extinguisher(s).",
+    "tags": ["fire_extinguisher", "kitchen", "safety"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Insulation voids found in wall, attic, or floor after install",
+    "action_item": "Dense-pack or re-install insulation to eliminate voids.",
+    "reference_policy": "IHWAP 2018 §6.2.7",
+    "documentation": "Photo before and after correction.",
+    "tags": ["insulation", "voids", "QA"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper discharge of HVAC condensate line (onto grade, sidewalk, etc.)",
+    "action_item": "Reroute to code-approved drain or dry well.",
+    "reference_policy": "IHWAP 2018 §5.3.6",
+    "documentation": "Photo of corrected discharge.",
+    "tags": ["HVAC", "condensate", "drainage"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Water heater lacks pressure relief valve",
+    "action_item": "Install code-compliant pressure relief valve.",
+    "reference_policy": "IHWAP 2018 §5.3.1",
+    "documentation": "Photo of new valve.",
+    "tags": ["water_heater", "plumbing", "safety"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Damaged or missing dryer vent clamp at appliance connection",
+    "action_item": "Install or replace vent clamp to ensure secure connection.",
+    "reference_policy": "IHWAP 2018 §4.3.5",
+    "documentation": "Photo of installed clamp.",
+    "tags": ["dryer", "ventilation", "clamp"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper attic baffle installation (allows insulation to enter soffit)",
+    "action_item": "Adjust or replace baffle to maintain clear vent pathway.",
+    "reference_policy": "IHWAP 2018 §6.3.1",
+    "documentation": "Photo of corrected baffle.",
+    "tags": ["attic", "baffle", "ventilation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No fire separation between multifamily units",
+    "action_item": "Defer project until code-compliant fire separation is installed.",
+    "reference_policy": "IHWAP 2018 §10.4.4",
+    "documentation": "Photo before and after, inspection report.",
+    "tags": ["multifamily", "fire_separation", "deferral"],
+    "wx_plus_fixable": false
+  },
+  {
+    "trigger": "Windows do not operate or cannot be opened for emergency egress",
+    "action_item": "Repair or replace window to restore egress capability.",
+    "reference_policy": "IHWAP 2018 §8.2.4",
+    "documentation": "Photo before and after repair.",
+    "tags": ["window", "egress", "repair"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Hose bibb in freezing zone not frost-proof or insulated",
+    "action_item": "Replace with frost-proof hose bibb or install insulation.",
+    "reference_policy": "IHWAP 2018 §5.1.5",
+    "documentation": "Photo before and after.",
+    "tags": ["hose_bibb", "frost_proof"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Temporary steps or makeshift ladders used for permanent access",
+    "action_item": "Replace with code-compliant permanent stair or ladder.",
+    "reference_policy": "IHWAP 2018 §5.1.8",
+    "documentation": "Photo of installed stair/ladder.",
+    "tags": ["stairs", "ladder", "access"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Mobile/manufactured home roof does not drain properly",
+    "action_item": "Correct drainage to prevent ponding per SWS/IHWAP.",
+    "reference_policy": "IHWAP 2018 §9.3.2",
+    "documentation": "Photo before and after correction.",
+    "tags": ["mobile_home", "roof", "drainage"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "GFCI outlets not tested after installation",
+    "action_item": "Test GFCI operation and record result in project file.",
+    "reference_policy": "IHWAP 2018 §5.1.5",
+    "documentation": "Photo of test, record sheet.",
+    "tags": ["GFCI", "outlet", "testing"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Garage ceiling under habitable space not fire-rated",
+    "action_item": "Install code-compliant fire-rated ceiling.",
+    "reference_policy": "IHWAP 2018 §5.2.5",
+    "documentation": "Photo of fire-rated ceiling.",
+    "tags": ["garage", "ceiling", "fire"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "House lacks house number visible from street",
+    "action_item": "Install minimum 4-inch house numbers visible from street.",
+    "reference_policy": "IHWAP 2018 §8.1.5",
+    "documentation": "Photo of house number.",
+    "tags": ["address", "house_number", "code"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improperly supported flue or vent connector",
+    "action_item": "Add supports as required to maintain safe venting.",
+    "reference_policy": "IHWAP 2018 §2.4.8",
+    "documentation": "Photo of supports.",
+    "tags": ["flue", "venting", "support"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Mobile/manufactured home lacks proper ground anchor system",
+    "action_item": "Install code-compliant ground anchors.",
+    "reference_policy": "IHWAP 2018 §9.2.2",
+    "documentation": "Photo of installed anchors.",
+    "tags": ["mobile_home", "anchor", "ground"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Garage slab has active water infiltration",
+    "action_item": "Install drain or regrade exterior as feasible.",
+    "reference_policy": "IHWAP 2018 §5.2.5",
+    "documentation": "Photo before and after correction.",
+    "tags": ["garage", "slab", "moisture"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Mobile home roof insulation compressed below R-value",
+    "action_item": "Restore or install insulation to achieve minimum R-value.",
+    "reference_policy": "IHWAP 2018 §9.3.1",
+    "documentation": "Photo before and after.",
+    "tags": ["mobile_home", "roof", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Attic bypasses missed during air sealing",
+    "action_item": "Seal bypasses with durable, code-compliant material.",
+    "reference_policy": "IHWAP 2018 §6.2.1",
+    "documentation": "Photo before and after sealing.",
+    "tags": ["attic", "bypass", "air_sealing"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No vapor barrier under manufactured/mobile home",
+    "action_item": "Install code-compliant vapor barrier over soil.",
+    "reference_policy": "IHWAP 2018 §9.2.6",
+    "documentation": "Photo of vapor barrier.",
+    "tags": ["mobile_home", "vapor_barrier"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Chimney lacks code-required clearance to combustibles",
+    "action_item": "Adjust or rebuild to maintain required clearance.",
+    "reference_policy": "IHWAP 2018 §2.4.8",
+    "documentation": "Photo of clearance before and after.",
+    "tags": ["chimney", "clearance", "combustion"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "Detached building on property used as living space with no CO/smoke detector",
+    "action_item": "Install detectors per program requirements.",
+    "reference_policy": "IHWAP 2018 §5.1.2",
+    "documentation": "Photo of installed detector(s).",
+    "tags": ["detached", "smoke_detector", "CO_detector"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Electrical system overloaded due to excessive plug-in appliances",
+    "action_item": "Refer to licensed electrician for evaluation and correction.",
+    "reference_policy": "IHWAP 2018 §5.1.4",
+    "documentation": "Photo, electrician's report.",
+    "tags": ["electrical", "overload"],
+    "wx_plus_fixable": false
+  },
+  {
+    "trigger": "No carbon monoxide alarm on each floor with combustion appliances",
+    "action_item": "Install CO alarm per IHWAP requirements.",
+    "reference_policy": "IHWAP 2018 §5.1.3",
+    "documentation": "Photo of installed CO alarm.",
+    "tags": ["CO_detector", "combustion", "safety"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Flexible ductwork used in place of rigid supply trunk",
+    "action_item": "Replace with rigid duct per manufacturer and code.",
+    "reference_policy": "IHWAP 2018 §3.4.2",
+    "documentation": "Photo of duct before and after.",
+    "tags": ["duct", "supply", "rigid"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Kitchen has no dedicated lighting circuit",
+    "action_item": "Refer to licensed electrician for correction.",
+    "reference_policy": "IHWAP 2018 §5.1.5",
+    "documentation": "Photo, electrician report.",
+    "tags": ["kitchen", "lighting", "electrical"],
+    "wx_plus_fixable": false
+  },
+  {
+    "trigger": "Uninsulated rim/band joist in mobile/manufactured home",
+    "action_item": "Install or repair insulation at rim/band per program specs.",
+    "reference_policy": "IHWAP 2018 §9.2.6",
+    "documentation": "Photo of insulated rim/band.",
+    "tags": ["mobile_home", "rim_joist", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No lockable disconnect at exterior AC condenser",
+    "action_item": "Install lockable disconnect per code.",
+    "reference_policy": "IHWAP 2018 §5.1.9",
+    "documentation": "Photo of disconnect.",
+    "tags": ["AC", "disconnect", "electrical"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing insulation certificate at job completion",
+    "action_item": "Issue and post insulation certificate per IHWAP requirements.",
+    "reference_policy": "IHWAP 2018 §6.2.11",
+    "documentation": "Photo of posted certificate.",
+    "tags": ["insulation", "certificate", "documentation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Insulation installed below code-required clearance from recessed lighting",
+    "action_item": "Maintain 3-inch clearance or use IC-rated fixtures.",
+    "reference_policy": "IHWAP 2018 §6.2.9",
+    "documentation": "Photo of clearance or fixture.",
+    "tags": ["insulation", "lighting", "clearance"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "No sediment trap on gas line to furnace or water heater",
+    "action_item": "Install code-compliant sediment trap.",
+    "reference_policy": "IHWAP 2018 §5.3.7",
+    "documentation": "Photo of trap.",
+    "tags": ["gas", "sediment_trap", "safety"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Mobile home tie-downs corroded or loose",
+    "action_item": "Replace or repair tie-downs to meet code.",
+    "reference_policy": "IHWAP 2018 §9.2.2",
+    "documentation": "Photo before and after correction.",
+    "tags": ["mobile_home", "anchor", "tie_down"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Uninsulated attic hatch or pull-down stairs",
+    "action_item": "Insulate to match attic R-value.",
+    "reference_policy": "IHWAP 2018 §6.2.4",
+    "documentation": "Photo of insulated hatch.",
+    "tags": ["attic", "hatch", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No exterior door peephole or viewer in multi-unit dwelling",
+    "action_item": "Install code-compliant viewer or peephole.",
+    "reference_policy": "IHWAP 2018 §8.1.7",
+    "documentation": "Photo of viewer.",
+    "tags": ["door", "viewer", "security"],
+    "wx_plus_fixable": true
+  }
+,
+  {
+    "trigger": "GFCI receptacle not labeled after installation",
+    "action_item": "Label all GFCI receptacles as required by code.",
+    "reference_policy": "IHWAP 2018 §5.1.5",
+    "documentation": "Photo of label and installed GFCI.",
+    "tags": ["GFCI", "electrical", "label"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Combustion water heater not elevated in garage as required by code",
+    "action_item": "Install code-compliant platform to elevate water heater above floor.",
+    "reference_policy": "IHWAP 2018 §5.3.1",
+    "documentation": "Photo of platform and heater.",
+    "tags": ["water_heater", "garage", "combustion"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Basement/crawlspace vent well filled with debris or soil",
+    "action_item": "Clear and maintain vent well for airflow and drainage.",
+    "reference_policy": "IHWAP 2018 §7.2.1",
+    "documentation": "Photo before and after clearing.",
+    "tags": ["basement", "crawlspace", "vent"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Electrical conduit not supported per code",
+    "action_item": "Install additional supports or straps to comply with code.",
+    "reference_policy": "IHWAP 2018 §5.1.4",
+    "documentation": "Photo before and after support install.",
+    "tags": ["electrical", "conduit", "support"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No exterior door weatherstripping on multi-family common doors",
+    "action_item": "Install or repair weatherstripping to minimize air infiltration.",
+    "reference_policy": "IHWAP 2018 §8.1.2",
+    "documentation": "Photo of new weatherstripping.",
+    "tags": ["door", "weatherstripping", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Hot water pipes not insulated in mobile/manufactured home",
+    "action_item": "Install pipe insulation per SWS/IHWAP standards.",
+    "reference_policy": "IHWAP 2018 §9.2.6",
+    "documentation": "Photo of insulated pipes.",
+    "tags": ["mobile_home", "plumbing", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Open stair risers in egress path exceed 4-inch maximum opening",
+    "action_item": "Modify stairs to reduce riser opening to ≤4 inches.",
+    "reference_policy": "IHWAP 2018 §5.1.8",
+    "documentation": "Photo of corrected stairs.",
+    "tags": ["stairs", "egress", "code"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No exhaust fan in bathrooms with tub or shower",
+    "action_item": "Install code-compliant exhaust fan vented to exterior.",
+    "reference_policy": "IHWAP 2018 §4.3.2",
+    "documentation": "Photo of new fan and exterior termination.",
+    "tags": ["bathroom", "ventilation", "exhaust_fan"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Drain tile/sump system present but not functional",
+    "action_item": "Repair or replace system to ensure proper water management.",
+    "reference_policy": "IHWAP 2018 §7.2.3",
+    "documentation": "Photo and repair record.",
+    "tags": ["sump_pump", "basement", "moisture"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing handrail return (ends of handrail not returned to wall or post)",
+    "action_item": "Install return to wall/post to prevent snagging.",
+    "reference_policy": "IHWAP 2018 §5.1.8",
+    "documentation": "Photo of new handrail return.",
+    "tags": ["handrail", "stairs", "safety"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Clothes dryer vent not terminated outside (terminates in garage/crawl/basement)",
+    "action_item": "Reroute vent to exterior wall or roof.",
+    "reference_policy": "IHWAP 2018 §4.3.5",
+    "documentation": "Photo of corrected vent termination.",
+    "tags": ["dryer", "ventilation", "code"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Backdraft damper missing or non-functional on range or bath fan",
+    "action_item": "Install code-compliant backdraft damper.",
+    "reference_policy": "IHWAP 2018 §4.3.4",
+    "documentation": "Photo of new or repaired damper.",
+    "tags": ["kitchen", "bathroom", "ventilation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Mobile/manufactured home entry door not weatherstripped",
+    "action_item": "Install or repair weatherstripping at entry door.",
+    "reference_policy": "IHWAP 2018 §9.2.4",
+    "documentation": "Photo of new weatherstripping.",
+    "tags": ["mobile_home", "door", "weatherstripping"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-functional or missing light fixtures in stairways and exits",
+    "action_item": "Install or repair lighting to ensure safe egress.",
+    "reference_policy": "IHWAP 2018 §5.1.15",
+    "documentation": "Photo before and after repair.",
+    "tags": ["lighting", "stairway", "egress"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Foundation insulation installed below grade without protection",
+    "action_item": "Install protective covering per SWS/IHWAP.",
+    "reference_policy": "IHWAP 2018 §7.1.3",
+    "documentation": "Photo of installed covering.",
+    "tags": ["foundation", "insulation", "protection"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Stair tread depth or riser height not uniform (variation >3/8 inch)",
+    "action_item": "Correct treads/risers to provide uniform rise/run.",
+    "reference_policy": "IHWAP 2018 §5.1.8",
+    "documentation": "Photo of corrected stair.",
+    "tags": ["stairs", "tread", "riser"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper installation of expansion tank on water heater",
+    "action_item": "Reinstall or correct per manufacturer and code.",
+    "reference_policy": "IHWAP 2018 §5.3.2",
+    "documentation": "Photo of corrected tank.",
+    "tags": ["water_heater", "expansion_tank", "plumbing"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper pipe insulation material used on hot water lines",
+    "action_item": "Replace with code-approved insulation (≥R-3).",
+    "reference_policy": "IHWAP 2018 §5.3.4",
+    "documentation": "Photo of new insulation.",
+    "tags": ["plumbing", "pipe", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-operable window(s) in required egress location",
+    "action_item": "Repair or replace window(s) to restore operation.",
+    "reference_policy": "IHWAP 2018 §8.2.4",
+    "documentation": "Photo of repair or replacement.",
+    "tags": ["window", "egress", "repair"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-code handrail profile (not graspable or too large)",
+    "action_item": "Install code-compliant handrail profile.",
+    "reference_policy": "IHWAP 2018 §5.1.8",
+    "documentation": "Photo of handrail and profile measurement.",
+    "tags": ["stairs", "handrail", "code"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Ductwork disconnected or leaking in attic/crawl/basement",
+    "action_item": "Reconnect and seal ductwork with approved material.",
+    "reference_policy": "IHWAP 2018 §3.4.2",
+    "documentation": "Photo before and after repair.",
+    "tags": ["ductwork", "leakage", "repair"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-functional GFCI breaker or receptacle in wet area",
+    "action_item": "Replace with new, code-compliant GFCI device.",
+    "reference_policy": "IHWAP 2018 §5.1.5",
+    "documentation": "Photo of new device.",
+    "tags": ["GFCI", "electrical", "replacement"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Crawlspace access hatch less than 18x24 inches",
+    "action_item": "Enlarge access to meet code.",
+    "reference_policy": "IHWAP 2018 §7.2.1",
+    "documentation": "Photo of enlarged hatch.",
+    "tags": ["crawlspace", "access", "hatch"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Smoke alarm not interconnected in multi-unit dwelling",
+    "action_item": "Install or upgrade to interconnected alarms.",
+    "reference_policy": "IHWAP 2018 §5.1.2",
+    "documentation": "Photo of installation, device manual.",
+    "tags": ["smoke_alarm", "interconnected", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Uninsulated band/rim joist in finished basement",
+    "action_item": "Install insulation per SWS/IHWAP to required R-value.",
+    "reference_policy": "IHWAP 2018 §7.3.1",
+    "documentation": "Photo of new insulation.",
+    "tags": ["rim_joist", "insulation", "basement"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-operable light fixture at exterior entry door",
+    "action_item": "Repair or replace fixture for code-compliant lighting.",
+    "reference_policy": "IHWAP 2018 §8.1.4",
+    "documentation": "Photo of working fixture.",
+    "tags": ["exterior", "lighting", "door"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Heated space above unheated garage with no insulation below floor",
+    "action_item": "Install code-compliant insulation below floor.",
+    "reference_policy": "IHWAP 2018 §6.2.2",
+    "documentation": "Photo of insulation install.",
+    "tags": ["garage", "insulation", "floor"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Garage door opener not equipped with auto-reverse feature",
+    "action_item": "Install or repair to provide auto-reverse safety.",
+    "reference_policy": "IHWAP 2018 §5.1.16",
+    "documentation": "Photo of tested auto-reverse.",
+    "tags": ["garage", "door_opener", "safety"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Clothes dryer vent does not slope to exterior (backflow risk)",
+    "action_item": "Adjust vent slope for positive drainage.",
+    "reference_policy": "IHWAP 2018 §4.3.5",
+    "documentation": "Photo of corrected vent.",
+    "tags": ["dryer", "ventilation", "slope"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper caulking or air sealing at window/door frames",
+    "action_item": "Remove and replace with durable, code-compliant sealant.",
+    "reference_policy": "IHWAP 2018 §8.1.6",
+    "documentation": "Photo of corrected caulking/sealing.",
+    "tags": ["window", "door", "air_sealing"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Uninsulated or poorly insulated mobile home underbelly",
+    "action_item": "Repair/install insulation per SWS/IHWAP requirements.",
+    "reference_policy": "IHWAP 2018 §9.2.6",
+    "documentation": "Photo of repaired underbelly insulation.",
+    "tags": ["mobile_home", "insulation", "underbelly"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No shutoff valve at each plumbing fixture",
+    "action_item": "Install code-compliant shutoff valve.",
+    "reference_policy": "IHWAP 2018 §5.3.12",
+    "documentation": "Photo of installed valve.",
+    "tags": ["plumbing", "shutoff_valve"],
+    "wx_plus_fixable": true
+  }
