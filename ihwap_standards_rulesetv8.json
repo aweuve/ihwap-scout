@@ -1,0 +1,490 @@
+,
+  {
+    "trigger": "Damaged or missing stair tread nosing in multifamily common stair",
+    "action_item": "Repair or replace nosing for code-compliant step.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["stairs", "nosing", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or damaged wall covering in multifamily corridor or lobby",
+    "action_item": "Repair or replace wall covering to restore finish.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair.",
+    "tags": ["wall_covering", "corridor", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No operable window or mechanical ventilation in multifamily bathroom",
+    "action_item": "Install operable window or code-compliant exhaust fan.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["bathroom", "ventilation", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improperly terminated exhaust duct at multifamily roof or wall",
+    "action_item": "Extend and terminate exhaust duct per code.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of new termination.",
+    "tags": ["exhaust_duct", "termination", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing or damaged guard at elevated walkway or balcony in multifamily",
+    "action_item": "Install or repair code-compliant guard.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after installation.",
+    "tags": ["guard", "walkway", "balcony"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, missing, or corroded fastener at handrail or guardrail in common area",
+    "action_item": "Replace or repair all fasteners for secure attachment.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo of repaired fastener.",
+    "tags": ["handrail", "guardrail", "fastener"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No address directory posted at main entry to multifamily",
+    "action_item": "Install code-compliant directory for resident identification.",
+    "reference_policy": "IHWAP 2018 §8.1.5",
+    "documentation": "Photo of directory.",
+    "tags": ["address", "directory", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Damaged or missing electrical cover plate in multifamily unit",
+    "action_item": "Install code-compliant cover plate at all locations.",
+    "reference_policy": "IHWAP 2018 §10.4.3",
+    "documentation": "Photo of cover plate installation.",
+    "tags": ["electrical", "cover_plate", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No weather seal at main entry door to multifamily corridor",
+    "action_item": "Install or repair weather seal to minimize air infiltration.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["door", "weather_seal", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Insulation missing at roof/wall intersection in multifamily",
+    "action_item": "Install or repair insulation for full coverage.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after insulation.",
+    "tags": ["insulation", "roof", "wall", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, missing, or improper stair balusters in multifamily",
+    "action_item": "Repair or replace to maintain code-compliant spacing and attachment.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after correction.",
+    "tags": ["stairs", "baluster", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improperly supported deck or balcony at multifamily unit",
+    "action_item": "Install or repair support to meet code for load and attachment.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after correction.",
+    "tags": ["deck", "balcony", "support"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No fire extinguisher in multifamily common kitchen",
+    "action_item": "Install code-compliant fire extinguisher.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["fire_extinguisher", "kitchen", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or damaged flooring in multifamily common corridor",
+    "action_item": "Repair or replace flooring to restore safe surface.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair.",
+    "tags": ["flooring", "corridor", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No CO detector in multifamily unit with combustion appliance",
+    "action_item": "Install code-compliant CO detector.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["CO_detector", "combustion", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No hot water at common bathroom fixture in multifamily",
+    "action_item": "Repair plumbing or water heater to restore hot water.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair.",
+    "tags": ["hot_water", "bathroom", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No slip-resistant treads at main entry stair in multifamily",
+    "action_item": "Install slip-resistant material on stair treads.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after install.",
+    "tags": ["stairs", "slip_resistant", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improperly sealed roof vent at multifamily",
+    "action_item": "Reseal or repair vent for code-compliant weather tightness.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after reseal/repair.",
+    "tags": ["roof", "vent", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Laundry equipment in multifamily lacks manufacturer-required clearance",
+    "action_item": "Modify installation for code- and manufacturer-compliant clearance.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after modification.",
+    "tags": ["laundry", "clearance", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper or missing dryer vent termination at multifamily exterior",
+    "action_item": "Install code-compliant vent termination with pest/weather protection.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["dryer", "vent", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing or damaged window lock in multifamily unit",
+    "action_item": "Repair or install code-compliant window lock.",
+    "reference_policy": "IHWAP 2018 §8.2.2",
+    "documentation": "Photo of new lock.",
+    "tags": ["window", "lock", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No insulation certificate posted at job completion in multifamily",
+    "action_item": "Issue and post insulation certificate per IHWAP.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of posted certificate.",
+    "tags": ["insulation", "certificate", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No lighting at exterior entry door to multifamily corridor",
+    "action_item": "Install or repair lighting at entry door.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair/install.",
+    "tags": ["lighting", "entry_door", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Exterior handrail not continuous at multifamily steps or ramps",
+    "action_item": "Install continuous handrail to meet code.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after correction.",
+    "tags": ["handrail", "exterior", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or missing door hardware at shared entrance in multifamily",
+    "action_item": "Install or repair door hardware for code-compliant operation.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of hardware after repair.",
+    "tags": ["door", "hardware", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper or missing expansion joint at exterior slab in multifamily",
+    "action_item": "Install/repair code-compliant expansion joint.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install/repair.",
+    "tags": ["expansion_joint", "slab", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Clothes washer lacks anti-siphon device in multifamily laundry",
+    "action_item": "Install code-compliant anti-siphon device.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["washer", "anti_siphon", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No vapor barrier or insulation under laundry in multifamily",
+    "action_item": "Install code-compliant vapor barrier and/or insulation.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["laundry", "vapor_barrier", "insulation"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Obstructed emergency egress at window or door in multifamily unit",
+    "action_item": "Clear or repair egress to comply with code.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after correction.",
+    "tags": ["egress", "window", "door"],
+    "wx_plus_fixable": true
+  }
+,
+  {
+    "trigger": "No weatherproof cover at exterior electrical outlet in multifamily common area",
+    "action_item": "Install code-compliant weatherproof cover.",
+    "reference_policy": "IHWAP 2018 §10.4.3",
+    "documentation": "Photo after installation.",
+    "tags": ["electrical", "outlet", "weatherproof"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No grab bar in accessible bathroom required by code in multifamily",
+    "action_item": "Install code-compliant grab bar at accessible fixtures.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["grab_bar", "bathroom", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Non-slip surface missing at required accessible ramp or walkway in multifamily",
+    "action_item": "Install code-compliant non-slip surface.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after application.",
+    "tags": ["ramp", "non_slip", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Elevator call button not ADA-compliant in multifamily",
+    "action_item": "Install or modify elevator controls to meet ADA standards.",
+    "reference_policy": "IHWAP 2018 §10.5.1",
+    "documentation": "Photo of compliant controls.",
+    "tags": ["elevator", "ADA", "multifamily"],
+    "wx_plus_fixable": false
+  },
+  {
+    "trigger": "No accessible parking or loading zone at multifamily building",
+    "action_item": "Designate, sign, and stripe accessible parking as required by code.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of parking area after compliance.",
+    "tags": ["parking", "accessible", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "Accessible route to entry not maintained (snow, debris, etc.) in multifamily",
+    "action_item": "Clear and maintain accessible route.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of cleared route.",
+    "tags": ["route", "accessible", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Handrail height at multifamily stair not 34–38 inches as required",
+    "action_item": "Modify handrail to achieve code-compliant height.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after correction.",
+    "tags": ["handrail", "height", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Signage for emergency exit missing at required location in multifamily",
+    "action_item": "Install code-compliant exit signage.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after sign installation.",
+    "tags": ["signage", "emergency_exit", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No emergency procedures or contact list posted in multifamily common area",
+    "action_item": "Post required emergency procedures and contacts.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of posted information.",
+    "tags": ["emergency", "contact", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or missing kickplate at common area door in multifamily",
+    "action_item": "Install or repair code-compliant kickplate.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install/repair.",
+    "tags": ["door", "kickplate", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, damaged, or missing closet door hardware in multifamily unit",
+    "action_item": "Repair or replace hardware for safe and code-compliant operation.",
+    "reference_policy": "IHWAP 2018 §10.4.3",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["closet_door", "hardware", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No weather seal at common area mailroom or package room entry in multifamily",
+    "action_item": "Install or repair weather seal.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["mailroom", "weather_seal", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No accessible door hardware (lever, paddle) at entry in multifamily",
+    "action_item": "Install accessible hardware per code.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["door", "accessible_hardware", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No code-compliant threshold at main entry to multifamily",
+    "action_item": "Install or repair threshold to code height and slope.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation.",
+    "tags": ["threshold", "main_entry", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Mailboxes in multifamily not labeled or accessible per code",
+    "action_item": "Label mailboxes and adjust height/location for accessibility.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after correction.",
+    "tags": ["mailbox", "label", "accessibility"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper landing at top/bottom of common stairs in multifamily",
+    "action_item": "Modify or rebuild landing for code-compliant size and slope.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after modification.",
+    "tags": ["landing", "stairs", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "Loose, damaged, or missing signage at multifamily main entry",
+    "action_item": "Repair or replace entry signage as required.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["signage", "main_entry", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Unit number missing or not visible at multifamily unit door",
+    "action_item": "Install minimum 4-inch high unit number.",
+    "reference_policy": "IHWAP 2018 §8.1.5",
+    "documentation": "Photo after install.",
+    "tags": ["unit_number", "door", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Multifamily playground lacks code-required safety surfacing",
+    "action_item": "Install code-compliant safety surface at all play equipment.",
+    "reference_policy": "IHWAP 2018 §10.4.5",
+    "documentation": "Photo after install.",
+    "tags": ["playground", "safety_surface", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "No code-compliant lock at exterior mechanical/electrical room in multifamily",
+    "action_item": "Install or repair code-compliant lock.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install/repair.",
+    "tags": ["lock", "mechanical_room", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose or missing grab bar in accessible multifamily bathroom",
+    "action_item": "Repair or replace grab bar for code-compliant support.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["grab_bar", "bathroom", "accessible"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Damaged or missing safety glazing at common area door in multifamily",
+    "action_item": "Replace with code-compliant safety glazing.",
+    "reference_policy": "IHWAP 2018 §10.4.1",
+    "documentation": "Photo after installation.",
+    "tags": ["door", "safety_glazing", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, missing, or damaged stair tread at exterior common stairs in multifamily",
+    "action_item": "Repair or replace stair tread.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["stairs", "tread", "exterior", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No fire separation between bike storage or accessory structure and main building in multifamily",
+    "action_item": "Install code-compliant fire separation.",
+    "reference_policy": "IHWAP 2018 §10.4.4",
+    "documentation": "Photo after install.",
+    "tags": ["fire_separation", "bike_storage", "multifamily"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "Loose or missing fire extinguisher in multifamily common area",
+    "action_item": "Install or secure code-compliant fire extinguisher.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after install.",
+    "tags": ["fire_extinguisher", "common_area", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, damaged, or missing wall base at common area in multifamily",
+    "action_item": "Repair or replace wall base for finished appearance.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["wall_base", "common_area", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Accessible route from parking to entry not continuous in multifamily",
+    "action_item": "Modify route to achieve continuous accessible path.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after modification.",
+    "tags": ["route", "parking", "accessible"],
+    "wx_plus_fixable": "case_by_case"
+  },
+  {
+    "trigger": "Loose, missing, or corroded handrail fastener at exterior stair in multifamily",
+    "action_item": "Repair or replace fasteners for code-compliant handrail.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after repair.",
+    "tags": ["handrail", "fastener", "exterior"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Missing or non-functional sump pump in common basement of multifamily",
+    "action_item": "Install or repair sump pump as required.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo after installation/repair.",
+    "tags": ["sump_pump", "basement", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "No signage for fire extinguisher location in multifamily common area",
+    "action_item": "Install required signage above fire extinguisher.",
+    "reference_policy": "IHWAP 2018 §10.3.1",
+    "documentation": "Photo of signage after installation.",
+    "tags": ["signage", "fire_extinguisher", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Loose, missing, or inoperable door closer at fire-rated door in multifamily",
+    "action_item": "Repair or replace door closer for code-compliant operation.",
+    "reference_policy": "IHWAP 2018 §10.4.4",
+    "documentation": "Photo after repair/replacement.",
+    "tags": ["door", "closer", "fire_rated", "multifamily"],
+    "wx_plus_fixable": true
+  },
+  {
+    "trigger": "Improper handrail extension at top or bottom stair in multifamily common area",
+    "action_item": "Extend handrail per code to meet required length and return.",
+    "reference_policy": "IHWAP 2018 §10.4.2",
+    "documentation": "Photo after extension.",
+    "tags": ["handrail", "extension", "multifamily"],
+    "wx_plus_fixable": true
+  }
