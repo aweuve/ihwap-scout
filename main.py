@@ -34,7 +34,7 @@ def load_all_health_safety_logic():
 ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
 
 # -------------------------------
-# Search logic by keyword(s): show all partials, highlight the best
+# Search logic by keyword(s): show ALL matches, no best/others
 # -------------------------------
 def search_policy(keyword):
     keyword_lower = keyword.lower().strip()
@@ -59,24 +59,13 @@ def search_policy(keyword):
             key = (item.get("reference_policy", ""), item.get("trigger", ""))
             if key not in seen_keys:
                 results.append({
-                    "answer": f"{item.get('action_item','')}\n{item.get('policy_text','')}".strip(),
-                    "policy": item.get("reference_policy", ""),
                     "trigger": item.get("trigger", ""),
-                    "score": score,
+                    "answer": f"{item.get('action_item','')}\n{item.get('policy_text','')}".strip(),
+                    "policy": item.get("reference_policy", "")
                 })
                 seen_keys.add(key)
 
-    if not results:
-        return {}  # No matches at all
-
-    results.sort(key=lambda r: -r["score"])
-    best = results[0]
-    for r in results:
-        r.pop("score", None)
-    return {
-        "best": best,
-        "all": results
-    }
+    return results
 
 # -------------------------------
 # Flask App Setup
@@ -161,13 +150,11 @@ def age_finder():
 def knowledge():
     q = request.args.get("q")
     if not q:
-        return render_template("knowledge.html", query="", best=None, others=None, error="Query ?q= missing")
-    result = search_policy(q)
-    if not result or not result.get("all"):
-        return render_template("knowledge.html", query=q, best=None, others=None, error="No policy or logic found.")
-    best = result["best"]
-    others = [r for r in result["all"] if r != best]
-    return render_template("knowledge.html", query=q, best=best, others=others, error=None)
+        return render_template("knowledge.html", query="", results=None, error="Query ?q= missing")
+    results = search_policy(q)
+    if not results:
+        return render_template("knowledge.html", query=q, results=None, error="No policy or logic found.")
+    return render_template("knowledge.html", query=q, results=results, error=None)
 
 @app.route("/logic_test")
 def logic_test():
@@ -183,5 +170,6 @@ def logic_test():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
