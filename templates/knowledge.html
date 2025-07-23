@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IHWAP Scout Knowledge Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
+        .container { max-width: 680px; margin: 24px auto; background: #fff; padding: 32px 20px 20px 20px; box-shadow: 0 2px 6px #ddd; border-radius: 12px; }
+        h2 { margin-top: 0; }
+        form { margin-bottom: 28px; display: flex; flex-direction: row; gap: 12px; }
+        input[type="text"] { flex: 1; padding: 8px; font-size: 1.1em; border-radius: 5px; border: 1px solid #bbb; }
+        button { padding: 8px 18px; font-size: 1.1em; background: #3b4656; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .result { background: #f3f6fb; border-radius: 7px; margin-bottom: 20px; padding: 18px 18px 12px 18px; border-left: 6px solid #6072ea; box-shadow: 0 1px 2px #eaeaea; }
+        .top-result { border-left: 6px solid #22bb55; background: #eafbe9; }
+        em { color: #888; }
+        @media (max-width: 500px) {
+            .container { padding: 12px 4px; }
+            form { flex-direction: column; gap: 7px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🔎 IHWAP Scout Knowledge Search</h2>
+    <form method="get" action="/knowledge">
+        <input type="text" name="q" placeholder="Enter a keyword or question..." value="{{ request.args.get('q','') }}">
+        <button type="submit">Search</button>
+    </form>
+
+    {% if answers %}
+        {% for ans in answers %}
+            <div class="result {% if loop.first %}top-result{% endif %}">
+                {{ ans|safe }}
+            </div>
+        {% endfor %}
+    {% else %}
+        <div>No results found for your query.</div>
+    {% endif %}
+</div>
+</body>
+</html>
