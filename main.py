@@ -34,7 +34,7 @@ def load_all_health_safety_logic():
 ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
 
 # -------------------------------
-# Search logic by keyword(s) -- now shows all partial matches, highlights the best
+# Search logic by keyword(s): show all partials, highlight the best
 # -------------------------------
 def search_policy(keyword):
     keyword_lower = keyword.lower().strip()
@@ -45,7 +45,6 @@ def search_policy(keyword):
     def _score_match(text):
         return sum(1 for term in key_terms if term in text)
 
-    # Score all items, keep all matches
     for item in ALL_HEALTH_SAFETY_LOGIC:
         fields = [
             item.get("trigger", ""),
@@ -68,11 +67,9 @@ def search_policy(keyword):
                 seen_keys.add(key)
 
     if not results:
-        return []  # No matches at all
+        return {}  # No matches at all
 
-    # Sort: best first, keep all partials
     results.sort(key=lambda r: -r["score"])
-    # Highlight the best
     best = results[0]
     for r in results:
         r.pop("score", None)
@@ -157,30 +154,20 @@ def prevent():
 
 @app.route("/age_finder", methods=["GET", "POST"])
 def age_finder():
-    # ... unchanged from your previous logic ...
-    # Kept short here, see your previous implementation!
-    pass
+    # KEEP: Fill in with your current implementation for age_finder
+    return render_template("age_finder.html")  # (dummy, update as needed)
 
 @app.route("/knowledge", methods=["GET"])
 def knowledge():
     q = request.args.get("q")
     if not q:
-        return "Query ?q= missing", 400
+        return render_template("knowledge.html", query="", best=None, others=None, error="Query ?q= missing")
     result = search_policy(q)
     if not result or not result.get("all"):
-        return "No policy or logic found.", 404
+        return render_template("knowledge.html", query=q, best=None, others=None, error="No policy or logic found.")
     best = result["best"]
     others = [r for r in result["all"] if r != best]
-    out = [
-        f"<b>🔎 BEST MATCH</b><br><b>{best['trigger']}</b><br>{best['answer']}<br><em>[{best['policy']}]</em>"
-    ]
-    if others:
-        out.append("<br><b>Other partial matches:</b>")
-        for r in others:
-            out.append(
-                f"<b>{r['trigger']}</b><br>{r['answer']}<br><em>[{r['policy']}]</em><hr>"
-            )
-    return "<br>".join(out)
+    return render_template("knowledge.html", query=q, best=best, others=others, error=None)
 
 @app.route("/logic_test")
 def logic_test():
@@ -196,4 +183,5 @@ def logic_test():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
