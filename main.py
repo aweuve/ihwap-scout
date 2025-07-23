@@ -10,13 +10,13 @@ import glob
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 
-from vision_matcher import get_matching_trigger_from_image  # Assumes you have this in your stack
+from vision_matcher import get_matching_trigger_from_image
 from decoders import decode_serial
-from chat_routes import init_chat_routes  # Assumes you have chat_routes.py in your stack
+from chat_routes import init_chat_routes
 
-# ------------------------------
-# LOAD ALL HEALTH & SAFETY LOGIC v1-v9
-# ------------------------------
+# -------------------------------
+# Load ALL logic_health_safety_v*.json files (v1-v9+)
+# -------------------------------
 def load_all_health_safety_logic():
     logic = []
     for fname in glob.glob("logic_health_safety_v*.json"):
@@ -33,9 +33,9 @@ def load_all_health_safety_logic():
 
 ALL_HEALTH_SAFETY_LOGIC = load_all_health_safety_logic()
 
-# ------------------------------
-# FLEXIBLE SEARCH POLICY FUNCTION
-# ------------------------------
+# -------------------------------
+# Search logic by keyword(s) -- upgraded for full trigger pool
+# -------------------------------
 def search_policy(keyword):
     keyword_lower = keyword.lower().strip()
     key_terms = re.split(r"[\s_\-]+", keyword_lower)
@@ -98,21 +98,21 @@ def search_policy(keyword):
         r.pop("score", None)
     return results
 
-# ------------------------------
-# FLASK APP SETUP
-# ------------------------------
+# -------------------------------
+# Flask App Setup
+# -------------------------------
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET", "super_secret_key")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# ------------------------------
-# REGISTER CHAT ROUTES (MODULAR)
-# ------------------------------
+# -------------------------------
+# Register Chat Routes (from chat_routes.py)
+# -------------------------------
 init_chat_routes(app, search_policy)
 
-# ------------------------------
-# OTHER APP LOGIC (OPTIONAL)
-# ------------------------------
+# -------------------------------
+# ROUTES
+# -------------------------------
 
 @app.route("/")
 def landing():
@@ -146,7 +146,6 @@ def qci():
 
             result = get_matching_trigger_from_image(image_bytes, ALL_HEALTH_SAFETY_LOGIC)
             visible_elements = result.get("visible_elements", [])
-
             scene_type = result.get("scene_type") if result.get("scene_type") else None
 
             session["last_result"] = result
@@ -171,7 +170,118 @@ def scope():
 
 @app.route("/prevent")
 def prevent():
+    # If you want a future feature here, add logic; for now, just renders the page
     return render_template("prevent.html")
+
+@app.route("/age_finder", methods=["GET", "POST"])
+def age_finder():
+    result = None
+    fail_msg = None
+    use_manual = False
+    ocr_text = None
+    label_estimate = None
+
+    if request.method == "POST":
+        if request.form.get("manual"):
+            use_manual = True
+            brand = request.form.get("brand", "")
+            serial = request.form.get("serial", "").strip()
+            if not serial or not brand:
+                fail_msg = "Please provide both brand and serial number."
+            else:
+                res = decode_serial(serial, brand)
+                if isinstance(res, dict):
+                    result = res
+                else:
+                    fail_msg = res
+
+        elif "photo" in request.files:
+            photo = request.files.get("photo")
+            if photo and photo.filename:
+                img_bytes = photo.read()
+                try:
+                    base64_img = base64.b64encode(img_bytes).decode("utf-8")
+                    vision_prompt = (
+                        "You are an HVAC and appliance label expert. "
+                        "Extract ONLY the following from the nameplate or label in this photo: "
+                        "brand (if shown), model number, and serial number. "
+                        "Look for fields labeled 'Model', 'Model (Modèle)', 'Serial No', 'Serial (Série) No', 'S/N', or similar. "
+                        "Ignore barcodes—use only the printed letters/numbers. "
+                        "Respond ONLY with valid JSON like this: "
+                        '{"brand": "...", "model": "...", "serial": "..."} '
+                        "If any value is not found, return an empty string for that field. "
+                        "EXAMPLE: "
+                        '{"brand": "", "model": "GD080M16B-S", "serial": "GD0000658741"}'
+                    )
+                    vision_resp = openai.ChatCompletion.create(
+                        model="gpt-4o",
+                        messages=[
+                            {"role": "system", "content": vision_prompt},
+                            {
+                                "role": "user",
+                                "content": [
+                                    {
+                                        "type": "image_url",
+                                        "image_url": {"url": f"data:image/jpeg;base64,{base64_img}"},
+                                    }
+                                ],
+                            },
+                        ],
+                        max_tokens=200,
+                    )
+                    import json as pyjson
+                    txt = vision_resp.choices[0].message["content"]
+                    try:
+                        data = pyjson.loads(txt)
+                        brand = data.get("brand", "").strip()
+                        serial = data.get("serial", "").strip()
+                        if not brand or not serial:
+                            raise ValueError
+                        res = decode_serial(serial, brand)
+                        if isinstance(res, dict):
+                            result = res
+                        else:
+                            fail_msg = res
+                    except Exception:
+                        ocr_prompt = (
+                            "You are an OCR engine. Extract ALL readable text from the uploaded appliance label photo, including numbers and letters. "
+                            "Respond ONLY with a plain text list. Do NOT try to interpret it. Do NOT reply in JSON."
+                        )
+                        ocr_resp = openai.ChatCompletion.create(
+                            model="gpt-4o",
+                            messages=[
+                                {"role": "system", "content": ocr_prompt},
+                                {
+                                    "role": "user",
+                                    "content": [
+                                        {
+                                            "type": "image_url",
+                                            "image_url": {"url": f"data:image/jpeg;base64,{base64_img}"},
+                                        }
+                                    ],
+                                },
+                            ],
+                            max_tokens=600,
+                        )
+                        ocr_text = ocr_resp.choices[0].message["content"]
+                        fail_msg = (
+                            "Could not automatically extract brand/serial from the image. "
+                            "See all detected label text below, or enter the info manually."
+                        )
+                        use_manual = True
+                except Exception as e:
+                    fail_msg = f"Vision model error: {e}"
+                    use_manual = True
+            else:
+                fail_msg = "No image uploaded."
+    return render_template(
+        "age_finder.html",
+        result=result,
+        fail_msg=fail_msg,
+        use_manual=use_manual,
+        ocr_text=ocr_text,
+        label_estimate=label_estimate,
+    )
 
 @app.route("/knowledge", methods=["GET"])
 def knowledge():
@@ -197,9 +307,9 @@ def logic_test():
     total = len(ALL_HEALTH_SAFETY_LOGIC)
     return f"<h2>{total} H&S Triggers Loaded</h2>" + "".join(lines)
 
-# ------------------------------
-# MAIN GUARD
-# ------------------------------
+# -------------------------------
+# Main Guard
+# -------------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
     app.run(host="0.0.0.0", port=port, debug=False)
