@@ -2,41 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IHWAP Scout Knowledge Search</title>
+    <title>IHWAP Scout | Knowledge Search</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; }
-        .container { max-width: 680px; margin: 24px auto; background: #fff; padding: 32px 20px 20px 20px; box-shadow: 0 2px 6px #ddd; border-radius: 12px; }
-        h2 { margin-top: 0; }
-        form { margin-bottom: 28px; display: flex; flex-direction: row; gap: 12px; }
-        input[type="text"] { flex: 1; padding: 8px; font-size: 1.1em; border-radius: 5px; border: 1px solid #bbb; }
-        button { padding: 8px 18px; font-size: 1.1em; background: #3b4656; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
-        .result { background: #f3f6fb; border-radius: 7px; margin-bottom: 20px; padding: 18px 18px 12px 18px; border-left: 6px solid #6072ea; box-shadow: 0 1px 2px #eaeaea; }
-        .top-result { border-left: 6px solid #22bb55; background: #eafbe9; }
-        em { color: #888; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f9f9fb; margin: 0; padding: 0; }
+        .container { max-width: 600px; margin: 3rem auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; padding: 2rem 2rem 1rem 2rem; }
+        h1 { font-size: 1.6rem; margin-top: 0; color: #20262e; letter-spacing: 1px; }
+        form { margin-bottom: 1.5rem; display: flex; gap: 8px; }
+        input[type="text"] { flex: 1; padding: 10px; font-size: 1rem; border-radius: 5px; border: 1px solid #d0d0d6; }
+        button { padding: 10px 18px; border-radius: 5px; background: #444e5a; color: #fff; font-weight: bold; border: none; cursor: pointer; font-size: 1rem; }
+        button:hover { background: #2b3241; }
+        .notice { background: #f7eedd; color: #765c2b; border-radius: 4px; padding: 0.75em 1em; margin-bottom: 1.5rem; border: 1px solid #ffe9b8; }
+        .search-result { background: #f3f7fa; border-left: 4px solid #3c7cf5; margin-bottom: 1.2em; padding: 1em; border-radius: 4px; }
+        em { color: #3862b1; }
         @media (max-width: 500px) {
-            .container { padding: 12px 4px; }
-            form { flex-direction: column; gap: 7px; }
+            .container { padding: 1rem 0.5rem; }
+            h1 { font-size: 1.1rem; }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>🔎 IHWAP Scout Knowledge Search</h2>
-    <form method="get" action="/knowledge">
-        <input type="text" name="q" placeholder="Enter a keyword or question..." value="{{ request.args.get('q','') }}">
-        <button type="submit">Search</button>
-    </form>
+    <div class="container">
+        <h1>🧠 IHWAP Scout Knowledge Search</h1>
+        <form method="get" action="{{ url_for('knowledge') }}">
+            <input type="text" name="q" value="{{ query or '' }}" placeholder="Enter keywords (e.g. sump pump, dryer vent, handrail)..." autofocus>
+            <button type="submit">🔍 Search</button>
+        </form>
+        {% if message %}
+            <div class="notice">{{ message }}</div>
+        {% endif %}
 
-    {% if answers %}
-        {% for ans in answers %}
-            <div class="result {% if loop.first %}top-result{% endif %}">
-                {{ ans|safe }}
-            </div>
+        {% for answer in answers %}
+            <div class="search-result">{{ answer|safe }}</div>
         {% endfor %}
-    {% else %}
-        <div>No results found for your query.</div>
-    {% endif %}
-</div>
+    </div>
 </body>
 </html>
