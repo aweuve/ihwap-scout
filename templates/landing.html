@@ -2,115 +2,79 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>IHWAP Scout – Tool Hub</title>
+    <title>IHWAP Scout – Landing</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        :root {
-            --primary: #4763f5;
-            --primary-hover: #3547b6;
-            --accent: #43d8c9;
-            --background: linear-gradient(135deg, #e3eaff 0%, #f7faff 100%);
-            --card-bg: #fff;
-            --shadow: 0 4px 24px rgba(71,99,245,0.08), 0 1.5px 5px rgba(0,0,0,0.03);
-        }
-        html, body {
-            min-height: 100%;
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-            background: var(--background);
+            text-align: center;
         }
         .container {
-            max-width: 420px;
-            margin: 54px auto;
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            padding: 36px 32px 30px 32px;
-            text-align: center;
-            position: relative;
+            max-width: 480px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            padding: 32px 20px 24px 20px;
         }
         h1 {
-            font-size: 2.1rem;
-            font-weight: 700;
-            letter-spacing: -2px;
-            margin-bottom: 36px;
-            color: var(--primary);
-            background: linear-gradient(90deg, #4763f5 80%, #43d8c9 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 2rem;
+            color: #23344c;
+            margin-bottom: 12px;
         }
-        .tool-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin-bottom: 24px;
+        p {
+            color: #4f6179;
+            font-size: 1.12rem;
+            margin-bottom: 28px;
         }
         .tool-btn {
-            padding: 18px;
-            border-radius: 14px;
-            font-size: 1.17rem;
-            font-weight: 600;
-            background: var(--primary);
+            display: block;
+            width: 100%;
+            background: #364f6b;
             color: #fff;
+            font-size: 1.11rem;
+            padding: 18px 0;
+            margin: 14px 0;
             border: none;
-            cursor: pointer;
-            transition: background 0.15s, box-shadow 0.15s, transform 0.10s;
-            box-shadow: 0 2px 8px rgba(71,99,245,0.06);
+            border-radius: 8px;
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
+            transition: background 0.15s;
         }
         .tool-btn:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px) scale(1.025);
-            box-shadow: 0 6px 24px rgba(71,99,245,0.11);
-            text-decoration: none;
+            background: #23344c;
         }
-        .preview-label {
-            font-size: 0.98rem;
-            color: #666;
-            margin: 24px 0 10px 0;
-        }
-        .tool-btn.preview {
-            background: #e8eefa;
-            color: #4763f5;
-            border: 1.5px dashed #4763f5;
-        }
-        .tool-btn.preview:hover {
-            background: #d5e5ff;
-            color: #3547b6;
-            border: 1.5px solid #3547b6;
+        .brand {
+            margin-bottom: 22px;
+            font-size: 1.22rem;
+            color: #4f6179;
+            letter-spacing: 1px;
         }
         @media (max-width: 600px) {
-            .container {
-                max-width: 96vw;
-                padding: 20px 8px 14px 8px;
-            }
-            h1 {
-                font-size: 1.25rem;
-            }
-            .tool-btn {
-                padding: 15px 8px;
-                font-size: 1rem;
-            }
+            .container { margin: 10px 2vw; padding: 18px 4vw 12px 4vw; }
+            h1 { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧠 IHWAP Scout<br><span style="font-weight: 500; font-size: 1.0rem; color: #555;">Tool Hub</span></h1>
-        <div class="tool-list">
-            <a href="{{ url_for('chat.chat') }}" class="tool-btn">💬 Chat with Scout</a>
-            <a href="{{ url_for('qci') }}" class="tool-btn">📸 QCI Photo Review</a>
-            <a href="{{ url_for('scope') }}" class="tool-btn">📝 Scope of Work Summary</a>
-        </div>
-        <div class="preview-label">Preview Tools — Available for Future Use:</div>
-        <div class="tool-list">
-            <a href="{{ url_for('prevent') }}" class="tool-btn preview">🚧 Deferral Preventer (Preview)</a>
-            <a href="{{ url_for('age_finder') }}" class="tool-btn preview">🛠️ HVAC / Appliance Age Finder (Preview)</a>
+        <div class="brand"><b>IHWAP Scout</b></div>
+        <h1>Welcome to the Illinois Weatherization Scout</h1>
+        <p>
+            Use Scout to review field photos, chat about compliance, or search all state weatherization triggers and policies. 
+            Start below:
+        </p>
+        <a href="{{ url_for('chat.chat') }}" class="tool-btn">🧠 Chat with Scout</a>
+        <a href="{{ url_for('knowledge') }}?q=" class="tool-btn">🔍 Quick Policy Search</a>
+        <a href="{{ url_for('qci') }}" class="tool-btn">📷 QCI / Image Analyzer</a>
+        <a href="{{ url_for('scope') }}" class="tool-btn">📝 Scope of Work Summary</a>
+        <a href="{{ url_for('prevent') }}" class="tool-btn">🚧 Deferral Preventer (Preview)</a>
+        <a href="{{ url_for('age_finder') }}" class="tool-btn">🛠️ HVAC / Appliance Age Finder</a>
+        <br>
+        <div style="font-size: 0.95rem; color: #adb5bd; margin-top: 18px;">
+            Weatherization Intelligence Systems, LLC &copy; 2025
         </div>
     </div>
 </body>
