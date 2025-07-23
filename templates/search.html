@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scout | IHWAP Field Search</title>
+    <style>
+        body { font-family: system-ui, sans-serif; margin: 0; padding: 0; background: #f8f9fa; }
+        .container { max-width: 700px; margin: 0 auto; padding: 2rem 1rem; }
+        h2 { text-align: center; }
+        form { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+        input[type="text"] { flex: 1; padding: 0.6rem; font-size: 1.1rem; border: 1px solid #bbb; border-radius: 4px; }
+        button { padding: 0.6rem 1.2rem; font-size: 1.1rem; background: #4d6274; color: #fff; border: none; border-radius: 4px; cursor: pointer;}
+        .result { background: #fff; margin-bottom: 1rem; border-radius: 6px; box-shadow: 0 1px 4px #ddd; padding: 1rem; }
+        .result.best { border-left: 6px solid #3578e5; background: #f3f8fc; }
+        .policy { color: #444; font-size: 0.98em; margin-top: 0.5em; }
+        @media (max-width: 600px) {
+            .container { padding: 1rem 0.3rem; }
+            input, button { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>🔎 Scout Field Rule Search</h2>
+    <form method="get" action="{{ url_for('search') }}">
+        <input type="text" name="q" placeholder="Type keywords, e.g. 'attic vapor barrier'" value="{{ query|default('') }}">
+        <button type="submit">Search</button>
+    </form>
+    {% if query %}
+        {% if results %}
+            <div>
+                {% for result in results %}
+                    <div class="result{% if loop.index0 == 0 %} best{% endif %}">
+                        <strong>{{ loop.index0 == 0 and "Best Match:" or "Match:" }}</strong><br>
+                        <div>{{ result.answer|safe }}</div>
+                        {% if result.policy %}
+                            <div class="policy"><b>[Citation: {{ result.policy }}]</b></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div>No rules found for this query.</div>
+        {% endif %}
+    {% endif %}
+</div>
+</body>
+</html>
