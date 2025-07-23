@@ -169,6 +169,10 @@ def scope():
     result = session.get("last_result", {"scene_type": "unset", "matched_triggers": [], "auto_triggered": []})
     return render_template("scope.html", result=result)
 
+@app.route("/prevent")
+def prevent():
+    return render_template("prevent.html")
+
 @app.route("/knowledge", methods=["GET"])
 def knowledge():
     q = request.args.get("q")
