@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Scout Policy Knowledge Search</title>
+    <title>Scout Policy & Logic Search</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; }
         .search-form { margin-bottom: 30px; }
-        .best-match { background: #f8ffd6; border: 2px solid #88b938; padding: 18px; margin-bottom: 24px; }
-        .other-matches { background: #f5f5f5; padding: 12px; border-radius: 5px; }
-        hr { border: none; border-top: 1px solid #ccc; }
+        .match-block {
+            background: #f8ffd6; border: 2px solid #88b938;
+            padding: 16px; margin-bottom: 18px; border-radius: 7px;
+        }
+        hr { border: none; border-top: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -21,29 +23,18 @@
         <div style="color: red;"><b>{{ error }}</b></div>
     {% endif %}
 
-    {% if best %}
-        <div class="best-match">
-            <b>🔎 BEST MATCH:</b>
-            <div><b>{{ best.trigger }}</b></div>
-            <div>{{ best.answer|safe }}</div>
-            <div><em>[{{ best.policy }}]</em></div>
-        </div>
-    {% endif %}
-
-    {% if others and others|length > 0 %}
-        <div class="other-matches">
-            <b>Other partial matches:</b>
-            <ul>
-            {% for r in others %}
-                <li>
-                    <b>{{ r.trigger }}</b><br>
-                    {{ r.answer|safe }}<br>
-                    <em>[{{ r.policy }}]</em>
-                </li>
+    {% if results %}
+        <div>
+            {% for item in results %}
+                <div class="match-block">
+                    <b>{{ item.trigger }}</b><br>
+                    {{ item.answer|safe }}<br>
+                    <em>[{{ item.policy }}]</em>
+                </div>
             {% endfor %}
-            </ul>
         </div>
     {% endif %}
 </body>
 </html>
+
 
