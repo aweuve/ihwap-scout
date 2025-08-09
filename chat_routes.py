@@ -1,10 +1,32 @@
 # chat_routes.py
+"""
+IHWAP Scout — Chat routes (WX-only + FAAIE-first + safe LLM helper)
+
+- Smalltalk/out-of-scope → suggestions (no decision).
+- FAAIE match → deterministic Decision/Sequence/Verify/Docs/Citation card.
+- LLM is helper only: explains matched rule or suggests topics on a miss.
+- Keeps your existing 'search_policy' pattern if provided; otherwise uses a
+  simple internal mapping via logic_index.json.
+
+Env:
+  OPENAI_API_KEY   (required for LLM helper)
+  LLM_MODEL        (default: gpt-4o-mini)
+  LLM_MAXTOK       (default: 320)
+"""
+
 from flask import Blueprint, request, jsonify, session, redirect, url_for, render_template, current_app
 import openai
 import markdown
 import bleach
 import json
 import os
+from typing import Callable, List, Dict, Any, Optional
+
+# ---------- Config ----------
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+_LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
+_LLM_MAXTOK = int(os.getenv("LLM_MAXTOK", "320"))
 
 # ---------- WX-only guardrails & suggestions ----------
 
@@ -28,7 +50,7 @@ _IN_SCOPE = {
 def _normalize(s: str) -> str:
     return "".join(ch.lower() if ch.isalnum() or ch in " &/-" else " " for ch in (s or "")).strip()
 
-def _tokens(s: str):
+def _tokens(s: str) -> List[str]:
     return [t for t in _normalize(s).split() if len(t) >= 3]
 
 def _is_smalltalk(q: str) -> bool:
@@ -38,23 +60,24 @@ def _is_smalltalk(q: str) -> bool:
     if q in {"hi","hello","hey","ok","okay","thanks","thank you","yo","lol","moo","?","??","???"}:
         return True
     toks = _tokens(q)
-    if len(toks) < 2 and q not in {"t&p","co","gfci","afci","wx+"}:
-        return True
-    return False
+    return (len(toks) < 2) and (q not in {"t&p","co","gfci","afci","wx+"})
 
 def _in_scope(q: str) -> bool:
     return bool(set(_tokens(q)) & _IN_SCOPE)
 
-def _render_suggestions_html(message: str, items: list) -> str:
+def _render_suggestions_html(message: str, items: List[str]) -> str:
     lis = "".join(f"<li>{bleach.clean(i)}</li>" for i in items)
     return f"<p>{bleach.clean(message)}</p><ul>{lis}</ul>"
 
-def _render_decision_card(rule: dict) -> str:
-    """Deterministic FAAIE card (no model text). Handles both legacy and v2 fields."""
-    # v2 fields
+# ---------- FAAIE card renderer ----------
+
+def _render_decision_card(rule: Dict[str, Any]) -> str:
+    """
+    Deterministic FAAIE card (no model text). Supports v1/v2 fields.
+    """
     decision = rule.get("display_decision") or rule.get("decision_code") or rule.get("answer") or "Decision"
-    seq = rule.get("sequence") or rule.get("actions") or ([] if not rule.get("action_item") else [rule.get("action_item")])
-    ver = rule.get("verify") or []
+    sequence = rule.get("sequence") or rule.get("actions") or ([] if not rule.get("action_item") else [rule.get("action_item")])
+    verify = rule.get("verify") or []
     docs = rule.get("documentation") or []
     cite = rule.get("reference_policy") or rule.get("policy") or ""
     funding = rule.get("funding_source") or "H&S"
@@ -63,22 +86,18 @@ def _render_decision_card(rule: dict) -> str:
         if not items: return "<ul></ul>"
         return "<ul>" + "".join(f"<li>{bleach.clean(str(i))}</li>" for i in items) + "</ul>"
 
-    block = []
-    block.append(
+    parts = []
+    parts.append(
         f"<p><strong>Decision:</strong> {bleach.clean(decision)} "
         f"<span style='border:1px solid #ddd;border-radius:8px;padding:1px 6px;margin-left:6px;font-size:12px;opacity:.8'>{bleach.clean(funding)}</span></p>"
     )
-    if seq:  block.append("<p><strong>Sequence:</strong></p>" + bullets(seq))
-    if ver:  block.append("<p><strong>Verify:</strong></p>" + bullets(ver))
-    if docs: block.append("<p><strong>Documentation:</strong></p>" + bullets(docs))
-    if cite: block.append(f"<p><em>[Citation: {bleach.clean(cite)}]</em></p>")
-    return "\n".join(block)
+    if sequence: parts.append("<p><strong>Sequence:</strong></p>" + bullets(sequence))
+    if verify:   parts.append("<p><strong>Verify:</strong></p>" + bullets(verify))
+    if docs:     parts.append("<p><strong>Documentation:</strong></p>" + bullets(docs))
+    if cite:     parts.append(f"<p><em>[Citation: {bleach.clean(cite)}]</em></p>")
+    return "\n".join(parts)
 
 # ---------- Safe LLM helpers (explain/suggest only) ----------
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
-_LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
-_LLM_MAXTOK = int(os.getenv("LLM_MAXTOK", "320"))
 
 _SYSTEM_WX_ONLY = (
     "You are Scout for IHWAP weatherization. Scope: combustion safety, HVAC/water heaters, electrical (GFCI/AFCI), "
@@ -89,8 +108,12 @@ _SYSTEM_WX_ONLY = (
     "Be concise, professional, and actionable. No chit-chat or jokes."
 )
 
-def _llm_explain_rule(user_q: str, rule_for_llm: dict) -> str or None:
-    """Return short HTML explanation; never a decision."""
+def _llm_explain_rule(user_q: str, rule_for_llm: Dict[str, Any]) -> Optional[str]:
+    """
+    Return short HTML explanation; never a decision.
+    """
+    if not openai.api_key:
+        return None
     try:
         prompt = (
             "User asked: " + user_q + "\n\n"
@@ -118,8 +141,12 @@ def _llm_explain_rule(user_q: str, rule_for_llm: dict) -> str or None:
         current_app.logger.warning({"event":"llm_explain_error","err":str(ex)})
         return None
 
-def _llm_suggest(user_q: str) -> dict:
-    """Return {'message': str, 'suggestions': [...]}; never a decision."""
+def _llm_suggest(user_q: str) -> Dict[str, Any]:
+    """
+    Return {'message': str, 'suggestions': [...]}; never a decision.
+    """
+    if not openai.api_key:
+        return {"message":"No direct FAAIE match. Try one of the suggestions below.", "suggestions": _SUGGESTIONS}
     try:
         prompt = (
             "User asked: " + user_q + "\n\n"
@@ -144,10 +171,64 @@ def _llm_suggest(user_q: str) -> dict:
         current_app.logger.warning({"event":"llm_suggest_error","err":str(ex)})
         return {"message":"No direct FAAIE match. Try one of the suggestions below.", "suggestions": _SUGGESTIONS}
 
-# ---------- Routes ----------
+# ---------- Optional internal search_policy fallback ----------
 
-def init_chat_routes(app, search_policy):
+def _fallback_search_policy_factory() -> Callable[[str], List[Dict[str, Any]]]:
+    """
+    If the app doesn't inject a search_policy, use a simple key map that
+    reads a path from logic_index.json and returns triggers from that file.
+    """
+    logic_index = None
+    try:
+        with open("logic_index.json", "r", encoding="utf-8") as f:
+            logic_index = json.load(f)
+    except Exception:
+        pass
+
+    key_map = {
+        "tankless": ["faaie", "HVAC", "water_heater", "tankless"],
+        "power vent": ["faaie", "HVAC", "water_heater", "power_vent"],
+        "electric water heater": ["faaie", "HVAC", "water_heater", "electric"],
+        "water heater": ["faaie", "HVAC", "water_heater", "health_and_safety"],
+        "co": ["faaie", "HVAC", "water_heater", "combustion_safety"],
+        "boiler": ["faaie", "HVAC", "boiler", "health_and_safety"],
+        "crawlspace": ["faaie", "foundations", "crawlspace"],
+        "ptac": ["faaie","HVAC","air_conditioning","IHWAP_context"],
+        "mini split": ["faaie","HVAC","air_conditioning","IHWAP_context"],
+        "mixing valve": ["faaie","HVAC","water_heater","health_and_safety"],
+        "t&p": ["faaie","HVAC","water_heater","health_and_safety"],
+        "gfci": ["faaie","health_and_safety","electrical"],
+        "knob and tube": ["faaie","health_and_safety","electrical"],
+        "sump": ["faaie","foundations","basement","scopes"],
+    }
+
+    def _search(user_input: str) -> List[Dict[str, Any]]:
+        if not logic_index:
+            return []
+        query = (user_input or "").lower()
+        for keyword, keys in key_map.items():
+            if keyword in query:
+                try:
+                    node = logic_index
+                    for k in keys:
+                        node = node[k]
+                    with open(node, "r", encoding="utf-8") as f:
+                        logic = json.load(f)
+                    return logic.get("triggers", [])
+                except Exception as e:
+                    current_app.logger.warning({"event":"search_policy_error","kw":keyword,"err":str(e)})
+                    return []
+        return []
+
+    return _search
+
+# ---------- Blueprint init ----------
+
+def init_chat_routes(app, search_policy: Optional[Callable[[str], List[Dict[str, Any]]]] = None):
     chat_bp = Blueprint('chat', __name__)
+
+    # use injected search_policy if provided; otherwise fallback
+    sp = search_policy or _fallback_search_policy_factory()
 
     @chat_bp.route("/chat", methods=["GET", "POST"])
     def chat():
@@ -162,97 +243,12 @@ def init_chat_routes(app, search_policy):
             user_msg = (user_msg or "").strip()
 
             if user_msg:
-                # store raw user text for UI (sanitized)
+                # store sanitized user text for UI
                 session["chat_history"].append({"role": "user", "content": bleach.clean(user_msg)})
                 session.modified = True
 
-                # --- Guardrails ---
+                # --- Guardrails (no model) ---
                 if _is_smalltalk(user_msg):
-                    assistant_reply = _render_suggestions_html(
-                        "Scout is weatherization-only. Try one of these:",
-                        _SUGGESTIONS
-                    )
+                    assistant_reply = _render_suggestions_html("Scout is weatherization-only. Try one of these:", _SUGGESTIONS)
                     session["chat_history"].append({"role": "assistant", "content": assistant_reply})
-                    session.modified = True
-                    wants_json = (
-                        request.is_json
-                        or request.headers.get("X-Requested-With") == "XMLHttpRequest"
-                        or request.headers.get("Accept", "").startswith("application/json")
-                    )
-                    if wants_json:
-                        return jsonify({"reply": assistant_reply})
-                    return redirect(url_for("chat.chat"))
-
-                if not _in_scope(user_msg):
-                    assistant_reply = _render_suggestions_html(
-                        "Out of scope for weatherization. Try one of these:",
-                        _SUGGESTIONS
-                    )
-                    session["chat_history"].append({"role": "assistant", "content": assistant_reply})
-                    session.modified = True
-                    wants_json = (
-                        request.is_json
-                        or request.headers.get("X-Requested-With") == "XMLHttpRequest"
-                        or request.headers.get("Accept", "").startswith("application/json")
-                    )
-                    if wants_json:
-                        return jsonify({"reply": assistant_reply})
-                    return redirect(url_for("chat.chat"))
-
-                # --- FAAIE-first (authoritative) ---
-                search_results = search_policy(user_msg)
-
-                if search_results:
-                    best = search_results[0]
-                    # Deterministic decision card
-                    card_html = _render_decision_card(best)
-
-                    # Optional: model explanation (cannot alter decision)
-                    rule_for_llm = {
-                        "trigger": best.get("trigger",""),
-                        "decision": best.get("display_decision") or best.get("decision_code",""),
-                        "sequence": best.get("sequence", []),
-                        "verify": best.get("verify", []),
-                        "documentation": best.get("documentation", []),
-                        "funding_source": best.get("funding_source",""),
-                        "reference_policy": best.get("reference_policy") or best.get("policy",""),
-                    }
-                    addendum_html = _llm_explain_rule(user_msg, rule_for_llm)
-                    if addendum_html:
-                        card_html += "<hr style='border:none;border-top:1px solid #eee;margin:10px 0' />" + addendum_html
-
-                    assistant_reply = card_html
-
-                else:
-                    # No FAAIE rule → suggestions only (never a Decision)
-                    s = _llm_suggest(user_msg)
-                    assistant_reply = _render_suggestions_html(s["message"], s["suggestions"])
-
-                # sanitize final HTML
-                assistant_reply = bleach.clean(
-                    assistant_reply,
-                    tags=bleach.sanitizer.ALLOWED_TAGS + ["p","ul","ol","li","code","pre","strong","em","br","hr","span"],
-                    attributes={"span": ["style"]},
-                    strip=True,
-                )
-
-                session["chat_history"].append({"role": "assistant", "content": assistant_reply})
-                session.modified = True
-
-                wants_json = (
-                    request.is_json
-                    or request.headers.get("X-Requested-With") == "XMLHttpRequest"
-                    or request.headers.get("Accept", "").startswith("application/json")
-                )
-                if wants_json:
-                    return jsonify({"reply": assistant_reply})
-                return redirect(url_for("chat.chat"))
-
-        return render_template("chat.html", chat_history=session.get("chat_history", []))
-
-    @chat_bp.route("/reset_chat")
-    def reset_chat():
-        session["chat_history"] = []
-        return redirect(url_for("chat.chat"))
-
-    app.register_blueprint(chat_bp)
+                    session.modif
